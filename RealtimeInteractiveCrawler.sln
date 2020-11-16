@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealtimeInteractiveCrawler", "RealtimeInteractiveCrawler\RealtimeInteractiveCrawler.csproj", "{FEAB7D9C-C497-43F8-BF92-EBD3A937BF38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealtimeInteractiveCrawler", "RealtimeInteractiveCrawler.csproj", "{FEAB7D9C-C497-43F8-BF92-EBD3A937BF38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {46F70B2B-1138-4F38-B859-23B3078AF75A}
+		SolutionGuid = {FE8A4061-0478-47DE-A5FC-EF736E4A124C}
 	EndGlobalSection
 EndGlobal

@@ -55,6 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LeosGame\AwesomeGame.cs" />
+    <Compile Include="LeosGame\DebugUtility.cs" />
+    <Compile Include="LeosGame\GameLoop.cs" />
+    <Compile Include="LeosGame\GameTime.cs" />
+    <Compile Include="LeosGame\MainGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
