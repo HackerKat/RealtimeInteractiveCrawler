@@ -19,6 +19,8 @@ namespace RealtimeInteractiveCrawler
         static Texture texture = new Texture("image.png");
         static Sprite sprite = new Sprite();
         static InputManager inputManager = new InputManager();
+        static GameTime gameTime = new GameTime();
+        static float movementSpeed = 10f;
 
         static void Main(string[] args)
         {
@@ -35,6 +37,7 @@ namespace RealtimeInteractiveCrawler
             while (window.IsOpen)
             {
                 window.DispatchEvents();
+                gameTime.Update();
 
                 Update();
                 Draw();
@@ -43,23 +46,21 @@ namespace RealtimeInteractiveCrawler
 
         private static void Update()
         {
-            Console.WriteLine("UPDATE");
-            if (inputManager.getKeyDown(Keyboard.Key.W))
+            if (inputManager.getKeyDown(Keyboard.Key.W) || inputManager.getKeyDown(Keyboard.Key.Up))
             {
-                Console.WriteLine("W IS PRESSED");
-                sprite.Position += new Vector2f(0f,-1f);
+                sprite.Position += new Vector2f(0f,-1f) * movementSpeed * gameTime.DeltaTime;
             }
-            if (inputManager.getKeyDown(Keyboard.Key.A))
+            if (inputManager.getKeyDown(Keyboard.Key.A) || inputManager.getKeyDown(Keyboard.Key.Left))
             {
-                sprite.Position += new Vector2f(-1f, 0f);
+                sprite.Position += new Vector2f(-1f, 0f) * movementSpeed * gameTime.DeltaTime;
             }
-            if (inputManager.getKeyDown(Keyboard.Key.S))
+            if (inputManager.getKeyDown(Keyboard.Key.S) || inputManager.getKeyDown(Keyboard.Key.Down))
             {
-                sprite.Position += new Vector2f(0f, 1f);
+                sprite.Position += new Vector2f(0f, 1f) * movementSpeed * gameTime.DeltaTime;
             }
-            if (inputManager.getKeyDown(Keyboard.Key.D))
+            if (inputManager.getKeyDown(Keyboard.Key.D) || inputManager.getKeyDown(Keyboard.Key.Right))
             {
-                sprite.Position += new Vector2f(1f, 0f);
+                sprite.Position += new Vector2f(1f, 0f) * movementSpeed * gameTime.DeltaTime;
             }
         }
 
