@@ -26,7 +26,7 @@ namespace RealtimeInteractiveCrawler
         {
             sprite.Texture = texture;
             window.Closed += Window_Closed;
-            //Connect("localhost", "Hello");
+            Connect("localhost", "Hello");
 
             GameLoop();
         }
@@ -61,6 +61,10 @@ namespace RealtimeInteractiveCrawler
             if (inputManager.getKeyDown(Keyboard.Key.D) || inputManager.getKeyDown(Keyboard.Key.Right))
             {
                 sprite.Position += new Vector2f(1f, 0f) * movementSpeed * gameTime.DeltaTime;
+            }
+            if (inputManager.getKeyDown(Keyboard.Key.Escape))
+            {
+                window.Close();
             }
         }
 
@@ -130,9 +134,6 @@ namespace RealtimeInteractiveCrawler
             {
                 Console.WriteLine("SocketException: {0}", e);
             }
-
-            Console.WriteLine("\n Press Enter to continue...");
-            Console.Read();
         }
     }
 }

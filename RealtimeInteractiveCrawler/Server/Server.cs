@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Server
 {
-    class Program
+    class Server
     {
         static void Main(string[] args)
         {
