@@ -361,3 +361,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 RealtimeInteractiveCrawler/RealtimeInteractiveCrawler/obj/Debug/RealtimeInteractiveCrawler.csprojAssemblyReference.cache
+*.cache
+*.exe
+*.pdb
