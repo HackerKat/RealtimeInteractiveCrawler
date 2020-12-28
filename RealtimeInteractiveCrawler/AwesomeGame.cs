@@ -18,7 +18,7 @@ namespace RealtimeInteractiveCrawler
         private InputManager inputManager = new InputManager();
 
         private float movementSpeed = 5f;
-        private Sprite sprite; // player debug
+        private Sprite sprite;
 
         private World world;
 
@@ -29,17 +29,16 @@ namespace RealtimeInteractiveCrawler
 
         public override void Draw(GameTime gameTime)
         {
-            //DebugUtility.DrawPerformanceData(this, Color.White);
+            DebugUtility.DrawPerformanceData(this, Color.White);
 
             Window.Draw(world);
-            //Window.Draw(sprite);
+            Window.Draw(sprite);
         }
 
         public override void Initialize()
         {
             //Connect("localhost", "Hello");
             world = new World();
-            world.GenerateWorld();
         }
 
         public override void LoadContent()

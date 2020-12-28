@@ -32,10 +32,18 @@ namespace RealtimeInteractiveCrawler
             //        SetTile(TileType.GROUND, x, y);
         }
 
-        public void SetTile(TileType type, int x, int y)
+        public void SetTile(TileType type, int x, int y, Tile[] neighbours)
         {
-            tiles[x][y] = new Tile(type);
+            tiles[x][y] = new Tile(type, neighbours);
             tiles[x][y].Position = new Vector2f(x * Tile.TILE_SIZE, y * Tile.TILE_SIZE);
+        }
+        
+        public Tile GetTile(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE)
+                return null;
+
+            return tiles[x][y];
         }
 
         public void Draw(RenderTarget target, RenderStates states)

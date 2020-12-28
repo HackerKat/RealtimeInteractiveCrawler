@@ -23,14 +23,22 @@ namespace RealtimeInteractiveCrawler
                 chunks[i] = new Chunk[WORLD_SIZE];
             }
 
-            for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
-                for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
+        }
+
+        public void GenerateWorld()
+        {
+            // Ground
+            int[] xCords = { 0, 50 };
+            int[] yCords = { 18, 32 };
+            for (int x = xCords[0]; x < xCords[1]; x++)
+                for (int y = yCords[0]; y <= yCords[1]; y++)
                     SetTile(TileType.GROUND, x, y);
-
-            for (int x = Chunk.CHUNK_SIZE; x < Chunk.CHUNK_SIZE * 2; x++)
-                for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
+            // Grass
+            xCords = new int[]{ 0, 50 };
+            yCords = new int[] { 17, 17 };
+            for (int x = xCords[0]; x < xCords[1]; x++)
+                for (int y = yCords[0]; y <= yCords[1]; y++)
                     SetTile(TileType.GRASS, x, y);
-
         }
 
         public void SetTile(TileType type, int x, int y)
@@ -38,7 +46,24 @@ namespace RealtimeInteractiveCrawler
             Chunk chunk = GetChunk(x, y);
             Vector2i tilePos = GetTilePosFromChunk(x, y);
 
-            chunk.SetTile(type, tilePos.X, tilePos.Y);
+            Tile[] neighbours = new Tile[4];
+            neighbours[0] = GetTile(x, y - 1); // up
+            neighbours[1] = GetTile(x, y + 1); // down
+            neighbours[2] = GetTile(x - 1, y); // left 
+            neighbours[3] = GetTile(x + 1, y); // right
+
+            chunk.SetTile(type, tilePos.X, tilePos.Y, neighbours);
+        }
+
+        public Tile GetTile(int x, int y)
+        {
+            Chunk chunk = GetChunk(x, y);
+            if (chunk == null)
+                return null;
+
+            Vector2i tilePos = GetTilePosFromChunk(x, y);
+
+            return chunk.GetTile(tilePos.X, tilePos.Y);
         }
 
         public Chunk GetChunk(int x, int y)
