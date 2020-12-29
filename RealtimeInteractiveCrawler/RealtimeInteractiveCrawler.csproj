@@ -59,10 +59,12 @@
     <Compile Include="Game\Chunk.cs" />
     <Compile Include="Game\Content.cs" />
     <Compile Include="Game\DebugUtility.cs" />
+    <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\GameTime.cs" />
     <Compile Include="Game\InputManager.cs" />
     <Compile Include="Game\MainClass.cs" />
+    <Compile Include="Game\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Game\World.cs" />
