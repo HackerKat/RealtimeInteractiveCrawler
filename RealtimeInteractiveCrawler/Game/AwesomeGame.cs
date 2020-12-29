@@ -21,6 +21,7 @@ namespace RealtimeInteractiveCrawler
         private Sprite sprite; // player debug
 
         private World world;
+        private Player player;
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
@@ -32,6 +33,7 @@ namespace RealtimeInteractiveCrawler
             //DebugUtility.DrawPerformanceData(this, Color.White);
 
             Window.Draw(world);
+            Window.Draw(player);
             //Window.Draw(sprite);
         }
 
@@ -40,6 +42,9 @@ namespace RealtimeInteractiveCrawler
             //Connect("localhost", "Hello");
             world = new World();
             world.GenerateWorld();
+
+            player = new Player(world);
+            player.Spawn(300, 150);
         }
 
         public override void LoadContent()
@@ -52,6 +57,9 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
+            player.Update();
+
+
             if (inputManager.getKeyDown(Keyboard.Key.W) || inputManager.getKeyDown(Keyboard.Key.Up))
             {
                 Console.WriteLine("W is pressed");
