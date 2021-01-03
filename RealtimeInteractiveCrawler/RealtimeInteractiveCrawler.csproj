@@ -58,6 +58,7 @@
     <Compile Include="Game\AwesomeGame.cs" />
     <Compile Include="Game\Chunk.cs" />
     <Compile Include="Game\Content.cs" />
+    <Compile Include="Game\DebugRender.cs" />
     <Compile Include="Game\DebugUtility.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\GameTime.cs" />

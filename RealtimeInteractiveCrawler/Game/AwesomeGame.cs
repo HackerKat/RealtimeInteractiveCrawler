@@ -25,7 +25,7 @@ namespace RealtimeInteractiveCrawler
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
-            
+            DebugRender.Enabled = true;
         }
 
         public override void Draw(GameTime gameTime)
@@ -34,6 +34,7 @@ namespace RealtimeInteractiveCrawler
 
             Window.Draw(world);
             Window.Draw(player);
+            DebugRender.Draw(Window);
             //Window.Draw(sprite);
         }
 

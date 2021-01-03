@@ -28,17 +28,29 @@ namespace RealtimeInteractiveCrawler
         public void GenerateWorld()
         {
             // Ground
-            int[] xCords = { 0, 50 };
+            int[] xCords = { 3, 46 };
             int[] yCords = { 18, 32 };
-            for (int x = xCords[0]; x < xCords[1]; x++)
+            for (int x = xCords[0]; x <= xCords[1]; x++)
                 for (int y = yCords[0]; y <= yCords[1]; y++)
                     SetTile(TileType.GROUND, x, y);
             // Grass
-            xCords = new int[]{ 0, 50 };
+            xCords = new int[]{ 3, 46 };
             yCords = new int[] { 17, 17 };
-            for (int x = xCords[0]; x < xCords[1]; x++)
+            for (int x = xCords[0]; x <= xCords[1]; x++)
                 for (int y = yCords[0]; y <= yCords[1]; y++)
                     SetTile(TileType.GRASS, x, y);
+
+            // Random Walls
+            xCords = new int[] { 3, 4 };
+            yCords = new int[] { 1, 17 };
+            for (int x = xCords[0]; x <= xCords[1]; x++)
+                for (int y = yCords[0]; y <= yCords[1]; y++)
+                    SetTile(TileType.GROUND, x, y);
+            xCords = new int[] { 45, 46 };
+            yCords = new int[] { 1, 17 };
+            for (int x = xCords[0]; x <= xCords[1]; x++)
+                for (int y = yCords[0]; y <= yCords[1]; y++)
+                    SetTile(TileType.GROUND, x, y);
         }
 
         public void SetTile(TileType type, int x, int y)
@@ -71,10 +83,24 @@ namespace RealtimeInteractiveCrawler
             int X = x / Chunk.CHUNK_SIZE;
             int Y = y / Chunk.CHUNK_SIZE;
 
-            if (chunks[X][Y] == null)
-                chunks[X][Y] = new Chunk(new Vector2i(X, Y));
+            if(X >= WORLD_SIZE || Y >= WORLD_SIZE)
+            {
+                return null;
+            }
 
-            return chunks[X][Y];
+            try
+            {
+                if (chunks[X][Y] == null)
+                    chunks[X][Y] = new Chunk(new Vector2i(X, Y));
+
+                return chunks[X][Y];
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+            
         }
 
         public Vector2i GetTilePosFromChunk(int x, int y)

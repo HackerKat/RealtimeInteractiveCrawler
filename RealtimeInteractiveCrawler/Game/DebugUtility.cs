@@ -23,9 +23,9 @@ namespace RealtimeInteractiveCrawler
             float fps = 1f / gameLoop.GameTime.DeltaTime;
             string fpsStr = fps.ToString("0.00");
 
-            gameLoop.Window.Draw(CreateText(totalTimeElapsed, 4f, 8f, fontColor));
-            gameLoop.Window.Draw(CreateText(deltaTime, 4f, 28f, fontColor));
-            gameLoop.Window.Draw(CreateText(fpsStr, 4f, 48f, fontColor));
+            GameLoop.Window.Draw(CreateText(totalTimeElapsed, 4f, 8f, fontColor));
+            GameLoop.Window.Draw(CreateText(deltaTime, 4f, 28f, fontColor));
+            GameLoop.Window.Draw(CreateText(fpsStr, 4f, 48f, fontColor));
 
         }
 
