@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
+using System.Threading;
+using NetworkLib;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -11,6 +13,14 @@ namespace RealtimeInteractiveCrawler
     {
 
         private NetworkStream stream;
+        private Thread networkThread;
+        private bool threadShouldEnd = false;
+        private TcpClient client;
+        public MessageQueue MessageQueue
+        {
+            get;
+            private set;
+        } = new MessageQueue();
         public NetworkManager()
         {
 
@@ -38,13 +48,24 @@ namespace RealtimeInteractiveCrawler
             return new Packet(id, size, data);
         }
 
-        public void Connect(String server)
+        public void StopNetwork()
+        {
+            threadShouldEnd = true;
+            networkThread.Join();
+            stream.Close();
+            client.Close();
+        }
+
+        public void Connect(string server)
         {
             try
             {
-                Int32 port = 8888;
-                TcpClient client = new TcpClient(server, port);
+                int port = 12534;
+                client = new TcpClient(server, port);
                 stream = client.GetStream();
+                threadShouldEnd = false;
+                networkThread = new Thread(ReadLoop);
+                networkThread.Start();
             }
             catch (ArgumentNullException e)
             {
@@ -57,6 +78,15 @@ namespace RealtimeInteractiveCrawler
             catch (Exception e)
             {
                 Console.WriteLine("failed to connect...");
+            }
+        }
+
+        public void ReadLoop()
+        {
+            while (!threadShouldEnd)
+            {
+                Packet p = ReadData();
+                MessageQueue.Push(p);
             }
         }
     }

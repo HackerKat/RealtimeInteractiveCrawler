@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using NetworkLib;
+using System.Threading;
 
 namespace Server
 {
@@ -12,6 +14,13 @@ namespace Server
     {
 
         private NetworkStream stream;
+        private Thread networkThread;
+        private bool threadShouldEnd = false;
+        public MessageQueue MessageQueue
+        {
+            get;
+            private set;
+        } = new MessageQueue();
         public NetworkManager()
         {
 
@@ -39,6 +48,14 @@ namespace Server
             return new Packet(id, size, data);
         }
 
+        public void StopNetwork()
+        {
+            threadShouldEnd = true;
+            networkThread.Join();
+            stream.Close();
+            //client.Close();
+        }
+
         public void StartServer()
         {
             try
@@ -46,6 +63,9 @@ namespace Server
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
                 TcpListener server = new TcpListener(localAddr, 8888);
                 server.Start();
+                threadShouldEnd = false;
+                networkThread = new Thread(ReadLoop);
+                networkThread.Start();
             }
             catch (ArgumentNullException e)
             {
@@ -58,6 +78,15 @@ namespace Server
             catch (Exception e)
             {
                 Console.WriteLine("failed to connect...");
+            }
+        }
+
+        public void ReadLoop()
+        {
+            while (!threadShouldEnd)
+            {
+                Packet p = ReadData();
+                MessageQueue.Push(p);
             }
         }
     }

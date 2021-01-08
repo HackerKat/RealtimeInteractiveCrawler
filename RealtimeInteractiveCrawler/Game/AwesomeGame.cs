@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using SFML.Window;
 using SFML.System;
 using System.IO;
+using NetworkLib;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -53,9 +54,28 @@ namespace RealtimeInteractiveCrawler
             sprite.Texture = Content.TexPlay0;
         }
 
+        public void ProcessPacket(Packet p)
+        {
+            switch (p.Id)
+            {
+                //case 1:
+                //processing packets
+                //break;
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
+            MessageQueue messageQueue = networkManager.MessageQueue;
+            Packet p;
+            while ((p = messageQueue.Pop()) != null)
+            {
+                ProcessPacket(p);
+            }
+
             player.Update(inputManager, gameTime);
+
+
             if (inputManager.getKeyDown(Keyboard.Key.Escape))
             {
                 Window.Close();

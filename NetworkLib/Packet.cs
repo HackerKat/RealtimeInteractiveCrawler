@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Server
+namespace NetworkLib
 {
     public class Packet
     {
-        public byte Id 
+        public byte Id
         {
             get;
             private set;
@@ -32,7 +28,5 @@ namespace Server
             this.Size = size;
             Array.Copy(data, this.data, size);
         }
-
-
     }
 }
