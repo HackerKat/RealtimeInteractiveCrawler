@@ -93,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetworkLib\NetworkLib.csproj">
-      <Project>{5E8BEA57-FCBC-45D6-BF69-85215BD89E17}</Project>
+      <Project>{5e8bea57-fcbc-45d6-bf69-85215bd89e17}</Project>
       <Name>NetworkLib</Name>
     </ProjectReference>
   </ItemGroup>
