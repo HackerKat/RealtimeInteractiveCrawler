@@ -26,6 +26,7 @@ namespace NetworkLib
         {
             this.Id = id;
             this.Size = size;
+            this.data = new byte[size];
             Array.Copy(data, this.data, size);
         }
     }

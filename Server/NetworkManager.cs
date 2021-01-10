@@ -12,21 +12,18 @@ namespace Server
 {
     public class NetworkManager
     {
-
-        private NetworkStream stream;
-        private Thread networkThread;
-        private bool threadShouldEnd = false;
-        public MessageQueue MessageQueue
-        {
-            get;
-            private set;
-        } = new MessageQueue();
+        private List<Thread> clients;
+        //private bool threadShouldEnd = false;
+        private TcpListener server;
+        private Dictionary<TcpClient, int> connections;
+        private int connectionId;
+        
         public NetworkManager()
         {
 
         }
 
-        public void SendData(Packet packet)
+        public void SendData(Packet packet, NetworkStream stream)
         {
             //write id of the packet
             stream.WriteByte(packet.Id);
@@ -36,7 +33,7 @@ namespace Server
             stream.Write(packet.Data, 0, packet.Data.Length);
         }
 
-        public Packet ReadData()
+        public Packet ReadData(NetworkStream stream)
         {
             byte id = (byte)stream.ReadByte();
             byte[] sizeBytes = new byte[4];
@@ -50,10 +47,17 @@ namespace Server
 
         public void StopNetwork()
         {
-            threadShouldEnd = true;
-            networkThread.Join();
-            stream.Close();
-            //client.Close();
+            //threadShouldEnd = true;
+            
+            foreach(TcpClient client in connections.Keys)
+            {
+                client.Close();
+            }
+            foreach(Thread t in clients)
+            {
+                t.Join(); //wait until this thread ends itself
+            }
+            server.Stop();
         }
 
         public void StartServer()
@@ -61,11 +65,11 @@ namespace Server
             try
             {
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-                TcpListener server = new TcpListener(localAddr, 8888);
+                server = new TcpListener(localAddr, 12534);
+                connections = new Dictionary<TcpClient, int>();
+                clients = new List<Thread>();
                 server.Start();
-                threadShouldEnd = false;
-                networkThread = new Thread(ReadLoop);
-                networkThread.Start();
+                Console.WriteLine("Server started");
             }
             catch (ArgumentNullException e)
             {
@@ -81,12 +85,36 @@ namespace Server
             }
         }
 
-        public void ReadLoop()
+        public void Accept()
         {
-            while (!threadShouldEnd)
+            
+            TcpClient client = server.AcceptTcpClient();
+            Console.WriteLine("Connection establisehd");
+            connections.Add(client, connectionId++); //wird connectionId geadded und danach incrementiert
+            Thread newThread = new Thread(() => ClientThreadLoop(client));
+            clients.Add(newThread);
+            newThread.Start();
+        }
+
+        public void ClientThreadLoop(TcpClient client)
+        {
+            while (client.Connected)
             {
-                Packet p = ReadData();
-                MessageQueue.Push(p);
+                Packet p = ReadData(client.GetStream());
+
+                switch (p.Id)
+                {
+                    case 0:
+                        Console.WriteLine("ping packet received");
+                        PacketBuilder pb = new PacketBuilder(0);
+                        pb.Add(14);
+                        Packet packet = pb.Build(); //ping packet
+                        SendData(packet, client.GetStream());
+                        Console.WriteLine("Send pong");
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

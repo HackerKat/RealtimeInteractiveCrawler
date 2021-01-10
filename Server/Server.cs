@@ -11,10 +11,14 @@ namespace Server
 {
     class Server
     {
-        private static NetworkManager networkManager;
+        private static NetworkManager networkManager = new NetworkManager();
         static void Main(string[] args)
         {
             networkManager.StartServer();
+            while (true)
+            {
+                networkManager.Accept();
+            }
         }
         
     }

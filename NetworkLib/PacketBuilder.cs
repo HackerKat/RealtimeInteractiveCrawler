@@ -41,7 +41,11 @@ namespace NetworkLib
 
         public Packet Build()
         {
-            return new Packet(id, data.Count, data.ToArray()); 
+            if(data.Count != 0)
+            {
+                return new Packet(id, data.Count, data.ToArray());
+            }
+            return new Packet(id, 0, new byte[0]);
         }
     }
 }

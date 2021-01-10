@@ -26,6 +26,9 @@ namespace RealtimeInteractiveCrawler
 
         private World world;
 
+
+        private bool pPressed = false;
+
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             
@@ -58,9 +61,9 @@ namespace RealtimeInteractiveCrawler
         {
             switch (p.Id)
             {
-                //case 1:
-                //processing packets
-                //break;
+                case 0:
+                    Console.WriteLine("pong received from server");    //ping is received from server
+                    break;
             }
         }
 
@@ -75,7 +78,18 @@ namespace RealtimeInteractiveCrawler
 
             player.Update(inputManager, gameTime);
 
-
+            if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
+            {
+                pPressed = true;
+                PacketBuilder pb = new PacketBuilder(0);
+                pb.Add(5);
+                networkManager.SendData(pb.Build());  //ping is sent
+                Console.WriteLine("Ping is sent");
+            }
+            if (!inputManager.getKeyDown(Keyboard.Key.P))
+            {
+                pPressed = false;
+            }
             if (inputManager.getKeyDown(Keyboard.Key.Escape))
             {
                 Window.Close();
