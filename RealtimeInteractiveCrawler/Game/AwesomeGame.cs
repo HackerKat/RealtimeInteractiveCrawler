@@ -22,6 +22,9 @@ namespace RealtimeInteractiveCrawler
 
         private World world;
         private Player player;
+        NpcSlime slime;
+
+        List<NpcSlime> slimes = new List<NpcSlime>();
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
@@ -34,6 +37,11 @@ namespace RealtimeInteractiveCrawler
 
             Window.Draw(world);
             Window.Draw(player);
+            Window.Draw(slime);
+
+            foreach (var s in slimes)
+                Window.Draw(s);
+
             DebugRender.Draw(Window);
             //Window.Draw(sprite);
         }
@@ -44,8 +52,19 @@ namespace RealtimeInteractiveCrawler
             world = new World();
             world.GenerateWorld();
 
+            // Create player
             player = new Player(world);
             player.Spawn(300, 150);
+            // Create example enemy
+            slime = new NpcSlime(world);
+            slime.Spawn(500, 150);
+            for (int i = 0; i < 50; i++)
+            {
+                var slime = new NpcSlime(world);        
+                slime.Direction = MainClass.Rand.Next(0, 2) == 0 ? 1 : -1;
+                slime.Spawn(MainClass.Rand.Next(150, 600), 150);
+                slimes.Add(slime);
+            }
         }
 
         public override void LoadContent()
@@ -59,29 +78,11 @@ namespace RealtimeInteractiveCrawler
         public override void Update(GameTime gameTime)
         {
             player.Update();
+            slime.Update();
 
+            foreach (var s in slimes)
+                s.Update();
 
-            if (inputManager.getKeyDown(Keyboard.Key.W) || inputManager.getKeyDown(Keyboard.Key.Up))
-            {
-                Console.WriteLine("W is pressed");
-                sprite.Position += new Vector2f(0f, -1f) * movementSpeed * gameTime.DeltaTime;
-            }
-            if (inputManager.getKeyDown(Keyboard.Key.A) || inputManager.getKeyDown(Keyboard.Key.Left))
-            {
-                sprite.Position += new Vector2f(-1f, 0f) * movementSpeed * gameTime.DeltaTime;
-            }
-            if (inputManager.getKeyDown(Keyboard.Key.S) || inputManager.getKeyDown(Keyboard.Key.Down))
-            {
-                sprite.Position += new Vector2f(0f, 1f) * movementSpeed * gameTime.DeltaTime;
-            }
-            if (inputManager.getKeyDown(Keyboard.Key.D) || inputManager.getKeyDown(Keyboard.Key.Right))
-            {
-                sprite.Position += new Vector2f(1f, 0f) * movementSpeed * gameTime.DeltaTime;
-            }
-            if (inputManager.getKeyDown(Keyboard.Key.Escape))
-            {
-                Window.Close();
-            }
         }
 
         static void Connect(String server, String message)

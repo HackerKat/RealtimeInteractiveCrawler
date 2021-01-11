@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace RealtimeInteractiveCrawler
 {
+    // TODO Singleton
     class World : Transformable, Drawable
     {
         public const int WORLD_SIZE = 5;
@@ -83,7 +84,7 @@ namespace RealtimeInteractiveCrawler
             int X = x / Chunk.CHUNK_SIZE;
             int Y = y / Chunk.CHUNK_SIZE;
 
-            if(X >= WORLD_SIZE || Y >= WORLD_SIZE)
+            if(X >= WORLD_SIZE || Y >= WORLD_SIZE || X < 0 || Y < 0)
             {
                 return null;
             }
