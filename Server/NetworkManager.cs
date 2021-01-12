@@ -87,8 +87,8 @@ namespace Server
 
         public void Accept()
         {
-            
             TcpClient client = server.AcceptTcpClient();
+            SendAcceptPacket(client);
             Console.WriteLine("Connection establisehd");
             connections.Add(client, connectionId++); //wird connectionId geadded und danach incrementiert
             Thread newThread = new Thread(() => ClientThreadLoop(client));
@@ -112,10 +112,63 @@ namespace Server
                         SendData(packet, client.GetStream());
                         Console.WriteLine("Send pong");
                         break;
+                    case 1:
+                        break;
+                    case 2:
+                        SendInitData(client);
+                        break;
+                    case 3:
+                        SendPlayerUpdate(client, p);
+                        break;
                     default:
                         break;
                 }
             }
         }
+
+        public void SendAcceptPacket(TcpClient client)
+        {
+            PacketBuilder pb = new PacketBuilder(1);
+            int clientId = connections[client];
+            pb.Add(clientId);
+            Packet packet = pb.Build();
+            SendData(packet, client.GetStream());
+        }
+
+        public void SendInitData(TcpClient client)
+        {
+            PacketBuilder pb = new PacketBuilder(2);
+            pb.Add(66); //seed
+            pb.Add(33); //spawn posX
+            pb.Add(22); //spawn posY
+            foreach(TcpClient c in connections.Keys)
+            {
+                if(c != client)
+                {
+                    //other player pos
+                    //entity list
+                }
+            }
+            Packet packet = pb.Build();
+            SendData(packet, client.GetStream());
+        }
+
+        public void SendPlayerUpdate(TcpClient client, Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+            int spriteId = pr.GetInt();
+            int posX = pr.GetInt();
+            int posY = pr.GetInt();
+            int conId = pr.GetInt();
+            
+            PacketBuilder pb = new PacketBuilder(3);
+            pb.Add(spriteId);
+            pb.Add(posX);
+            pb.Add(posY);
+            pb.Add(conId);
+            Packet packet = pb.Build();
+            SendData(packet, client.GetStream());
+        }
+       
     }
 }
