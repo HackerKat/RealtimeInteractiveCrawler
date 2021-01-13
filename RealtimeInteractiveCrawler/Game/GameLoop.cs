@@ -21,7 +21,7 @@ namespace RealtimeInteractiveCrawler
             protected set;
         }
 
-        public GameTime GameTime
+        public static GameTime GameTime
         {
             get;
             protected set;

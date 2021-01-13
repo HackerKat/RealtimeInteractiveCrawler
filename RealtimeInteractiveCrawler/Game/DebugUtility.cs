@@ -13,14 +13,14 @@ namespace RealtimeInteractiveCrawler
 
         public static Font ConsoleFont = Content.Font;
 
-        public static void DrawPerformanceData(GameLoop gameLoop, Color fontColor)
+        public static void DrawPerformanceData(Color fontColor)
         {
             if (ConsoleFont == null)
                 return;
 
-            string totalTimeElapsed = gameLoop.GameTime.TotealTimeElapsed.ToString("0.000");
-            string deltaTime = gameLoop.GameTime.DeltaTime.ToString("0.00000");
-            float fps = 1f / gameLoop.GameTime.DeltaTime;
+            string totalTimeElapsed = GameLoop.GameTime.TotealTimeElapsed.ToString("0.000");
+            string deltaTime = GameLoop.GameTime.DeltaTime.ToString("0.00000");
+            float fps = 1f / GameLoop.GameTime.DeltaTime;
             string fpsStr = fps.ToString("0.00");
 
             GameLoop.Window.Draw(CreateText(totalTimeElapsed, 4f, 8f, fontColor));

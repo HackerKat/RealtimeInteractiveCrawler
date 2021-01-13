@@ -133,14 +133,12 @@ namespace RealtimeInteractiveCrawler
                     {
                         Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
-                        velocity.X = 0;
                     }
                     // Right walls
                     else if (offset.X < 0)
                     {
                         Position = new Vector2f(tileRect.Left - playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
-                        velocity.X = 0;
                     }
 
                     OnWallCollided();

@@ -58,7 +58,7 @@ namespace RealtimeInteractiveCrawler
             // Create example enemy
             slime = new NpcSlime(world);
             slime.Spawn(500, 150);
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var slime = new NpcSlime(world);        
                 slime.Direction = MainClass.Rand.Next(0, 2) == 0 ? 1 : -1;

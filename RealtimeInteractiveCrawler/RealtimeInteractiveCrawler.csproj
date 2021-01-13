@@ -67,6 +67,7 @@
     <Compile Include="Game\NPC\Npc.cs" />
     <Compile Include="Game\NPC\NpcSlime.cs" />
     <Compile Include="Game\Player.cs" />
+    <Compile Include="Game\SpriteSheet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Game\World.cs" />
