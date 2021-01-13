@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using SFML.Window;
 using SFML.System;
+using System.IO;
+using NetworkLib;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -16,6 +18,8 @@ namespace RealtimeInteractiveCrawler
         private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "OBAMA CARES";
         private InputManager inputManager = new InputManager();
+        private NetworkManager networkManager = new NetworkManager();
+        private Player player;
 
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
@@ -25,6 +29,9 @@ namespace RealtimeInteractiveCrawler
         NpcSlime slime;
 
         List<NpcSlime> slimes = new List<NpcSlime>();
+
+
+        private bool pPressed = false;
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
@@ -48,7 +55,8 @@ namespace RealtimeInteractiveCrawler
 
         public override void Initialize()
         {
-            //Connect("localhost", "Hello");
+            player = new Player(sprite);
+            networkManager.Connect("localhost");
             world = new World();
             world.GenerateWorld();
 
@@ -75,7 +83,7 @@ namespace RealtimeInteractiveCrawler
             sprite.Texture = Content.TexPlayer;
         }
 
-        public override void Update(GameTime gameTime)
+        public void ProcessPacket(Packet p)
         {
             player.Update();
             slime.Update();
@@ -83,52 +91,40 @@ namespace RealtimeInteractiveCrawler
             foreach (var s in slimes)
                 s.Update();
 
+            switch (p.Id)
+            {
+                case 0:
+                    Console.WriteLine("pong received from server");    //ping is received from server
+                    break;
+            }
         }
 
-        static void Connect(String server, String message)
+        public override void Update(GameTime gameTime)
         {
-            try
+            MessageQueue messageQueue = networkManager.MessageQueue;
+            Packet p;
+            while ((p = messageQueue.Pop()) != null)
             {
-                Int32 port = 8888;
-                TcpClient client = new TcpClient(server, port);
-
-                // Translate the passed message into ASCII and store it as a Byte array.
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-
-                // Get a client stream for reading and writing.
-                //  Stream stream = client.GetStream();
-
-                NetworkStream stream = client.GetStream();
-
-                // Send the message to the connected TcpServer.
-                stream.Write(data, 0, data.Length);
-
-                Console.WriteLine("Sent: {0}", message);
-
-                // Receive the TcpServer.response.
-
-                // Buffer to store the response bytes.
-                data = new Byte[256];
-
-                // String to store the response ASCII representation.
-                String responseData = String.Empty;
-
-                // Read the first batch of the TcpServer response bytes.
-                Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Received: {0}", responseData);
-
-                // Close everything.
-                stream.Close();
-                client.Close();
+                ProcessPacket(p);
             }
-            catch (ArgumentNullException e)
+
+            player.Update(inputManager, gameTime);
+
+            if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
+                pPressed = true;
+                PacketBuilder pb = new PacketBuilder(0);
+                pb.Add(5);
+                networkManager.SendData(pb.Build());  //ping is sent
+                Console.WriteLine("Ping is sent");
             }
-            catch (SocketException e)
+            if (!inputManager.getKeyDown(Keyboard.Key.P))
             {
-                Console.WriteLine("SocketException: {0}", e);
+                pPressed = false;
+            }
+            if (inputManager.getKeyDown(Keyboard.Key.Escape))
+            {
+                Window.Close();
             }
         }
     }

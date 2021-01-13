@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealtimeInteractiveCrawler"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{7EF30479-4D9F-4412-807E-E3DD4A744A14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkLib", "NetworkLib\NetworkLib.csproj", "{5E8BEA57-FCBC-45D6-BF69-85215BD89E17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7EF30479-4D9F-4412-807E-E3DD4A744A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EF30479-4D9F-4412-807E-E3DD4A744A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EF30479-4D9F-4412-807E-E3DD4A744A14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E8BEA57-FCBC-45D6-BF69-85215BD89E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E8BEA57-FCBC-45D6-BF69-85215BD89E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E8BEA57-FCBC-45D6-BF69-85215BD89E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E8BEA57-FCBC-45D6-BF69-85215BD89E17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
