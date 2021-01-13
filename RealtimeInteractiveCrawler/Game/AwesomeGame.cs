@@ -9,6 +9,7 @@ using SFML.Window;
 using SFML.System;
 using System.IO;
 using NetworkLib;
+using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -25,7 +26,6 @@ namespace RealtimeInteractiveCrawler
         private Sprite sprite; // player debug
 
         private World world;
-        private Player player;
         NpcSlime slime;
 
         List<NpcSlime> slimes = new List<NpcSlime>();
@@ -55,8 +55,7 @@ namespace RealtimeInteractiveCrawler
 
         public override void Initialize()
         {
-            player = new Player(sprite);
-            networkManager.Connect("localhost");
+            //networkManager.Connect("localhost");
             world = new World();
             world.GenerateWorld();
 
@@ -101,23 +100,27 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
-            MessageQueue messageQueue = networkManager.MessageQueue;
-            Packet p;
-            while ((p = messageQueue.Pop()) != null)
-            {
-                ProcessPacket(p);
-            }
+            player.Update();
+            slime.Update();
 
-            player.Update(inputManager, gameTime);
+            foreach (var s in slimes)
+                s.Update();
 
-            if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
-            {
-                pPressed = true;
-                PacketBuilder pb = new PacketBuilder(0);
-                pb.Add(5);
-                networkManager.SendData(pb.Build());  //ping is sent
-                Console.WriteLine("Ping is sent");
-            }
+            //MessageQueue messageQueue = networkManager.MessageQueue;
+            //Packet p;
+            //while ((p = messageQueue.Pop()) != null)
+            //{
+            //    ProcessPacket(p);
+            //}
+
+            //if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
+            //{
+            //    pPressed = true;
+            //    PacketBuilder pb = new PacketBuilder(0);
+            //    pb.Add(5);
+            //    networkManager.SendData(pb.Build());  //ping is sent
+            //    Console.WriteLine("Ping is sent");
+            //}
             if (!inputManager.getKeyDown(Keyboard.Key.P))
             {
                 pPressed = false;
