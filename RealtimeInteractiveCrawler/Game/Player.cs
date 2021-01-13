@@ -2,6 +2,7 @@
 using SFML.System;
 using SFML.Window;
 using System;
+using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -14,16 +15,43 @@ namespace RealtimeInteractiveCrawler
         private float positionX;
         private float positionY;
 
+        AnimSprite animSprite;
 
+        private SpriteSheet spriteSheet;
+        private int currSpriteX;
 
         public Player(World world) : base(world)
         {
-            rect = new RectangleShape(new Vector2f(Tile.TILE_SIZE * 1.5f, Tile.TILE_SIZE * 2.8f));
-            rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
+            isRectVisible = false;
+            useGravity = false;
 
-            rectDirection = new RectangleShape(new Vector2f(50, 3));
-            rectDirection.FillColor = Color.Red;
-            rectDirection.Position = new Vector2f(0, rect.Size.Y * 0.5f - 1);
+            spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
+            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubWidth));
+            rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
+            
+
+            animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
+            // TODO Color
+            animSprite.color = Color.White; 
+
+            // Idle Anim           
+            AssignAnimations("idle", 2, 1);
+            AssignAnimations("goHorizontal", 1, 9);
+            AssignAnimations("goUp", 0, 9);
+            AssignAnimations("goDown", 2, 9);
+
+        }
+
+        // TODO
+        public void AssignAnimations(string animName, int spriteType, int animAmount, float time = 0.1f)
+        {
+            AnimationFrame[] animFrame = new AnimationFrame[animAmount];
+            for (int i = 0; i < animAmount; i++)
+            {
+                animFrame[i] = new AnimationFrame(i, spriteType, time);
+            }
+
+            animSprite.AddAnimation(animName, new Animation(animFrame));
         }
 
         public override void OnKill()
@@ -32,12 +60,12 @@ namespace RealtimeInteractiveCrawler
         }
 
         public override void OnWallCollided()
-        {
-
+        {         
         }
 
         public override void UpdateNPC()
         {
+            rect.TextureRect = spriteSheet.GetTextureRect(currSpriteX, 1);
             UpdateMovement();
 
             positionX = Position.X;
@@ -46,7 +74,7 @@ namespace RealtimeInteractiveCrawler
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {
-            target.Draw(rectDirection, states);
+            target.Draw(animSprite, states);
         }
 
         private void UpdateMovement()
@@ -57,8 +85,35 @@ namespace RealtimeInteractiveCrawler
             bool movingRight = Keyboard.IsKeyPressed(Keyboard.Key.D) || Keyboard.IsKeyPressed(Keyboard.Key.Right);
 
             bool movingOnX = movingLeft || movingRight;
+            bool movingOnY = movingUp || movingDown;
+            if (movingOnY){
+                if (movingDown)
+                {
+                    if (movement.Y < 0)
+                        movement.Y = 0;
 
-            if (movingOnX)
+                    movement.Y += PLAYER_MOVE_SPEED_ACCELERATION;
+
+                    // Animation
+                    animSprite.Play("goDown");
+                }
+                else if (movingUp)
+                {
+                    if (movement.Y > 0)
+                        movement.Y = 0;
+
+                    movement.Y -= PLAYER_MOVE_SPEED_ACCELERATION;
+
+                    // Animation
+                    animSprite.Play("goUp");
+                }
+                if (movement.Y > PLAYER_MOVE_SPEED)
+                    movement.Y = PLAYER_MOVE_SPEED;
+                else if (movement.Y < -PLAYER_MOVE_SPEED)
+                    movement.Y = -PLAYER_MOVE_SPEED;
+
+            }
+            else if (movingOnX)
             {
                 if (movingLeft)
                 {
@@ -81,10 +136,16 @@ namespace RealtimeInteractiveCrawler
                     movement.X = PLAYER_MOVE_SPEED;
                 else if (movement.X < -PLAYER_MOVE_SPEED)
                     movement.X = -PLAYER_MOVE_SPEED;
+
+                // Animation
+                animSprite.Play("goHorizontal");
             }
             else
             {
                 movement = new Vector2f();
+
+                // Animation
+                animSprite.Play("idle");
             }
         }
 

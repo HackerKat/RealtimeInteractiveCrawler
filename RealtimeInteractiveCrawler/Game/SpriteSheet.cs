@@ -34,8 +34,8 @@ namespace RealtimeInteractiveCrawler
 
             if(texW != 0 && texH != 0)
             {
-                subW = texW / a;
-                subH = texH / b;
+                subW = (int)Math.Ceiling((float)texW / a);
+                subH = (int)Math.Ceiling((float)texH / b);
             }
             else
             {

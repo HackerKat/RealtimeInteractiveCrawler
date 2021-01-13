@@ -18,6 +18,9 @@ namespace RealtimeInteractiveCrawler
         protected Vector2f movement;
         protected World world;
         protected bool isFlying = true;
+        protected bool isRectVisible = true;
+        protected bool useGravity = true;
+
 
         public int Direction
         {
@@ -64,7 +67,9 @@ namespace RealtimeInteractiveCrawler
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            target.Draw(rect, states);
+
+            if (isRectVisible)
+                target.Draw(rect, states);
 
             DrawNPC(target, states);
         }
@@ -74,8 +79,10 @@ namespace RealtimeInteractiveCrawler
             bool isFalling = true;
 
             velocity.X *= 0.99f;
+
             // Gravity
-            velocity.Y += 0.25f;
+            if (useGravity)
+                velocity.Y += 0.25f;
 
             Vector2f nextPos = Position + velocity - rect.Origin;
             FloatRect playerRect = new FloatRect(nextPos, rect.Size);
@@ -90,9 +97,11 @@ namespace RealtimeInteractiveCrawler
                 FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
 
                 DebugRender.AddRectangle(tileRect, Color.Red);
-                // Collision
+
                 isFalling = !playerRect.Intersects(tileRect);
                 isFlying = isFalling;
+                if (!useGravity)
+                    isFalling = false;
             }
             if (!isFalling)
             {
@@ -104,6 +113,7 @@ namespace RealtimeInteractiveCrawler
 
         private void UpdatePhysicsWall(FloatRect playerRect, int physicsX, int physicsY)
         {
+            // TODO all directions
             Tile[] walls = new Tile[]
             {
                 world.GetTile(physicsX - 1, physicsY - 1),

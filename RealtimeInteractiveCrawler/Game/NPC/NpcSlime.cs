@@ -23,7 +23,7 @@ namespace RealtimeInteractiveCrawler
             rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * 0.8f, spriteSheet.SubHeight * 0.8f));
             // Center of rectangle
             rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
-            rect.FillColor = Color.Green;
+            rect.FillColor = new Color(0, 255, 0, 127);
 
             rect.Texture = Content.TexPlay1;
             rect.TextureRect = spriteSheet.GetTextureRect(0, 0);

@@ -72,7 +72,7 @@ namespace RealtimeInteractiveCrawler
             Content.Load();
 
             sprite = new Sprite();
-            sprite.Texture = Content.TexPlay0;
+            sprite.Texture = Content.TexPlayer;
         }
 
         public override void Update(GameTime gameTime)

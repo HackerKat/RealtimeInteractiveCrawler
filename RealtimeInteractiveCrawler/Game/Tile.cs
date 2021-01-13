@@ -103,7 +103,7 @@ namespace RealtimeInteractiveCrawler
                     rectShape.Texture = Content.TexTile0;                
                     break;
                 case TileType.PLAYER:
-                    rectShape.Texture = Content.TexPlay0;
+                    rectShape.Texture = Content.TexPlayer;
                     break;
                 default:
                     break;
