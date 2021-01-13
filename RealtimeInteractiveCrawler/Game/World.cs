@@ -52,6 +52,11 @@ namespace RealtimeInteractiveCrawler
             for (int x = xCords[0]; x <= xCords[1]; x++)
                 for (int y = yCords[0]; y <= yCords[1]; y++)
                     SetTile(TileType.GROUND, x, y);
+            xCords = new int[] { 3, 46 };
+            yCords = new int[] { 1, 2 };
+            for (int x = xCords[0]; x <= xCords[1]; x++)
+                for (int y = yCords[0]; y <= yCords[1]; y++)
+                    SetTile(TileType.GROUND, x, y);
         }
 
         public void SetTile(TileType type, int x, int y)

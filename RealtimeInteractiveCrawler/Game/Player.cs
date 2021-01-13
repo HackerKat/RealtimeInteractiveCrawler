@@ -18,7 +18,6 @@ namespace RealtimeInteractiveCrawler
         AnimSprite animSprite;
 
         private SpriteSheet spriteSheet;
-        private int currSpriteX;
 
         public Player(World world) : base(world)
         {
@@ -26,13 +25,10 @@ namespace RealtimeInteractiveCrawler
             useGravity = false;
 
             spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
-            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubWidth));
-            rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
-            
-
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
-            // TODO Color
-            animSprite.color = Color.White; 
+            animSprite.color = Color.Red;
+            rect = animSprite.RectShape;
+           
 
             // Idle Anim           
             AssignAnimations("idle", 2, 1);
@@ -42,7 +38,6 @@ namespace RealtimeInteractiveCrawler
 
         }
 
-        // TODO
         public void AssignAnimations(string animName, int spriteType, int animAmount, float time = 0.1f)
         {
             AnimationFrame[] animFrame = new AnimationFrame[animAmount];
@@ -65,7 +60,6 @@ namespace RealtimeInteractiveCrawler
 
         public override void UpdateNPC()
         {
-            rect.TextureRect = spriteSheet.GetTextureRect(currSpriteX, 1);
             UpdateMovement();
 
             positionX = Position.X;

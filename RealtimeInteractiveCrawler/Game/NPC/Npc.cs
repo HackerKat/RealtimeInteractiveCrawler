@@ -13,7 +13,6 @@ namespace RealtimeInteractiveCrawler
         public Vector2f StartPosition;
 
         protected RectangleShape rect;
-        protected RectangleShape rectDirection;
         protected Vector2f velocity;
         protected Vector2f movement;
         protected World world;
@@ -116,12 +115,23 @@ namespace RealtimeInteractiveCrawler
             // TODO all directions
             Tile[] walls = new Tile[]
             {
+                // Left
                 world.GetTile(physicsX - 1, physicsY - 1),
                 world.GetTile(physicsX - 1, physicsY - 2),
                 world.GetTile(physicsX - 1, physicsY - 3),
+                // Right
                 world.GetTile(physicsX + 1, physicsY - 1),
                 world.GetTile(physicsX + 1, physicsY - 2),
                 world.GetTile(physicsX + 1, physicsY - 3),
+                // Top
+                world.GetTile(physicsX - 1, physicsY - 2),
+                world.GetTile(physicsX, physicsY - 2),
+                world.GetTile(physicsX + 1, physicsY - 2),
+                // Down
+                world.GetTile(physicsX - 1, physicsY + 1),
+                world.GetTile(physicsX, physicsY + 1),
+                world.GetTile(physicsX + 1, physicsY + 1),
+
             };
 
             foreach (var tile in walls)
@@ -133,8 +143,9 @@ namespace RealtimeInteractiveCrawler
 
                 if (playerRect.Intersects(tileRect))
                 {
-                    Vector2f offset = new Vector2f(playerRect.Left - tileRect.Left, 0);
+                    Vector2f offset = new Vector2f(playerRect.Left - tileRect.Left, playerRect.Top - tileRect.Top);
                     offset.X /= Math.Abs(offset.X);
+                    offset.Y /= Math.Abs(offset.Y);
 
                     float speed = Math.Abs(movement.X);
 
@@ -150,6 +161,12 @@ namespace RealtimeInteractiveCrawler
                         Position = new Vector2f(tileRect.Left - playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
                     }
+                    // Top walls
+                    //if (offset.Y > 0)
+                    //{
+                    //    Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
+                    //    movement.X = 0;
+                    //}
 
                     OnWallCollided();
 

@@ -82,12 +82,14 @@ namespace RealtimeInteractiveCrawler
             get { return rectShape.FillColor; }
         }
 
+        public RectangleShape RectShape { get => rectShape;}
+
         public AnimSprite(Texture texture, SpriteSheet spriteSheet)
         {
             this.spriteSheet = spriteSheet;
-
-            rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight));
-            rectShape.Origin = new Vector2f(spriteSheet.SubWidth * 0.5f, spriteSheet.SubHeight * 0.5f);
+            float size = 1.5f;
+            rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
+            rectShape.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubHeight * size * 0.5f);
             rectShape.Texture = texture;
         }
 
