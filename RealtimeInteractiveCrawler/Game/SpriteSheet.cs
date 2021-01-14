@@ -23,8 +23,8 @@ namespace RealtimeInteractiveCrawler
         /// <param name="a">Amount of fragments on X axis or width of one fragment in px</param>
         /// <param name="b">Amount of fragments on Y axis or height of one fragment in px</param>
         /// <param name="borderSize">Space between sprites</param>
-        /// <param name="texW">Width of texture</param>
-        /// <param name="texH">Height of texture</param>
+        /// <param name="texW">Width of texture in px</param>
+        /// <param name="texH">Height of texture in px</param>
         public SpriteSheet(int a, int b, int borderSize, int texW = 0, int texH = 0)
         {
             if (borderSize > 0)

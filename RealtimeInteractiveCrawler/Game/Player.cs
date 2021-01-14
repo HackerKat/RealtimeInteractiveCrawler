@@ -3,6 +3,7 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Diagnostics;
+using static RealtimeInteractiveCrawler.AnimSprite;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -21,33 +22,28 @@ namespace RealtimeInteractiveCrawler
 
         public Player(World world) : base(world)
         {
-            isRectVisible = false;
+            isRectVisible = true;
             useGravity = false;
 
             spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
             animSprite.color = Color.Red;
             rect = animSprite.RectShape;
-           
+            float size = 1;
+            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
+            // Center of rectangle
+            rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
+
 
             // Idle Anim           
-            AssignAnimations("idle", 2, 1);
-            AssignAnimations("goHorizontal", 1, 9);
-            AssignAnimations("goUp", 0, 9);
-            AssignAnimations("goDown", 2, 9);
+            AssignAnimations(animSprite, MovementType.Idle, 2, 1);
+            AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
+            AssignAnimations(animSprite, MovementType.Up, 0, 9);
+            AssignAnimations(animSprite, MovementType.Down, 2, 9);
 
         }
 
-        public void AssignAnimations(string animName, int spriteType, int animAmount, float time = 0.1f)
-        {
-            AnimationFrame[] animFrame = new AnimationFrame[animAmount];
-            for (int i = 0; i < animAmount; i++)
-            {
-                animFrame[i] = new AnimationFrame(i, spriteType, time);
-            }
 
-            animSprite.AddAnimation(animName, new Animation(animFrame));
-        }
 
         public override void OnKill()
         {
@@ -62,6 +58,7 @@ namespace RealtimeInteractiveCrawler
         {
             UpdateMovement();
 
+            // For server
             positionX = Position.X;
             positionY = Position.Y;
         }
@@ -89,7 +86,7 @@ namespace RealtimeInteractiveCrawler
                     movement.Y += PLAYER_MOVE_SPEED_ACCELERATION;
 
                     // Animation
-                    animSprite.Play("goDown");
+                    animSprite.Play(MovementType.Down);
                 }
                 else if (movingUp)
                 {
@@ -99,7 +96,7 @@ namespace RealtimeInteractiveCrawler
                     movement.Y -= PLAYER_MOVE_SPEED_ACCELERATION;
 
                     // Animation
-                    animSprite.Play("goUp");
+                    animSprite.Play(MovementType.Up);
                 }
                 if (movement.Y > PLAYER_MOVE_SPEED)
                     movement.Y = PLAYER_MOVE_SPEED;
@@ -132,14 +129,14 @@ namespace RealtimeInteractiveCrawler
                     movement.X = -PLAYER_MOVE_SPEED;
 
                 // Animation
-                animSprite.Play("goHorizontal");
+                animSprite.Play(MovementType.Horizontal);
             }
             else
             {
                 movement = new Vector2f();
 
                 // Animation
-                animSprite.Play("idle");
+                animSprite.Play(MovementType.Idle);
             }
         }
 

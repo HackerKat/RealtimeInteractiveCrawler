@@ -66,13 +66,21 @@ namespace RealtimeInteractiveCrawler
 
     class AnimSprite : Transformable, Drawable
     {
+        public enum MovementType
+        {
+            Idle,
+            Horizontal,
+            Up,
+            Down
+        }
+
         public float Speed = 0.05f;
         RectangleShape rectShape;
         SpriteSheet spriteSheet;
 
         // Probably to replace
-        SortedDictionary<string, Animation> animations = new SortedDictionary<string, Animation>();
-        string currAnimName;
+        SortedDictionary<MovementType, Animation> animations = new SortedDictionary<MovementType, Animation>();
+        MovementType currAnimType;
 
         Animation currAnim;
 
@@ -87,26 +95,30 @@ namespace RealtimeInteractiveCrawler
         public AnimSprite(Texture texture, SpriteSheet spriteSheet)
         {
             this.spriteSheet = spriteSheet;
-            float size = 1.5f;
-            rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
-            rectShape.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubHeight * size * 0.5f);
-            rectShape.Texture = texture;
+            float size = 1;
+            rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size))
+            {
+                Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubHeight * size * 0.5f),
+                Texture = texture
+            };
         }
 
-        public void AddAnimation(string name, Animation animation)
+        public void AddAnimation(MovementType type, Animation animation)
         {
-            animations[name] = animation;
+
+
+            animations[type] = animation;
             currAnim = animation;
-            currAnimName = name;
+            currAnimType = type;
         }
 
-        public void Play(string name)
+        public void Play(MovementType type)
         {
-            if (currAnimName == name)
+            if (currAnimType == type)
                 return;
 
-            currAnim = animations[name];
-            currAnimName = name;
+            currAnim = animations[type];
+            currAnimType = type;
             currAnim.Reset();
         }
 
