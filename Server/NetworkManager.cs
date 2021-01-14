@@ -27,24 +27,21 @@ namespace Server
 
         public void SendData(Packet packet, NetworkStream stream)
         {
-            //write id of the packet
-            stream.WriteByte(packet.Id);
-            //write size of the packet
-            stream.Write(BitConverter.GetBytes(packet.Size), 0, 4);
-            //write data
-            stream.Write(packet.Data, 0, packet.Data.Length);
+            stream.WriteByte((byte)packet.PacketType); //write id of the packet
+            stream.Write(BitConverter.GetBytes(packet.Size), 0, 4); //write size of the packet
+            stream.Write(packet.Data, 0, packet.Data.Length); //write data
         }
 
         public Packet ReadData(NetworkStream stream)
         {
-            byte id = (byte)stream.ReadByte();
+            PacketType packetType = (PacketType)stream.ReadByte();
             byte[] sizeBytes = new byte[4];
             stream.Read(sizeBytes, 0, sizeBytes.Length);
             int size = BitConverter.ToInt32(sizeBytes, 0);
             byte[] data = new byte[size];
             stream.Read(data, 0, size);
 
-            return new Packet(id, size, data);
+            return new Packet(packetType, size, data);
         }
 
         public void StopNetwork()
@@ -91,9 +88,19 @@ namespace Server
         {
             TcpClient client = server.AcceptTcpClient();
             
-            Console.WriteLine("Connection establisehd");
-            connections.Add(client, connectionId++); //wird connectionId geadded und danach incrementiert
+            Console.WriteLine("Connection established");
+            int newConnId = connectionId;
+            connectionId++;
+            connections.Add(client, newConnId); //wird connectionId geadded und danach incrementiert
             SendAcceptPacket(client);
+
+            foreach(TcpClient c in connections.Keys)
+            {
+                if(client != c)
+                {
+                    SendNewPlayerJoined(c, newConnId);
+                }
+            }
             Thread newThread = new Thread(() => ClientThreadLoop(client));
             clients.Add(newThread);
             newThread.Start();
@@ -105,9 +112,9 @@ namespace Server
             {
                 Packet p = ReadData(client.GetStream());
 
-                switch (p.Id)
+                switch (p.PacketType)
                 {
-                    case 0:
+                    case PacketType.PING:
                         Console.WriteLine("ping packet received");
                         PacketBuilder pb = new PacketBuilder(0);
                         pb.Add(14);
@@ -115,12 +122,7 @@ namespace Server
                         SendData(packet, client.GetStream());
                         Console.WriteLine("Send pong");
                         break;
-                    case 1:
-                        break;
-                    case 2:
-                        //SendInitData(client);
-                        break;
-                    case 3:
+                    case PacketType.UPDATE_POS:
                         SendPlayerUpdate(client, p);
                         break;
                     default:
@@ -129,30 +131,24 @@ namespace Server
             }
         }
 
-        public void SendAcceptPacket(TcpClient client)
+        public void SendNewPlayerJoined(TcpClient client, int newClientId)
         {
-            PacketBuilder pb = new PacketBuilder(1);
-            int clientId = connections[client];
-            pb.Add(clientId);
+            PacketBuilder pb = new PacketBuilder(PacketType.NEW_PLAYER);
+            pb.Add(newClientId); //new players connection id
+            pb.Add(rand.Next(0, 500)); //spawn posX
+            pb.Add(rand.Next(0, 500)); //spawn posY
             Packet packet = pb.Build();
             SendData(packet, client.GetStream());
-            SendInitData(client);
         }
 
-        public void SendInitData(TcpClient client)
+        public void SendAcceptPacket(TcpClient client)
         {
-            PacketBuilder pb = new PacketBuilder(2);
+            PacketBuilder pb = new PacketBuilder(PacketType.INIT);
+            int clientId = connections[client];
+            pb.Add(clientId); //connection id
             pb.Add(seed); //seed
             pb.Add(300); //spawn posX
             pb.Add(150); //spawn posY
-            foreach(TcpClient c in connections.Keys)
-            {
-                if(c != client)
-                {
-                    //other player pos
-                    //entity list
-                }
-            }
             Packet packet = pb.Build();
             SendData(packet, client.GetStream());
         }
@@ -165,7 +161,7 @@ namespace Server
             int posY = pr.GetInt();
             int conId = pr.GetInt();
             
-            PacketBuilder pb = new PacketBuilder(3);
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_POS);
             pb.Add(spriteId);
             pb.Add(posX);
             pb.Add(posY);

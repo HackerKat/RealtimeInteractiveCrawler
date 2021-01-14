@@ -8,11 +8,11 @@ namespace NetworkLib
 {
     public class PacketBuilder
     {
-        private byte id;
+        private PacketType packetType;
         private List<byte> data = new List<byte>();
-        public PacketBuilder(byte id)
+        public PacketBuilder(PacketType packetType)
         {
-            this.id = id;
+            this.packetType = packetType;
         }
 
         public void Add(byte b)
@@ -43,9 +43,9 @@ namespace NetworkLib
         {
             if(data.Count != 0)
             {
-                return new Packet(id, data.Count, data.ToArray());
+                return new Packet(packetType, data.Count, data.ToArray());
             }
-            return new Packet(id, 0, new byte[0]);
+            return new Packet(packetType, 0, new byte[0]);
         }
     }
 }

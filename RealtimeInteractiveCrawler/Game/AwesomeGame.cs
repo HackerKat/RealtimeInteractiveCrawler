@@ -22,6 +22,7 @@ namespace RealtimeInteractiveCrawler
         private NetworkManager networkManager = new NetworkManager();
         private Player player;
         private bool isDataReadyToInit = false;
+        private Dictionary<int, NetworkPlayer> players = new Dictionary<int, NetworkPlayer>();
 
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
@@ -33,6 +34,8 @@ namespace RealtimeInteractiveCrawler
 
 
         private bool pPressed = false;
+
+        private int connectionId;
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
@@ -70,21 +73,25 @@ namespace RealtimeInteractiveCrawler
 
         public void ProcessPacket(Packet p)
         {
-            switch (p.Id)
+            switch (p.PacketType)
             {
-                case 0:
+                case PacketType.PING:
                     Console.WriteLine("pong received from server");    //ping is received from server
                     break;
-                case 2:
-                    InitializeWithPlayer(p);
+                case PacketType.INIT:
+                    GetAcceptData(p);
+                    break;
+                case PacketType.NEW_PLAYER:
+                    InitializeNewPlayer(p);
                     break;
             }
         }
 
-        public void InitializeWithPlayer(Packet p)
+        public void GetAcceptData(Packet p)
         {
             PacketReader pr = new PacketReader(p);
 
+            connectionId = pr.GetInt();
             int seed = pr.GetInt();
             int spawnX = pr.GetInt();
             int spawnY = pr.GetInt();
@@ -96,11 +103,32 @@ namespace RealtimeInteractiveCrawler
             isDataReadyToInit = true;
         }
 
+        public void InitializeNewPlayer(Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+
+            int connId = pr.GetInt();
+            int spawnX = pr.GetInt();
+            int spawnY = pr.GetInt();
+
+            Console.WriteLine("new player data get processed");
+            NetworkPlayer newPlayer = new NetworkPlayer(world);
+            //newPlayer.Spawn(spawnX, spawnY);
+            newPlayer.PositionX = spawnX;
+            newPlayer.PositionY = spawnY;
+
+            players.Add(connId, newPlayer);
+        }
+
         public override void Update(GameTime gameTime)
         {
             if (isDataReadyToInit)
             {
                 player.Update();
+                foreach(NetworkPlayer np in players.Values)
+                {
+                    np.Update();
+                }
             }
             
             slime.Update();
@@ -140,6 +168,10 @@ namespace RealtimeInteractiveCrawler
                 Window.Draw(world);
                 Window.Draw(player);
                 Window.Draw(slime);
+                foreach (NetworkPlayer np in players.Values)
+                {
+                    Window.Draw(np);
+                }
             }
 
             foreach (var s in slimes)

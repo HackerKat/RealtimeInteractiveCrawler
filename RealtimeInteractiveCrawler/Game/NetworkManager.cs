@@ -29,7 +29,7 @@ namespace RealtimeInteractiveCrawler
         public void SendData(Packet packet)
         {
             //write id of the packet
-            stream.WriteByte(packet.Id);
+            stream.WriteByte((byte)packet.PacketType);
             //write size of the packet
             stream.Write(BitConverter.GetBytes(packet.Size), 0, 4);
             //write data
@@ -40,14 +40,14 @@ namespace RealtimeInteractiveCrawler
 
         public Packet ReadData()
         {
-            byte id = (byte)stream.ReadByte();
+            PacketType packetType = (PacketType)stream.ReadByte();
             byte[] sizeBytes = new byte[4];
             stream.Read(sizeBytes, 0, sizeBytes.Length);
             int size = BitConverter.ToInt32(sizeBytes, 0);
             byte[] data = new byte[size];
             stream.Read(data, 0, size);
 
-            return new Packet(id, size, data);
+            return new Packet(packetType, size, data);
         }
 
         public void StopNetwork()
