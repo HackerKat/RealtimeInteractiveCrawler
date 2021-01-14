@@ -39,13 +39,11 @@ namespace RealtimeInteractiveCrawler
             DebugRender.Enabled = true;
         }
 
-        
-
         public override void Initialize()
         {
             networkManager.Connect("localhost");
             world = new World();
-            world.GenerateWorld();
+            //world.GenerateWorld();
 
             // Create player
             //player = new Player(world);
@@ -94,6 +92,7 @@ namespace RealtimeInteractiveCrawler
             Console.WriteLine("init data get processed");
             player = new Player(world);
             player.Spawn(spawnX, spawnY);
+            world.GenerateWorld(seed);
             isDataReadyToInit = true;
         }
 

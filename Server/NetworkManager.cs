@@ -17,10 +17,12 @@ namespace Server
         private TcpListener server;
         private Dictionary<TcpClient, int> connections;
         private int connectionId;
+        private Random rand = new Random();
+        private int seed;
         
         public NetworkManager()
         {
-
+            seed = rand.Next(1, int.MaxValue);
         }
 
         public void SendData(Packet packet, NetworkStream stream)
@@ -140,7 +142,7 @@ namespace Server
         public void SendInitData(TcpClient client)
         {
             PacketBuilder pb = new PacketBuilder(2);
-            pb.Add(66); //seed
+            pb.Add(seed); //seed
             pb.Add(300); //spawn posX
             pb.Add(150); //spawn posY
             foreach(TcpClient c in connections.Keys)

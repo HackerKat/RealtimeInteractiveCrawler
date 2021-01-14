@@ -1,12 +1,11 @@
-﻿using SFML.Graphics;
-using SFML.System;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
-namespace RealtimeInteractiveCrawler
+namespace Server
 {
     // TODO Singleton
-    class World : Transformable, Drawable
+    class World
     {
         public const int WORLD_SIZE = 5;
 
@@ -69,11 +68,11 @@ namespace RealtimeInteractiveCrawler
                 for (int y = 0; y < mapHandler.MapWidth; y++)
                     SetTile(mapHandler.Map[x, y], x, y);
 
-            List<Vector2i> treasures = mapHandler.PlaceTreasure();
+            List<Vector2> treasures = mapHandler.PlaceTreasure();
             for (int i = 0; i < treasures.Count; i++)
             {
-                mapHandler.Map[treasures[i].X, treasures[i].Y] = TileType.SLIME;
-                SetTile(TileType.SLIME, treasures[i].X, treasures[i].Y);
+                mapHandler.Map[(int)treasures[i].X, (int)treasures[i].Y] = TileType.SLIME;
+                SetTile(TileType.SLIME, (int)treasures[i].X, (int)treasures[i].Y);
             }
         
         }
@@ -81,7 +80,7 @@ namespace RealtimeInteractiveCrawler
         public void SetTile(TileType type, int x, int y)
         {
             Chunk chunk = GetChunk(x, y);
-            Vector2i tilePos = GetTilePosFromChunk(x, y);
+            Vector2 tilePos = GetTilePosFromChunk(x, y);
 
             Tile[] neighbours = new Tile[4];
             neighbours[0] = GetTile(x, y - 1); // up
@@ -89,7 +88,7 @@ namespace RealtimeInteractiveCrawler
             neighbours[2] = GetTile(x - 1, y); // left 
             neighbours[3] = GetTile(x + 1, y); // right
 
-            chunk.SetTile(type, tilePos.X, tilePos.Y, neighbours);
+            chunk.SetTile(type, (int)tilePos.X, (int)tilePos.Y, neighbours);
         }
 
         public Tile GetTile(int x, int y)
@@ -98,9 +97,9 @@ namespace RealtimeInteractiveCrawler
             if (chunk == null)
                 return null;
 
-            Vector2i tilePos = GetTilePosFromChunk(x, y);
+            Vector2 tilePos = GetTilePosFromChunk(x, y);
 
-            return chunk.GetTile(tilePos.X, tilePos.Y);
+            return chunk.GetTile((int)tilePos.X, (int)tilePos.Y);
         }
 
         public Chunk GetChunk(int x, int y)
@@ -116,7 +115,7 @@ namespace RealtimeInteractiveCrawler
             try
             {
                 if (chunks[X][Y] == null)
-                    chunks[X][Y] = new Chunk(new Vector2i(X, Y));
+                    chunks[X][Y] = new Chunk(new Vector2(X, Y));
 
                 return chunks[X][Y];
             }
@@ -128,14 +127,15 @@ namespace RealtimeInteractiveCrawler
 
         }
 
-        public Vector2i GetTilePosFromChunk(int x, int y)
+        public Vector2 GetTilePosFromChunk(int x, int y)
         {
             int X = x / Chunk.CHUNK_SIZE;
             int Y = y / Chunk.CHUNK_SIZE;
 
-            return new Vector2i(x - X * Chunk.CHUNK_SIZE, y - Y * Chunk.CHUNK_SIZE);
+            return new Vector2(x - X * Chunk.CHUNK_SIZE, y - Y * Chunk.CHUNK_SIZE);
         }
 
+        /*
         public void Draw(RenderTarget target, RenderStates states)
         {
             for (int x = 0; x < WORLD_SIZE; x++)
@@ -148,5 +148,6 @@ namespace RealtimeInteractiveCrawler
                 }
             }
         }
+        */
     }
 }
