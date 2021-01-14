@@ -88,9 +88,10 @@ namespace Server
         public void Accept()
         {
             TcpClient client = server.AcceptTcpClient();
-            SendAcceptPacket(client);
+            
             Console.WriteLine("Connection establisehd");
             connections.Add(client, connectionId++); //wird connectionId geadded und danach incrementiert
+            SendAcceptPacket(client);
             Thread newThread = new Thread(() => ClientThreadLoop(client));
             clients.Add(newThread);
             newThread.Start();
@@ -115,7 +116,7 @@ namespace Server
                     case 1:
                         break;
                     case 2:
-                        SendInitData(client);
+                        //SendInitData(client);
                         break;
                     case 3:
                         SendPlayerUpdate(client, p);
@@ -133,14 +134,15 @@ namespace Server
             pb.Add(clientId);
             Packet packet = pb.Build();
             SendData(packet, client.GetStream());
+            SendInitData(client);
         }
 
         public void SendInitData(TcpClient client)
         {
             PacketBuilder pb = new PacketBuilder(2);
             pb.Add(66); //seed
-            pb.Add(33); //spawn posX
-            pb.Add(22); //spawn posY
+            pb.Add(300); //spawn posX
+            pb.Add(150); //spawn posY
             foreach(TcpClient c in connections.Keys)
             {
                 if(c != client)

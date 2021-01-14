@@ -21,6 +21,7 @@ namespace RealtimeInteractiveCrawler
         private InputManager inputManager = new InputManager();
         private NetworkManager networkManager = new NetworkManager();
         private Player player;
+        private bool isDataReadyToInit = false;
 
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
@@ -38,30 +39,17 @@ namespace RealtimeInteractiveCrawler
             DebugRender.Enabled = true;
         }
 
-        public override void Draw(GameTime gameTime)
-        {
-            //DebugUtility.DrawPerformanceData(this, Color.White);
-
-            Window.Draw(world);
-            Window.Draw(player);
-            Window.Draw(slime);
-
-            foreach (var s in slimes)
-                Window.Draw(s);
-
-            DebugRender.Draw(Window);
-            //Window.Draw(sprite);
-        }
+        
 
         public override void Initialize()
         {
-            //networkManager.Connect("localhost");
+            networkManager.Connect("localhost");
             world = new World();
             world.GenerateWorld();
 
             // Create player
-            player = new Player(world);
-            player.Spawn(300, 150);
+            //player = new Player(world);
+            //player.Spawn(300, 150);
             // Create example enemy
             slime = new NpcSlime(world);
             slime.Spawn(500, 150);
@@ -84,43 +72,58 @@ namespace RealtimeInteractiveCrawler
 
         public void ProcessPacket(Packet p)
         {
-            player.Update();
-            slime.Update();
-
-            foreach (var s in slimes)
-                s.Update();
-
             switch (p.Id)
             {
                 case 0:
                     Console.WriteLine("pong received from server");    //ping is received from server
                     break;
+                case 2:
+                    InitializeWithPlayer(p);
+                    break;
             }
+        }
+
+        public void InitializeWithPlayer(Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+
+            int seed = pr.GetInt();
+            int spawnX = pr.GetInt();
+            int spawnY = pr.GetInt();
+
+            Console.WriteLine("init data get processed");
+            player = new Player(world);
+            player.Spawn(spawnX, spawnY);
+            isDataReadyToInit = true;
         }
 
         public override void Update(GameTime gameTime)
         {
-            player.Update();
+            if (isDataReadyToInit)
+            {
+                player.Update();
+            }
+            
             slime.Update();
 
             foreach (var s in slimes)
                 s.Update();
 
-            //MessageQueue messageQueue = networkManager.MessageQueue;
-            //Packet p;
-            //while ((p = messageQueue.Pop()) != null)
-            //{
-            //    ProcessPacket(p);
-            //}
+            MessageQueue messageQueue = networkManager.MessageQueue;
+            Packet p;
+            while ((p = messageQueue.Pop()) != null)
+            {
+                ProcessPacket(p);
+            }
 
-            //if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
-            //{
-            //    pPressed = true;
-            //    PacketBuilder pb = new PacketBuilder(0);
-            //    pb.Add(5);
-            //    networkManager.SendData(pb.Build());  //ping is sent
-            //    Console.WriteLine("Ping is sent");
-            //}
+            if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
+            {
+                pPressed = true;
+                PacketBuilder pb = new PacketBuilder(0);
+                pb.Add(5);
+                networkManager.SendData(pb.Build());  //ping is sent
+                Console.WriteLine("Ping is sent");
+            }
             if (!inputManager.getKeyDown(Keyboard.Key.P))
             {
                 pPressed = false;
@@ -129,6 +132,22 @@ namespace RealtimeInteractiveCrawler
             {
                 Window.Close();
             }
+        }
+        public override void Draw(GameTime gameTime)
+        {
+            //DebugUtility.DrawPerformanceData(this, Color.White);
+            if (isDataReadyToInit)
+            {
+                Window.Draw(world);
+                Window.Draw(player);
+                Window.Draw(slime);
+            }
+
+            foreach (var s in slimes)
+                Window.Draw(s);
+
+            DebugRender.Draw(Window);
+            //Window.Draw(sprite);
         }
     }
 }
