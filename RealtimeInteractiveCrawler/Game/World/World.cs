@@ -2,9 +2,6 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -28,6 +25,8 @@ namespace RealtimeInteractiveCrawler
 
         public void GenerateWorld()
         {
+            if (false)
+            {/*
             // Ground
             int[] xCords = { 3, 46 };
             int[] yCords = { 18, 32 };
@@ -57,6 +56,26 @@ namespace RealtimeInteractiveCrawler
             for (int x = xCords[0]; x <= xCords[1]; x++)
                 for (int y = yCords[0]; y <= yCords[1]; y++)
                     SetTile(TileType.GROUND, x, y);
+            */
+            }
+            int size = WORLD_SIZE * Chunk.CHUNK_SIZE;
+            MapHandler mapHandler = new MapHandler(size, size, 30, 6);
+            for (int i = 0; i < 6; i++)
+            {
+                mapHandler.DoSimulationStep();
+            }
+
+            for (int x = 0; x < mapHandler.MapHeight; x++)
+                for (int y = 0; y < mapHandler.MapWidth; y++)
+                    SetTile(mapHandler.Map[x, y], x, y);
+
+            List<Vector2i> treasures = mapHandler.PlaceTreasure();
+            for (int i = 0; i < treasures.Count; i++)
+            {
+                mapHandler.Map[treasures[i].X, treasures[i].Y] = TileType.SLIME;
+                SetTile(TileType.SLIME, treasures[i].X, treasures[i].Y);
+            }
+        
         }
 
         public void SetTile(TileType type, int x, int y)
@@ -89,7 +108,7 @@ namespace RealtimeInteractiveCrawler
             int X = x / Chunk.CHUNK_SIZE;
             int Y = y / Chunk.CHUNK_SIZE;
 
-            if(X >= WORLD_SIZE || Y >= WORLD_SIZE || X < 0 || Y < 0)
+            if (X >= WORLD_SIZE || Y >= WORLD_SIZE || X < 0 || Y < 0)
             {
                 return null;
             }
@@ -106,7 +125,7 @@ namespace RealtimeInteractiveCrawler
 
                 return null;
             }
-            
+
         }
 
         public Vector2i GetTilePosFromChunk(int x, int y)

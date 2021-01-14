@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RealtimeInteractiveCrawler.AnimSprite;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -116,21 +117,13 @@ namespace RealtimeInteractiveCrawler
             Tile[] walls = new Tile[]
             {
                 // Left
-                world.GetTile(physicsX - 1, physicsY - 1),
-                world.GetTile(physicsX - 1, physicsY - 2),
-                world.GetTile(physicsX - 1, physicsY - 3),
+                world.GetTile(physicsX - 2, physicsY),
                 // Right
-                world.GetTile(physicsX + 1, physicsY - 1),
-                world.GetTile(physicsX + 1, physicsY - 2),
-                world.GetTile(physicsX + 1, physicsY - 3),
+                world.GetTile(physicsX + 2, physicsY),
                 // Top
-                world.GetTile(physicsX - 1, physicsY - 2),
                 world.GetTile(physicsX, physicsY - 2),
-                world.GetTile(physicsX + 1, physicsY - 2),
                 // Down
-                world.GetTile(physicsX - 1, physicsY + 1),
-                world.GetTile(physicsX, physicsY + 1),
-                world.GetTile(physicsX + 1, physicsY + 1),
+                world.GetTile(physicsX, physicsY + 2),
 
             };
 
@@ -162,16 +155,33 @@ namespace RealtimeInteractiveCrawler
                         movement.X = 0;
                     }
                     // Top walls
-                    //if (offset.Y > 0)
-                    //{
-                    //    Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
-                    //    movement.X = 0;
-                    //}
+                    else if (offset.Y > 0)
+                    {
+                        Position = new Vector2f(Position.X, (tileRect.Top + tileRect.Height) + playerRect.Height * 0.5f);
+                        movement.Y = 0;
+                    }
+                    // Down walls
+                    else if (offset.Y < 0)
+                    {
+                        Position = new Vector2f(Position.X, tileRect.Top - playerRect.Height * 0.5f);
+                        movement.Y = 0;
+                    }
 
                     OnWallCollided();
 
                 }
             }
+        }
+
+        public void AssignAnimations(AnimSprite animSprite, MovementType animType, int spriteType, int animAmount, float time = 0.1f)
+        {
+            AnimationFrame[] animFrame = new AnimationFrame[animAmount];
+            for (int i = 0; i < animAmount; i++)
+            {
+                animFrame[i] = new AnimationFrame(i, spriteType, time);
+            }
+
+            animSprite.AddAnimation(animType, new Animation(animFrame));
         }
 
         public abstract void OnKill();

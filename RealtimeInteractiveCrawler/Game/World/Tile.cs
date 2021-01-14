@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace RealtimeInteractiveCrawler
 {
-    enum TileType
+    public enum TileType
     {
         NONE,
         GROUND,
         GRASS,
+        SLIME,
         PLAYER
     }
 
@@ -97,13 +98,16 @@ namespace RealtimeInteractiveCrawler
             switch (type)
             {
                 case TileType.GRASS:
-                    rectShape.Texture = Content.TexTile1;
+                    rectShape.Texture = Content.TexGrass;
                     break;
                 case TileType.GROUND:
-                    rectShape.Texture = Content.TexTile0;                
+                    rectShape.Texture = Content.TextGround;                
                     break;
                 case TileType.PLAYER:
                     rectShape.Texture = Content.TexPlayer;
+                    break;
+                case TileType.SLIME:
+                    rectShape.Texture = Content.TexPlay1;
                     break;
                 default:
                     break;
