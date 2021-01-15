@@ -21,7 +21,8 @@ namespace RealtimeInteractiveCrawler
     {
         public const int TILE_SIZE = 16;
 
-        TileType type = TileType.GROUND;
+        public TileType type = TileType.GROUND;
+
         RectangleShape rectShape;
         SpriteSheet spriteSheet;
 

@@ -29,13 +29,11 @@ namespace RealtimeInteractiveCrawler
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
             animSprite.color = Color.Red;
             rect = animSprite.RectShape;
-            float size = 1;
-            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
+            rect = animSprite.RectShape;
+            //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
-            rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
-
-
-            // Idle Anim           
+            //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
+       
             AssignAnimations(animSprite, MovementType.Idle, 2, 1);
             AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
             AssignAnimations(animSprite, MovementType.Up, 0, 9);
@@ -98,6 +96,7 @@ namespace RealtimeInteractiveCrawler
                     // Animation
                     animSprite.Play(MovementType.Up);
                 }
+
                 if (movement.Y > PLAYER_MOVE_SPEED)
                     movement.Y = PLAYER_MOVE_SPEED;
                 else if (movement.Y < -PLAYER_MOVE_SPEED)

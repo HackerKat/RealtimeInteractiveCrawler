@@ -25,41 +25,41 @@ namespace RealtimeInteractiveCrawler
 
         public void GenerateWorld()
         {
-            if (false)
-            {/*
-            // Ground
-            int[] xCords = { 3, 46 };
-            int[] yCords = { 18, 32 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            // Grass
-            xCords = new int[]{ 3, 46 };
-            yCords = new int[] { 17, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GRASS, x, y);
 
-            // Random Walls
-            xCords = new int[] { 3, 4 };
-            yCords = new int[] { 1, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            xCords = new int[] { 45, 46 };
-            yCords = new int[] { 1, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            xCords = new int[] { 3, 46 };
-            yCords = new int[] { 1, 2 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            */
-            }
-            int size = WORLD_SIZE * Chunk.CHUNK_SIZE;
-            MapHandler mapHandler = new MapHandler(size, size, 30, 6);
+            //// Ground
+            //int[] xCords = { 3, 46 };
+            //int[] yCords = { 18, 32 };
+            //for (int x = xCords[0]; x <= xCords[1]; x++)
+            //    for (int y = yCords[0]; y <= yCords[1]; y++)
+            //        SetTile(TileType.GROUND, x, y);
+            //// Grass
+            //xCords = new int[]{ 3, 46 };
+            //yCords = new int[] { 17, 17 };
+            //for (int x = xCords[0]; x <= xCords[1]; x++)
+            //    for (int y = yCords[0]; y <= yCords[1]; y++)
+            //        SetTile(TileType.GRASS, x, y);
+
+            //// Random Walls
+            //xCords = new int[] { 3, 4 };
+            //yCords = new int[] { 1, 17 };
+            //for (int x = xCords[0]; x <= xCords[1]; x++)
+            //    for (int y = yCords[0]; y <= yCords[1]; y++)
+            //        SetTile(TileType.GROUND, x, y);
+            //xCords = new int[] { 45, 46 };
+            //yCords = new int[] { 1, 17 };
+            //for (int x = xCords[0]; x <= xCords[1]; x++)
+            //    for (int y = yCords[0]; y <= yCords[1]; y++)
+            //        SetTile(TileType.GROUND, x, y);
+            //xCords = new int[] { 3, 46 };
+            //yCords = new int[] { 1, 2 };
+            //for (int x = xCords[0]; x <= xCords[1]; x++)
+            //    for (int y = yCords[0]; y <= yCords[1]; y++)
+            //        SetTile(TileType.GROUND, x, y);
+
+
+            // Generate Dungeon
+            int worldSize = WORLD_SIZE * Chunk.CHUNK_SIZE;
+            MapHandler mapHandler = new MapHandler(worldSize, worldSize, 30, 6);
             for (int i = 0; i < 6; i++)
             {
                 mapHandler.DoSimulationStep();
@@ -75,7 +75,7 @@ namespace RealtimeInteractiveCrawler
                 mapHandler.Map[treasures[i].X, treasures[i].Y] = TileType.SLIME;
                 SetTile(TileType.SLIME, treasures[i].X, treasures[i].Y);
             }
-        
+
         }
 
         public void SetTile(TileType type, int x, int y)
@@ -138,9 +138,9 @@ namespace RealtimeInteractiveCrawler
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-            for (int x = 0; x < WORLD_SIZE; x++)
+            for (int x = 0; x < WORLD_SIZE / 2; x++)
             {
-                for (int y = 0; y < WORLD_SIZE; y++)
+                for (int y = 0; y < WORLD_SIZE / 2; y++)
                 {
                     if (chunks[x][y] == null) continue;
 

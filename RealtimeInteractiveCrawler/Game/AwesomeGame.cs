@@ -1,15 +1,8 @@
 ﻿using SFML.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 using SFML.Window;
-using SFML.System;
-using System.IO;
 using NetworkLib;
-using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -40,11 +33,11 @@ namespace RealtimeInteractiveCrawler
 
         public override void Draw(GameTime gameTime)
         {
-            //DebugUtility.DrawPerformanceData(this, Color.White);
+            DebugUtility.DrawPerformanceData(Color.White);
 
             Window.Draw(world);
             Window.Draw(player);
-            Window.Draw(slime);
+            //Window.Draw(slime);
 
             foreach (var s in slimes)
                 Window.Draw(s);
@@ -61,12 +54,13 @@ namespace RealtimeInteractiveCrawler
 
             // Create player
             player = new Player(world);
-            player.Spawn(300, 150);
+            player.Spawn(650, 300);
             // Create example enemy
-            slime = new NpcSlime(world);
-            slime.Spawn(500, 150);
+            //slime = new NpcSlime(world);
+            //slime.Spawn(500, 150);
             for (int i = 0; i < 1; i++)
             {
+                return;
                 var slime = new NpcSlime(world);        
                 slime.Direction = MainClass.Rand.Next(0, 2) == 0 ? 1 : -1;
                 slime.Spawn(MainClass.Rand.Next(150, 600), 150);
@@ -101,7 +95,7 @@ namespace RealtimeInteractiveCrawler
         public override void Update(GameTime gameTime)
         {
             player.Update();
-            slime.Update();
+            //slime.Update();
 
             foreach (var s in slimes)
                 s.Update();

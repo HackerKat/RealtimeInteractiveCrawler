@@ -59,8 +59,8 @@
     <Compile Include="Game\AwesomeGame.cs" />
     <Compile Include="Game\World\Chunk.cs" />
     <Compile Include="Game\Content.cs" />
-    <Compile Include="Game\DebugRender.cs" />
-    <Compile Include="Game\DebugUtility.cs" />
+    <Compile Include="Game\Debug\DebugRender.cs" />
+    <Compile Include="Game\Debug\DebugUtility.cs" />
     <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\GameTime.cs" />
@@ -72,7 +72,6 @@
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\SpriteSheet.cs" />
     <Compile Include="Game\NetworkManager.cs" />
-    <Compile Include="Game\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\World\Tile.cs" />
     <Compile Include="Game\World\World.cs" />
