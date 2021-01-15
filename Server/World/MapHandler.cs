@@ -7,8 +7,6 @@ using System.Numerics;
 
 namespace Server
 {
-
-
     public class MapHandler
     {
         public TileType[,] Map;
@@ -323,7 +321,7 @@ namespace Server
             {
                 for (int y = 0; y < MapHeight; y++)
                 {
-                    if (Map[x,y] != TileType.GRASS && Map[x, y] != TileType.SLIME)
+                    if (Map[x,y] != TileType.GRASS && Map[x, y] != TileType.SLIME && Map[x, y] != TileType.ENEMY)
                     {
                         int nbs = CountAliveNeighbours(x, y);
                         if (nbs >= treasureHiddenLimit)
@@ -335,6 +333,30 @@ namespace Server
             }
 
             return allSlimes;
+        }
+
+        public List<Vector2> PlaceEnemies()
+        {
+            List<Vector2> enemies = new List<Vector2>();
+            //How hidden does a spot need to be for treasure?
+            //I find 5 or 6 is good. 6 for very rare treasure.
+            int enemyHiddenLimit = 4;
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++)
+                {
+                    if (Map[x, y] != TileType.GRASS && Map[x, y] != TileType.SLIME && Map[x, y] != TileType.ENEMY)
+                    {
+                        int nbs = CountAliveNeighbours(x, y);
+                        if (nbs >= enemyHiddenLimit)
+                        {
+                            enemies.Add(new Vector2(x, y));
+                        }
+                    }
+                }
+            }
+
+            return enemies;
         }
 
 

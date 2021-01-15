@@ -7,7 +7,8 @@ namespace NetworkLib
         INIT,
         PING,
         NEW_PLAYER,
-        UPDATE_POS
+        UPDATE_MY_POS,
+        UPDATE_OTHER_POS
     }
     public class Packet
     {

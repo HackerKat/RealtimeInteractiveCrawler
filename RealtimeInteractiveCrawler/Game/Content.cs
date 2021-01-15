@@ -16,6 +16,7 @@ namespace RealtimeInteractiveCrawler
 
         private static Texture texPlayer; // Player
         public static Texture TexPlay1; // Enemy
+        public static Texture TexPlay2; // Enemy
         public static Font Font; //font
 
         public static Texture TexPlayer { get => texPlayer;}
@@ -27,6 +28,7 @@ namespace RealtimeInteractiveCrawler
 
             texPlayer = new Texture(CONTENT_DIR + "Character\\" + "human_base.png");
             TexPlay1 = new Texture(CONTENT_DIR + "NPC\\" + "slime.png");
+            TexPlay2 = new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png");
 
             Font = new Font(CONTENT_DIR + "Fonts\\arial\\arial.ttf");
         }

@@ -25,10 +25,6 @@ namespace Server
             {
                 tiles[i] = new Tile[CHUNK_SIZE];
             }
-
-            //for (int x = 0; x < CHUNK_SIZE; x++)
-            //    for (int y = 0; y < CHUNK_SIZE; y++)
-            //        SetTile(TileType.GROUND, x, y);
         }
 
         public void SetTile(TileType type, int x, int y, Tile[] neighbours)
@@ -44,21 +40,5 @@ namespace Server
 
             return tiles[x][y];
         }
-
-        /*
-        public void Draw(RenderTarget target, RenderStates states)
-        {
-
-            for (int x = 0; x < CHUNK_SIZE; x++)
-            {
-                for (int y = 0; y < CHUNK_SIZE; y++)
-                {
-                    if (tiles[x][y] == null) continue;
-
-                    target.Draw(tiles[x][y]);
-                }
-            }
-        }
-        */
     }
 }

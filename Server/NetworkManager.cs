@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Net;
 using NetworkLib;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Server
 {
@@ -15,8 +16,8 @@ namespace Server
         private List<Thread> clients;
         //private bool threadShouldEnd = false;
         private TcpListener server;
-        private Dictionary<TcpClient, int> connections;
-        private Dictionary <Player, int> players = new Dictionary<Player, int>();
+        private ConcurrentDictionary<TcpClient, int> connections;
+        private ConcurrentDictionary<int, Player> players = new ConcurrentDictionary<int, Player>();
         private int connectionId;
         private Random rand = new Random();
         private int seed;
@@ -66,7 +67,7 @@ namespace Server
             {
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
                 server = new TcpListener(localAddr, 12534);
-                connections = new Dictionary<TcpClient, int>();
+                connections = new ConcurrentDictionary<TcpClient, int>();
                 clients = new List<Thread>();
                 server.Start();
                 Console.WriteLine("Server started");
@@ -92,7 +93,7 @@ namespace Server
             Console.WriteLine("Connection established");
             int newConnId = connectionId;
             connectionId++;
-            connections.Add(client, newConnId); //wird connectionId geadded und danach incrementiert
+            connections.TryAdd(client, newConnId); //wird connectionId geadded und danach incrementiert
             SendAcceptPacket(client);
 
             foreach(TcpClient c in connections.Keys)
@@ -123,7 +124,7 @@ namespace Server
                         SendData(packet, client.GetStream());
                         Console.WriteLine("Send pong");
                         break;
-                    case PacketType.UPDATE_POS:
+                    case PacketType.UPDATE_MY_POS:
                         SendPlayerUpdate(client, p);
                         break;
                     default:
@@ -135,7 +136,7 @@ namespace Server
         public void SendNewPlayerJoined(TcpClient client, int newClientId)
         {
             PacketBuilder pb = new PacketBuilder(PacketType.NEW_PLAYER);
-            foreach(Player p in players.Keys)
+            foreach(Player p in players.Values)
             {
                 if(p.ConnId == newClientId)
                 {
@@ -159,34 +160,40 @@ namespace Server
             pb.Add(x); //spawn posX
             pb.Add(y); //spawn posY
             Player pl = new Player(x, y, clientId);
-            players.Add(pl, clientId);
-            foreach (int id in players.Values)
+            players.TryAdd(clientId, pl);
+            Packet packet = pb.Build();
+            SendData(packet, client.GetStream());
+
+            foreach (int id in players.Keys)
             {
-                if(id != clientId)
+                if (id != clientId)
                 {
                     SendNewPlayerJoined(client, id);
                 }
             }
-            Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
         }
 
         public void SendPlayerUpdate(TcpClient client, Packet p)
         {
             PacketReader pr = new PacketReader(p);
-            int spriteId = pr.GetInt();
-            int posX = pr.GetInt();
-            int posY = pr.GetInt();
-            int conId = pr.GetInt();
-            
-            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_POS);
-            pb.Add(spriteId);
-            pb.Add(posX);
-            pb.Add(posY);
-            pb.Add(conId);
+            int id = pr.GetInt();
+            float x = pr.GetFloat();
+            float y = pr.GetFloat();
+            Player netplayer = players[id];
+            netplayer.PosX = (int)x;
+            netplayer.PosY = (int)y;
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_OTHER_POS);
+            pb.Add(id);
+            pb.Add(netplayer.PosX);
+            pb.Add(netplayer.PosY);
             Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
+            foreach(TcpClient c in connections.Keys)
+            {
+                if(c != client)
+                {
+                    SendData(packet, c.GetStream());
+                }
+            }
         }
-       
     }
 }

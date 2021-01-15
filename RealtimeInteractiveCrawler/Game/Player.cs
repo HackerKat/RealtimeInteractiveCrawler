@@ -43,8 +43,6 @@ namespace RealtimeInteractiveCrawler
 
         }
 
-
-
         public override void OnKill()
         {
             Spawn();

@@ -75,7 +75,14 @@ namespace RealtimeInteractiveCrawler
                 mapHandler.Map[treasures[i].X, treasures[i].Y] = TileType.SLIME;
                 SetTile(TileType.SLIME, treasures[i].X, treasures[i].Y);
             }
-        
+
+            List<Vector2i> enemies = mapHandler.PlaceEnemies();
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
+                SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
+            }
+
         }
 
         public void SetTile(TileType type, int x, int y)

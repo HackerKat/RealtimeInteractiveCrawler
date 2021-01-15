@@ -35,7 +35,6 @@ namespace RealtimeInteractiveCrawler
             //write data
             stream.Write(packet.Data, 0, packet.Data.Length);
             stream.Flush();
-            Console.WriteLine("Client send something");
         }
 
         public Packet ReadData()

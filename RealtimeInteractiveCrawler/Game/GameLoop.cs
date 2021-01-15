@@ -14,7 +14,7 @@ namespace RealtimeInteractiveCrawler
     {
         public const int FPS = 60;
         public const float TIME_TILL_UPDATE = 1f / FPS;
-        public bool hasFocus;
+        public bool hasFocus = true;
 
         public static RenderWindow Window
         {

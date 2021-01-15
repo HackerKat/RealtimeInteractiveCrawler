@@ -84,6 +84,9 @@ namespace RealtimeInteractiveCrawler
                 case PacketType.NEW_PLAYER:
                     InitializeNewPlayer(p);
                     break;
+                case PacketType.UPDATE_OTHER_POS:
+                    GetOtherPlayerData(p);
+                    break;
             }
         }
 
@@ -97,6 +100,7 @@ namespace RealtimeInteractiveCrawler
             int spawnY = pr.GetInt();
 
             Console.WriteLine("init data get processed");
+            Console.WriteLine("my connection id is: " + connectionId);
             player = new Player(world);
             player.Spawn(spawnX, spawnY);
             world.GenerateWorld(seed);
@@ -115,6 +119,35 @@ namespace RealtimeInteractiveCrawler
             NetworkPlayer newPlayer = new NetworkPlayer(spawnX, spawnY);
             //newPlayer.Spawn(spawnX, spawnY);
             players.Add(connId, newPlayer);
+            Console.WriteLine("new player joined: " + connId);
+        }
+
+        public void SendPlayerUpdate()
+        {
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_MY_POS);
+            pb.Add(connectionId);
+            pb.Add(player.Position.X);
+            pb.Add(player.Position.Y);
+            Packet packet = pb.Build();
+            networkManager.SendData(packet);
+        }
+
+        public void GetOtherPlayerData(Packet p)
+        {
+            Console.WriteLine("Client got data about other players position");
+            PacketReader pr = new PacketReader(p);
+
+            int id = pr.GetInt();
+            int x = pr.GetInt();
+            int y = pr.GetInt();
+            Console.WriteLine("Get data from player: " + id);
+            if (players.ContainsKey(id))
+            {
+                NetworkPlayer np = players[id];
+                Console.WriteLine("network player has moved to x: " + np.Position.X);
+                Console.WriteLine("network player has moved to y: " + np.Position.Y);
+                np.UpdatePos(x, y);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -124,13 +157,14 @@ namespace RealtimeInteractiveCrawler
                 if (hasFocus)
                 {
                     player.Update();
+                    SendPlayerUpdate();
                 }
             }
             
             slime.Update();
 
-            foreach (var s in slimes)
-                s.Update();
+            //foreach (var s in slimes)
+            //    s.Update();
 
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
@@ -170,8 +204,8 @@ namespace RealtimeInteractiveCrawler
                 }
             }
 
-            foreach (var s in slimes)
-                Window.Draw(s);
+            //foreach (var s in slimes)
+            //    Window.Draw(s);
 
             DebugRender.Draw(Window);
             //Window.Draw(sprite);

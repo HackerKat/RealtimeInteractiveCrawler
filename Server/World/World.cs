@@ -19,44 +19,10 @@ namespace Server
             {
                 chunks[i] = new Chunk[WORLD_SIZE];
             }
-
         }
 
         public void GenerateWorld(int seed)
         {
-            if (false)
-            {/*
-            // Ground
-            int[] xCords = { 3, 46 };
-            int[] yCords = { 18, 32 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            // Grass
-            xCords = new int[]{ 3, 46 };
-            yCords = new int[] { 17, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GRASS, x, y);
-
-            // Random Walls
-            xCords = new int[] { 3, 4 };
-            yCords = new int[] { 1, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            xCords = new int[] { 45, 46 };
-            yCords = new int[] { 1, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            xCords = new int[] { 3, 46 };
-            yCords = new int[] { 1, 2 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            */
-            }
             int size = WORLD_SIZE * Chunk.CHUNK_SIZE;
             MapHandler mapHandler = new MapHandler(size, size, 30, seed);
             for (int i = 0; i < 6; i++)
@@ -74,7 +40,13 @@ namespace Server
                 mapHandler.Map[(int)treasures[i].X, (int)treasures[i].Y] = TileType.SLIME;
                 SetTile(TileType.SLIME, (int)treasures[i].X, (int)treasures[i].Y);
             }
-        
+
+            List<Vector2> enemies = mapHandler.PlaceEnemies();
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
+                SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
+            }
         }
 
         public void SetTile(TileType type, int x, int y)
@@ -124,7 +96,6 @@ namespace Server
 
                 return null;
             }
-
         }
 
         public Vector2 GetTilePosFromChunk(int x, int y)
@@ -134,20 +105,5 @@ namespace Server
 
             return new Vector2(x - X * Chunk.CHUNK_SIZE, y - Y * Chunk.CHUNK_SIZE);
         }
-
-        /*
-        public void Draw(RenderTarget target, RenderStates states)
-        {
-            for (int x = 0; x < WORLD_SIZE; x++)
-            {
-                for (int y = 0; y < WORLD_SIZE; y++)
-                {
-                    if (chunks[x][y] == null) continue;
-
-                    target.Draw(chunks[x][y]);
-                }
-            }
-        }
-        */
     }
 }
