@@ -16,6 +16,7 @@ namespace Server
         //private bool threadShouldEnd = false;
         private TcpListener server;
         private Dictionary<TcpClient, int> connections;
+        private Dictionary <Player, int> players = new Dictionary<Player, int>();
         private int connectionId;
         private Random rand = new Random();
         private int seed;
@@ -134,9 +135,15 @@ namespace Server
         public void SendNewPlayerJoined(TcpClient client, int newClientId)
         {
             PacketBuilder pb = new PacketBuilder(PacketType.NEW_PLAYER);
-            pb.Add(newClientId); //new players connection id
-            pb.Add(rand.Next(0, 500)); //spawn posX
-            pb.Add(rand.Next(0, 500)); //spawn posY
+            foreach(Player p in players.Keys)
+            {
+                if(p.ConnId == newClientId)
+                {
+                    pb.Add(p.ConnId);
+                    pb.Add(p.PosX); 
+                    pb.Add(p.PosY);
+                }
+            }
             Packet packet = pb.Build();
             SendData(packet, client.GetStream());
         }
@@ -147,8 +154,19 @@ namespace Server
             int clientId = connections[client];
             pb.Add(clientId); //connection id
             pb.Add(seed); //seed
-            pb.Add(300); //spawn posX
-            pb.Add(150); //spawn posY
+            int x = rand.Next(50, 500);
+            int y = rand.Next(50, 500);
+            pb.Add(x); //spawn posX
+            pb.Add(y); //spawn posY
+            Player pl = new Player(x, y, clientId);
+            players.Add(pl, clientId);
+            foreach (int id in players.Values)
+            {
+                if(id != clientId)
+                {
+                    SendNewPlayerJoined(client, id);
+                }
+            }
             Packet packet = pb.Build();
             SendData(packet, client.GetStream());
         }

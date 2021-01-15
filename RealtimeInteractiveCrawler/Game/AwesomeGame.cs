@@ -112,11 +112,8 @@ namespace RealtimeInteractiveCrawler
             int spawnY = pr.GetInt();
 
             Console.WriteLine("new player data get processed");
-            NetworkPlayer newPlayer = new NetworkPlayer(world);
+            NetworkPlayer newPlayer = new NetworkPlayer(spawnX, spawnY);
             //newPlayer.Spawn(spawnX, spawnY);
-            newPlayer.PositionX = spawnX;
-            newPlayer.PositionY = spawnY;
-
             players.Add(connId, newPlayer);
         }
 
@@ -125,10 +122,6 @@ namespace RealtimeInteractiveCrawler
             if (isDataReadyToInit)
             {
                 player.Update();
-                foreach(NetworkPlayer np in players.Values)
-                {
-                    np.Update();
-                }
             }
             
             slime.Update();
