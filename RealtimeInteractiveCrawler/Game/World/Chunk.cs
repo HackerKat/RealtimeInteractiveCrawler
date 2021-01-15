@@ -34,6 +34,7 @@ namespace RealtimeInteractiveCrawler
             tiles[x][y].Position = new Vector2f(x * Tile.TILE_SIZE, y * Tile.TILE_SIZE) + Position;
         }
         
+        // Gets relative position
         public Tile GetTile(int x, int y)
         {
             if (x < 0 || y < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE)
@@ -54,6 +55,12 @@ namespace RealtimeInteractiveCrawler
                     target.Draw(tiles[x][y]);
                 }
             }
+        }
+
+        
+        public override string ToString()
+        {
+            return chunkPos.X + " " + chunkPos.Y;
         }
 
     }

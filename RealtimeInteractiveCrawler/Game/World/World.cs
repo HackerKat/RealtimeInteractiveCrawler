@@ -12,6 +12,7 @@ namespace RealtimeInteractiveCrawler
         public const int WORLD_SIZE = 3;
 
         Chunk[][] chunks;
+        float counter;
 
         public World()
         {
@@ -33,8 +34,8 @@ namespace RealtimeInteractiveCrawler
                 mapHandler.DoSimulationStep();
             }
 
-            for (int x = 0; x < mapHandler.MapWidth; x++)
-                for (int y = 0; y < mapHandler.MapHeight; y++)
+            for (int y = 0; y < mapHandler.MapHeight; y++)
+                for (int x = 0; x < mapHandler.MapWidth; x++)
                     SetTile(mapHandler.Map[x, y], x, y);
 
             List<Vector2i> treasures = mapHandler.PlaceTreasure();
@@ -49,6 +50,12 @@ namespace RealtimeInteractiveCrawler
             {
                 mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
                 SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
+            }
+
+            Tile tile = GetTile(10, 10);
+            if(tile != null)
+            {
+                return;
             }
 
         }
@@ -67,6 +74,7 @@ namespace RealtimeInteractiveCrawler
             chunk.SetTile(type, tilePos.X, tilePos.Y, neighbours);
         }
 
+        // x and y are absolut coordinates
         public Tile GetTile(int x, int y)
         {
             Chunk chunk = GetChunk(x, y);
@@ -79,16 +87,21 @@ namespace RealtimeInteractiveCrawler
             return chunk.GetTile(tilePos.X, tilePos.Y);
         }
 
+        // Gets absolut pos
         public Tile GetTileAbsolutPos(int x, int y)
         {
-            Tile tile = GetTile(x, y);
             Chunk chunk = GetChunk(x, y);
+            if (chunk == null)
+                return null;
+
             int X = x + chunk.chunkPos.X * Chunk.CHUNK_SIZE;
             int Y = y + chunk.chunkPos.Y * Chunk.CHUNK_SIZE;
 
-            return null;
+            return chunk.GetTile(X, Y);
         }
 
+        // Return chunk coordinates in array
+        // x and y are absolute coordinates
         public Chunk GetChunk(int x, int y)
         {
             int X = x / Chunk.CHUNK_SIZE;
@@ -109,6 +122,8 @@ namespace RealtimeInteractiveCrawler
             catch (Exception){ return null; }
                 
         }
+        // Gets absolut coordinates
+        // Returns relative tile Pos
         public Vector2i GetTilePosFromChunk(int x, int y)
         {
             int X = x / Chunk.CHUNK_SIZE;

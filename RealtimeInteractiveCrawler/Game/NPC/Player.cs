@@ -52,22 +52,21 @@ namespace RealtimeInteractiveCrawler
         {
             UpdateMovement();
             Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
-            //Debug.WriteLine(mousePos.X + " mouse x");
-            Tile tile = world.GetTile(mousePos.X, mousePos.Y);
-            //Chunk chunkChunk = world.GetChunk(mousePos.X, mousePos.Y);
-            //if (chunkChunk != null)
-            //    Debug.WriteLine(chunkChunk.chunkPos.X + " mopuse pos chunk");
+            Tile tile = world.GetTile(mousePos.X / Tile.TILE_SIZE, mousePos.Y / Tile.TILE_SIZE);
+            Chunk chunk = world.GetChunk(mousePos.X, mousePos.Y);
+            //if (chunk != null)
+            //Debug.WriteLine(chunk.ToString() + " chunk pos");
             if (tile != null)
             {
-                Debug.WriteLine(tile.Position.X + " tile x");
-                Vector2f mouseMan = new Vector2f(mousePos.X, mousePos.Y);
+                Debug.WriteLine(tile.Position.X + " tile pos");
                 FloatRect tileRect = tile.GetFloatRect();
+                //tileRect = new FloatRect(new Vector2f(mousePos.X, mousePos.Y), new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
                 DebugRender.AddRectangle(tileRect, Color.Green);
                 // Debug
                 if (Mouse.IsButtonPressed(Mouse.Button.Left))
                 {
-                    int i = (int)(mousePos.X / Tile.TILE_SIZE);
-                    int j = (int)(mousePos.Y / Tile.TILE_SIZE);
+                    int i = (int)(mousePos.X) / Tile.TILE_SIZE;
+                    int j = (int)(mousePos.Y) / Tile.TILE_SIZE;
                     world.SetTile(TileType.GROUND, i, j);
                 }
             }

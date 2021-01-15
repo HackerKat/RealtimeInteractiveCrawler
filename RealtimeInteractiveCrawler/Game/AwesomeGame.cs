@@ -23,11 +23,6 @@ namespace RealtimeInteractiveCrawler
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
 
-
-        private NpcSlime slime;
-
-        private List<NpcSlime> slimes = new List<NpcSlime>();
-
         private bool pPressed = false;
 
         private int connectionId;
