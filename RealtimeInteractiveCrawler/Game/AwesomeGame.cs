@@ -121,7 +121,10 @@ namespace RealtimeInteractiveCrawler
         {
             if (isDataReadyToInit)
             {
-                player.Update();
+                if (hasFocus)
+                {
+                    player.Update();
+                }
             }
             
             slime.Update();
