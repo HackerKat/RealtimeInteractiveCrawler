@@ -16,9 +16,9 @@ namespace RealtimeInteractiveCrawler
         private float positionX;
         private float positionY;
 
-        AnimSprite animSprite;
-
+        private AnimSprite animSprite;
         private SpriteSheet spriteSheet;
+        private MovementType lastAnim;
 
         public Player(World world) : base(world)
         {
@@ -27,7 +27,7 @@ namespace RealtimeInteractiveCrawler
 
             spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
-            animSprite.color = Color.Red;
+            //animSprite.color = Color.Red;
             rect = animSprite.RectShape;
             rect = animSprite.RectShape;
             //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
@@ -38,7 +38,7 @@ namespace RealtimeInteractiveCrawler
             AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
             AssignAnimations(animSprite, MovementType.Up, 0, 9);
             AssignAnimations(animSprite, MovementType.Down, 2, 9);
-
+            animSprite.Play(MovementType.Idle);
         }
 
 
@@ -85,6 +85,7 @@ namespace RealtimeInteractiveCrawler
 
                     // Animation
                     animSprite.Play(MovementType.Down);
+                    lastAnim = MovementType.Down;
                 }
                 else if (movingUp)
                 {
@@ -95,6 +96,7 @@ namespace RealtimeInteractiveCrawler
 
                     // Animation
                     animSprite.Play(MovementType.Up);
+                    lastAnim = MovementType.Up;
                 }
 
                 if (movement.Y > PLAYER_MOVE_SPEED)
@@ -129,13 +131,16 @@ namespace RealtimeInteractiveCrawler
 
                 // Animation
                 animSprite.Play(MovementType.Horizontal);
+                lastAnim = MovementType.Horizontal;
             }
+            // Standing / Idle
             else
             {
                 movement = new Vector2f();
 
                 // Animation
-                animSprite.Play(MovementType.Idle);
+                animSprite.animations[lastAnim].Reset();
+                //animSprite.Play(MovementType.Idle);
             }
         }
 

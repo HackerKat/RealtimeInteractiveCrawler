@@ -79,12 +79,12 @@ namespace RealtimeInteractiveCrawler
         SpriteSheet spriteSheet;
 
         // Probably to replace
-        SortedDictionary<MovementType, Animation> animations = new SortedDictionary<MovementType, Animation>();
+        public SortedDictionary<MovementType, Animation> animations = new SortedDictionary<MovementType, Animation>();
         MovementType currAnimType;
 
         Animation currAnim;
 
-        public Color color
+        public Color Color
         {
             set { rectShape.FillColor = value; }
             get { return rectShape.FillColor; }
@@ -106,8 +106,6 @@ namespace RealtimeInteractiveCrawler
 
         public void AddAnimation(MovementType type, Animation animation)
         {
-
-
             animations[type] = animation;
             currAnim = animation;
             currAnimType = type;
