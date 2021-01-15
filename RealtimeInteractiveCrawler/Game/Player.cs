@@ -39,8 +39,6 @@ namespace RealtimeInteractiveCrawler
             animSprite.Play(MovementType.Idle);
         }
 
-
-
         public override void OnKill()
         {
             Spawn();

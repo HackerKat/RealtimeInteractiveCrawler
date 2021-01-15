@@ -2,9 +2,17 @@
 
 namespace NetworkLib
 {
+    public enum PacketType
+    {
+        INIT,
+        PING,
+        NEW_PLAYER,
+        UPDATE_MY_POS,
+        UPDATE_OTHER_POS
+    }
     public class Packet
     {
-        public byte Id
+        public PacketType PacketType
         {
             get;
             private set;
@@ -22,9 +30,9 @@ namespace NetworkLib
                 return data;
             }
         }
-        public Packet(byte id, int size, byte[] data)
+        public Packet(PacketType packetType, int size, byte[] data)
         {
-            this.Id = id;
+            this.PacketType = packetType;
             this.Size = size;
             this.data = new byte[size];
             Array.Copy(data, this.data, size);

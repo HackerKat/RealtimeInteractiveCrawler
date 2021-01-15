@@ -14,7 +14,8 @@ namespace RealtimeInteractiveCrawler
         GROUND,
         GRASS,
         SLIME,
-        PLAYER
+        PLAYER,
+        ENEMY
     }
 
     class Tile : Transformable, Drawable
@@ -109,6 +110,9 @@ namespace RealtimeInteractiveCrawler
                     break;
                 case TileType.SLIME:
                     rectShape.Texture = Content.TexPlay1;
+                    break;
+                case TileType.ENEMY:
+                    rectShape.Texture = Content.TexPlay2;
                     break;
                 default:
                     break;

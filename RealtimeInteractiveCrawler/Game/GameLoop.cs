@@ -14,6 +14,7 @@ namespace RealtimeInteractiveCrawler
     {
         public const int FPS = 60;
         public const float TIME_TILL_UPDATE = 1f / FPS;
+        public bool hasFocus = true;
 
         public static RenderWindow Window
         {
@@ -40,6 +41,9 @@ namespace RealtimeInteractiveCrawler
             GameTime = new GameTime();
             Window.Closed += WindowClosed;
             Window.Resized += WindowResized;
+            Window.GainedFocus += WindowFocus;
+            Window.LostFocus += WindowUnfocus;
+
         }
 
         public void Run()
@@ -87,6 +91,16 @@ namespace RealtimeInteractiveCrawler
         private void WindowResized(object sender, SizeEventArgs e)
         {
             Window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
+        }
+        private void WindowFocus(object sender, EventArgs e)
+        {
+            Window.SetActive(true);
+            hasFocus = true;
+        }
+        private void WindowUnfocus(object sender, EventArgs e)
+        {
+            Window.SetActive(false);
+            hasFocus = false;
         }
     }
 }

@@ -1,14 +1,12 @@
-﻿using SFML.System;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
-namespace RealtimeInteractiveCrawler
+namespace Server
 {
-
-
     public class MapHandler
     {
         public TileType[,] Map;
@@ -17,11 +15,15 @@ namespace RealtimeInteractiveCrawler
         public int MapHeight { get; set; }
         public int PercentAreWalls { get; set; }
 
-        public MapHandler(int mapWidth, int mapHeight, int percentAreWalls)
+        private Random rand;
+
+        public MapHandler(int mapWidth, int mapHeight, int percentAreWalls, int seed)
         {
             MapWidth = mapWidth;
             MapHeight = mapHeight;
             PercentAreWalls = percentAreWalls;
+
+            rand = new Random(seed);
 
             RandomFillMap();
         }
@@ -227,7 +229,7 @@ namespace RealtimeInteractiveCrawler
 
         TileType RandomPercent(int percent)
         {
-            if (percent >= AwesomeGame.Rand.Next(1, 101))
+            if (percent >= rand.Next(1, 101))
             {
                 return TileType.GRASS;
             }
@@ -309,9 +311,9 @@ namespace RealtimeInteractiveCrawler
         }
 
 
-        public List<Vector2i> PlaceTreasure()
+        public List<Vector2> PlaceTreasure()
         {
-            List<Vector2i> allSlimes = new List<Vector2i>();
+            List<Vector2> allSlimes = new List<Vector2>();
             //How hidden does a spot need to be for treasure?
             //I find 5 or 6 is good. 6 for very rare treasure.
             int treasureHiddenLimit = 5;
@@ -324,7 +326,7 @@ namespace RealtimeInteractiveCrawler
                         int nbs = CountAliveNeighbours(x, y);
                         if (nbs >= treasureHiddenLimit)
                         {
-                            allSlimes.Add(new Vector2i(x, y));
+                            allSlimes.Add(new Vector2(x, y));
                         }
                     }
                 }
@@ -333,9 +335,9 @@ namespace RealtimeInteractiveCrawler
             return allSlimes;
         }
 
-        public List<Vector2i> PlaceEnemies()
+        public List<Vector2> PlaceEnemies()
         {
-            List<Vector2i> enemies = new List<Vector2i>();
+            List<Vector2> enemies = new List<Vector2>();
             //How hidden does a spot need to be for treasure?
             //I find 5 or 6 is good. 6 for very rare treasure.
             int enemyHiddenLimit = 4;
@@ -348,7 +350,7 @@ namespace RealtimeInteractiveCrawler
                         int nbs = CountAliveNeighbours(x, y);
                         if (nbs >= enemyHiddenLimit)
                         {
-                            enemies.Add(new Vector2i(x, y));
+                            enemies.Add(new Vector2(x, y));
                         }
                     }
                 }
@@ -356,6 +358,7 @@ namespace RealtimeInteractiveCrawler
 
             return enemies;
         }
+
 
     }
 }

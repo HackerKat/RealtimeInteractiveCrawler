@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="Game\AnimSprite.cs" />
     <Compile Include="Game\AwesomeGame.cs" />
+    <Compile Include="Game\NetworkPlayer.cs" />
+    <Compile Include="Game\World\Chunk.cs" />
     <Compile Include="Game\Content.cs" />
     <Compile Include="Game\Debug\DebugRender.cs" />
     <Compile Include="Game\Debug\DebugUtility.cs" />

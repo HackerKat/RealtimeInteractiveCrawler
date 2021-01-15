@@ -11,53 +11,18 @@ namespace RealtimeInteractiveCrawler
         public const int WORLD_WIDTH = 300;
         public const int WORLD_HEIGHT = 100;
 
-        public int Seed;
-
         Tile[,] tiles;
 
-        public World(int seed)
+        public World()
         {
             tiles = new Tile[WORLD_WIDTH, WORLD_HEIGHT];
-
-            Seed = seed;
         }
 
-        public void GenerateWorld()
+        public void GenerateWorld(int seed)
         {
-            AwesomeGame.Rand = Seed >= 0 ? new Random(Seed) : new Random((int)DateTime.Now.Ticks);
-            //// Ground
-            //int[] xCords = { 3, 46 };
-            //int[] yCords = { 18, 32 };
-            //for (int x = xCords[0]; x <= xCords[1]; x++)
-            //    for (int y = yCords[0]; y <= yCords[1]; y++)
-            //        SetTile(TileType.GROUND, x, y);
-            //// Grass
-            //xCords = new int[]{ 3, 46 };
-            //yCords = new int[] { 17, 17 };
-            //for (int x = xCords[0]; x <= xCords[1]; x++)
-            //    for (int y = yCords[0]; y <= yCords[1]; y++)
-            //        SetTile(TileType.GRASS, x, y);
 
-            //// Random Walls
-            //xCords = new int[] { 3, 4 };
-            //yCords = new int[] { 1, 17 };
-            //for (int x = xCords[0]; x <= xCords[1]; x++)
-            //    for (int y = yCords[0]; y <= yCords[1]; y++)
-            //        SetTile(TileType.GROUND, x, y);
-            //xCords = new int[] { 45, 46 };
-            //yCords = new int[] { 1, 17 };
-            //for (int x = xCords[0]; x <= xCords[1]; x++)
-            //    for (int y = yCords[0]; y <= yCords[1]; y++)
-            //        SetTile(TileType.GROUND, x, y);
-            //xCords = new int[] { 3, 46 };
-            //yCords = new int[] { 1, 2 };
-            //for (int x = xCords[0]; x <= xCords[1]; x++)
-            //    for (int y = yCords[0]; y <= yCords[1]; y++)
-            //        SetTile(TileType.GROUND, x, y);
-
-
-            // Generate Dungeon
-            MapHandler mapHandler = new MapHandler(WORLD_WIDTH, WORLD_HEIGHT, 30);
+            int size = WORLD_SIZE * Chunk.CHUNK_SIZE;
+            MapHandler mapHandler = new MapHandler(size, size, 30, seed);
             for (int i = 0; i < 6; i++)
             {
                 mapHandler.DoSimulationStep();
@@ -73,6 +38,37 @@ namespace RealtimeInteractiveCrawler
                 mapHandler.Map[treasures[i].X, treasures[i].Y] = TileType.SLIME;
                 SetTile(TileType.SLIME, treasures[i].X, treasures[i].Y);
             }
+
+            List<Vector2i> enemies = mapHandler.PlaceEnemies();
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
+                SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
+            }
+
+        }
+
+        public void SetTile(TileType type, int x, int y)
+        {
+            Chunk chunk = GetChunk(x, y);
+            Vector2i tilePos = GetTilePosFromChunk(x, y);
+
+            Tile[] neighbours = new Tile[4];
+            neighbours[0] = GetTile(x, y - 1); // up
+            neighbours[1] = GetTile(x, y + 1); // down
+            neighbours[2] = GetTile(x - 1, y); // left 
+            neighbours[3] = GetTile(x + 1, y); // right
+
+            chunk.SetTile(type, tilePos.X, tilePos.Y, neighbours);
+        }
+
+        public Tile GetTile(int x, int y)
+        {
+            Chunk chunk = GetChunk(x, y);
+            if (chunk == null)
+                return null;
+
+            Vector2i tilePos = GetTilePosFromChunk(x, y);
 
         }
 
