@@ -2,20 +2,25 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
     // TODO Singleton
     class World : Transformable, Drawable
     {
-        public const int WORLD_WIDTH = 300;
-        public const int WORLD_HEIGHT = 100;
+        public const int WORLD_SIZE = 3;
 
-        Tile[,] tiles;
+        Chunk[][] chunks;
 
         public World()
         {
-            tiles = new Tile[WORLD_WIDTH, WORLD_HEIGHT];
+            chunks = new Chunk[WORLD_SIZE][];
+
+            for (int i = 0; i < WORLD_SIZE; i++)
+            {
+                chunks[i] = new Chunk[WORLD_SIZE];
+            }
         }
 
         public void GenerateWorld(int seed)
@@ -65,69 +70,62 @@ namespace RealtimeInteractiveCrawler
         public Tile GetTile(int x, int y)
         {
             Chunk chunk = GetChunk(x, y);
+            
             if (chunk == null)
                 return null;
 
             Vector2i tilePos = GetTilePosFromChunk(x, y);
 
+            return chunk.GetTile(tilePos.X, tilePos.Y);
         }
 
-        public void SetTile(TileType type, int i, int j)
+        public Tile GetTileAbsolutPos(int x, int y)
         {
-            Tile[] neighbours = new Tile[4];
-            neighbours[0] = GetTile(i, j - 1); // up
-            neighbours[1] = GetTile(i, j + 1); // down
-            neighbours[2] = GetTile(i - 1, j); // left 
-            neighbours[3] = GetTile(i + 1, j); // right
+            Tile tile = GetTile(x, y);
+            Chunk chunk = GetChunk(x, y);
+            int X = x + chunk.chunkPos.X * Chunk.CHUNK_SIZE;
+            int Y = y + chunk.chunkPos.Y * Chunk.CHUNK_SIZE;
 
-            if (type != TileType.NONE)
+            return null;
+        }
+
+        public Chunk GetChunk(int x, int y)
+        {
+            int X = x / Chunk.CHUNK_SIZE;
+            int Y = y / Chunk.CHUNK_SIZE;
+
+            if (X >= WORLD_SIZE || Y >= WORLD_SIZE || X < 0 || Y < 0)
             {
-                var tile = new Tile(type, neighbours);
-                tile.Position = new Vector2f(i * Tile.TILE_SIZE, j * Tile.TILE_SIZE) + Position;
-                tiles[i, j] = tile;
-            }
-            else
-            {
-                tiles[i, j] = null;
-                if (neighbours[0] != null) neighbours[0].DownTile = null;
-                if (neighbours[1] != null) neighbours[1].UpTile = null;
-                if (neighbours[2] != null) neighbours[2].RightTile = null;
-                if (neighbours[3] != null) neighbours[3].LeftTile = null;
-            }
-        }
-
-        public Tile GerTileByWorldPos(float x, float y)
-        {
-            int i = (int)(x / Tile.TILE_SIZE);
-            int j = (int)(y / Tile.TILE_SIZE);
-            return GetTile(i, j);
-        }
-
-        public Tile GerTileByWorldPos(Vector2f pos)
-        {
-            return GerTileByWorldPos(pos.X, pos.Y);
-        }
-        public Tile GerTileByWorldPos(Vector2i pos)
-        {
-            return GerTileByWorldPos(pos.X, pos.Y);
-        }
-
-        public Tile GetTile(int i, int j)
-        {
-            if (i >= 0 && j >= 0 && i < WORLD_WIDTH && j < WORLD_HEIGHT)
-                return tiles[i, j];
-            else
                 return null;
+            }
+
+            try
+            {
+                if (chunks[X][Y] == null)
+                    chunks[X][Y] = new Chunk(new Vector2i(X, Y));
+
+                return chunks[X][Y];
+            }
+            catch (Exception){ return null; }
+                
+        }
+        public Vector2i GetTilePosFromChunk(int x, int y)
+        {
+            int X = x / Chunk.CHUNK_SIZE;
+            int Y = y / Chunk.CHUNK_SIZE;
+
+            return new Vector2i(x - X * Chunk.CHUNK_SIZE, y - Y * Chunk.CHUNK_SIZE);
         }
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-            for (int i = 0; i < GameLoop.Window.Size.X / Tile.TILE_SIZE + 1; i++)
+            for (int x = 0; x < WORLD_SIZE; x++)
             {
-                for (int j = 0; j < GameLoop.Window.Size.Y / Tile.TILE_SIZE + 1 / 2; j++)
+                for (int y = 0; y < WORLD_SIZE; y++)
                 {
-                    if (tiles[i, j] != null)
-                        target.Draw(tiles[i, j]);
+                    if (chunks[x][y] == null) continue;
+
+                    target.Draw(chunks[x][y]);
                 }
             }
         }

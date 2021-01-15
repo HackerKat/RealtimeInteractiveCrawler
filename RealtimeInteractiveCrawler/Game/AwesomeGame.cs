@@ -39,27 +39,15 @@ namespace RealtimeInteractiveCrawler
             Rand = new Random();
         }
 
-        public override void Draw(GameTime gameTime)
-        {
-            //DebugUtility.DrawPerformanceData(Color.White);
-
-            DebugRender.Draw(Window);
-
-            if(isDataReadyToInit){
-                Window.Draw(world);
-                Window.Draw(player);
-                foreach(NetworkPlayer np in players.Values){
-                    Window.Draw(np);
-                }
-            }
-
-        }
-
-
         public override void Initialize()
         {
-            networkManager.Connect("localhost");
+            //networkManager.Connect("localhost");
             world = new World();
+
+            player = new Player();
+            player.Spawn(650, 300);
+
+            world.GenerateWorld(5);
         }
 
         public override void LoadContent()
@@ -100,7 +88,7 @@ namespace RealtimeInteractiveCrawler
 
             Console.WriteLine("init data get processed");
             Console.WriteLine("my connection id is: " + connectionId);
-            player = new Player(world);
+            player = new Player();
             player.Spawn(spawnX, spawnY);
             world.GenerateWorld(seed);
             isDataReadyToInit = true;
@@ -151,15 +139,18 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
-            if (isDataReadyToInit)
+            //if (isDataReadyToInit)
+            //{
+            if (hasFocus)
             {
-                if (hasFocus)
-                {
-                    player.Update();
-                    SendPlayerUpdate();
-                }
+                player.Update();
+                // SendPlayerUpdate();
             }
-            
+            //}
+
+            // TODO revert debug change
+            return;
+
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
             while ((p = messageQueue.Pop()) != null)
@@ -184,25 +175,27 @@ namespace RealtimeInteractiveCrawler
                 Window.Close();
             }
         }
+
         public override void Draw(GameTime gameTime)
         {
-            //DebugUtility.DrawPerformanceData(this, Color.White);
-            if (isDataReadyToInit)
-            {
-                Window.Draw(world);
-                Window.Draw(player);
-                Window.Draw(slime);
-                foreach (NetworkPlayer np in players.Values)
-                {
-                    Window.Draw(np);
-                }
-            }
+            //DebugUtility.DrawPerformanceData(Color.White);
 
-            //foreach (var s in slimes)
-            //    Window.Draw(s);
+            // TODO remove debug
+            Window.Draw(world);
+            Window.Draw(player);
 
             DebugRender.Draw(Window);
-            //Window.Draw(sprite);
+
+            //if (isDataReadyToInit)
+            //{
+            //    Window.Draw(world);
+            //    Window.Draw(player);
+            //    foreach (NetworkPlayer np in players.Values)
+            //    {
+            //        Window.Draw(np);
+            //    }
+            //}
+
         }
     }
 }

@@ -17,11 +17,13 @@ namespace RealtimeInteractiveCrawler
         public int MapHeight { get; set; }
         public int PercentAreWalls { get; set; }
 
-        public MapHandler(int mapWidth, int mapHeight, int percentAreWalls)
+        public MapHandler(int mapWidth, int mapHeight, int percentAreWalls, int seed)
         {
             MapWidth = mapWidth;
             MapHeight = mapHeight;
             PercentAreWalls = percentAreWalls;
+
+            AwesomeGame.Rand = new Random(seed);
 
             RandomFillMap();
         }

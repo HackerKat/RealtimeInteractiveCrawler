@@ -51,11 +51,16 @@ namespace RealtimeInteractiveCrawler
         public override void UpdateNPC()
         {
             UpdateMovement();
-
-            var mousePos = Mouse.GetPosition(GameLoop.Window);
-            var tile = world.GerTileByWorldPos(mousePos.X, mousePos.Y);
+            Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
+            //Debug.WriteLine(mousePos.X + " mouse x");
+            Tile tile = world.GetTile(mousePos.X, mousePos.Y);
+            //Chunk chunkChunk = world.GetChunk(mousePos.X, mousePos.Y);
+            //if (chunkChunk != null)
+            //    Debug.WriteLine(chunkChunk.chunkPos.X + " mopuse pos chunk");
             if (tile != null)
             {
+                Debug.WriteLine(tile.Position.X + " tile x");
+                Vector2f mouseMan = new Vector2f(mousePos.X, mousePos.Y);
                 FloatRect tileRect = tile.GetFloatRect();
                 DebugRender.AddRectangle(tileRect, Color.Green);
                 // Debug
@@ -66,7 +71,6 @@ namespace RealtimeInteractiveCrawler
                     world.SetTile(TileType.GROUND, i, j);
                 }
             }
-
 
             // For server
             positionX = Position.X;

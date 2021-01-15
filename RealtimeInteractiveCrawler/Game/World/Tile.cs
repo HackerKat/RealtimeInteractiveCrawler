@@ -18,20 +18,20 @@ namespace RealtimeInteractiveCrawler
         ENEMY
     }
 
-    class Tile : Transformable, Drawable
+    public class Tile : Transformable, Drawable
     {
         public const int TILE_SIZE = 16;
 
         public TileType type = TileType.GROUND;
 
-        RectangleShape rectShape;
-        SpriteSheet spriteSheet;
+        private RectangleShape rectShape;
+        private SpriteSheet spriteSheet;
 
         // Neighbours
-        Tile upTile;
-        Tile downTile;
-        Tile leftTile;
-        Tile rightTile;
+        private Tile upTile;
+        private Tile downTile;
+        private Tile leftTile;
+        private Tile rightTile;
 
         public Tile UpTile
         {
