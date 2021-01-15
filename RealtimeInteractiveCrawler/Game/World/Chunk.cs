@@ -6,9 +6,10 @@ namespace RealtimeInteractiveCrawler
     class Chunk : Transformable, Drawable
     {
         public const int CHUNK_SIZE = 25;
+        public Vector2i chunkPos;
 
-        Tile[][] tiles;
-        Vector2i chunkPos;
+        private Tile[][] tiles;
+        
 
         public Chunk(Vector2i chunkPos)
         {
@@ -54,5 +55,6 @@ namespace RealtimeInteractiveCrawler
                 }
             }
         }
+
     }
 }

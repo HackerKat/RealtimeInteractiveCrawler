@@ -15,8 +15,6 @@ namespace RealtimeInteractiveCrawler
         public int SubWidth { get { return subW; } }
         public int SubHeight { get { return subH; } }
 
-        // a and b size of one sprite OR amount of sprite along one axis
-
         /// <summary>
         ///
         /// </summary>

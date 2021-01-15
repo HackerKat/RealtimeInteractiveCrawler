@@ -12,35 +12,31 @@ namespace RealtimeInteractiveCrawler
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;
 
-
         private float positionX;
         private float positionY;
 
-        AnimSprite animSprite;
-
+        private AnimSprite animSprite;
         private SpriteSheet spriteSheet;
+        private MovementType lastAnim;
 
-        public Player(World world) : base(world)
+        public Player() : base()
         {
             isRectVisible = true;
-            useGravity = false;
 
             spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
-            animSprite.color = Color.Red;
+            //animSprite.color = Color.Red;
             rect = animSprite.RectShape;
-            float size = 1;
-            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
+            rect = animSprite.RectShape;
+            //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
-            rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
+            //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
 
-
-            // Idle Anim           
             AssignAnimations(animSprite, MovementType.Idle, 2, 1);
             AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
             AssignAnimations(animSprite, MovementType.Up, 0, 9);
             AssignAnimations(animSprite, MovementType.Down, 2, 9);
-
+            animSprite.Play(MovementType.Idle);
         }
 
         public override void OnKill()
@@ -49,12 +45,32 @@ namespace RealtimeInteractiveCrawler
         }
 
         public override void OnWallCollided()
-        {         
+        {
         }
 
         public override void UpdateNPC()
         {
             UpdateMovement();
+            Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
+            //Debug.WriteLine(mousePos.X + " mouse x");
+            Tile tile = world.GetTile(mousePos.X, mousePos.Y);
+            //Chunk chunkChunk = world.GetChunk(mousePos.X, mousePos.Y);
+            //if (chunkChunk != null)
+            //    Debug.WriteLine(chunkChunk.chunkPos.X + " mopuse pos chunk");
+            if (tile != null)
+            {
+                Debug.WriteLine(tile.Position.X + " tile x");
+                Vector2f mouseMan = new Vector2f(mousePos.X, mousePos.Y);
+                FloatRect tileRect = tile.GetFloatRect();
+                DebugRender.AddRectangle(tileRect, Color.Green);
+                // Debug
+                if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                {
+                    int i = (int)(mousePos.X / Tile.TILE_SIZE);
+                    int j = (int)(mousePos.Y / Tile.TILE_SIZE);
+                    world.SetTile(TileType.GROUND, i, j);
+                }
+            }
 
             // For server
             positionX = Position.X;
@@ -75,7 +91,9 @@ namespace RealtimeInteractiveCrawler
 
             bool movingOnX = movingLeft || movingRight;
             bool movingOnY = movingUp || movingDown;
-            if (movingOnY){
+
+            if (movingOnY)
+            {
                 if (movingDown)
                 {
                     if (movement.Y < 0)
@@ -85,6 +103,7 @@ namespace RealtimeInteractiveCrawler
 
                     // Animation
                     animSprite.Play(MovementType.Down);
+                    lastAnim = MovementType.Down;
                 }
                 else if (movingUp)
                 {
@@ -95,7 +114,9 @@ namespace RealtimeInteractiveCrawler
 
                     // Animation
                     animSprite.Play(MovementType.Up);
+                    lastAnim = MovementType.Up;
                 }
+
                 if (movement.Y > PLAYER_MOVE_SPEED)
                     movement.Y = PLAYER_MOVE_SPEED;
                 else if (movement.Y < -PLAYER_MOVE_SPEED)
@@ -128,13 +149,16 @@ namespace RealtimeInteractiveCrawler
 
                 // Animation
                 animSprite.Play(MovementType.Horizontal);
+                lastAnim = MovementType.Horizontal;
             }
+            // Standing / Idle
             else
             {
                 movement = new Vector2f();
 
                 // Animation
-                animSprite.Play(MovementType.Idle);
+                animSprite.animations[lastAnim].Reset();
+                //animSprite.Play(MovementType.Idle);
             }
         }
 

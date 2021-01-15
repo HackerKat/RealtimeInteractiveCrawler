@@ -15,7 +15,7 @@ namespace RealtimeInteractiveCrawler
         SpriteSheet spriteSheet;
         float waitTimer;
 
-        public NpcSlime(World world) : base(world)
+        public NpcSlime() : base()
         {
             spriteSheet = new SpriteSheet(1, 2, 0, (int)Content.TexPlay1.Size.X, (int)Content.TexPlay1.Size.Y);
 
@@ -46,24 +46,21 @@ namespace RealtimeInteractiveCrawler
 
         public override void UpdateNPC()
         {
-            if (!isFlying)
+
+            if (waitTimer >= TIME_WAIT_JUMP)
             {
-                if (waitTimer >= TIME_WAIT_JUMP)
-                {
-                    velocity = new Vector2f(Direction * MainClass.Rand.Next(1, 10), -MainClass.Rand.Next(6, 9));
-                    waitTimer = 0f;
-                }
-                else
-                {
-                    waitTimer += GameLoop.GameTime.deltaTime;
-                    velocity.X = 0f;
-                }
-
-                rect.TextureRect = spriteSheet.GetTextureRect(0, 0);
-
+                velocity = new Vector2f(Direction * AwesomeGame.Rand.Next(1, 10), -AwesomeGame.Rand.Next(6, 9));
+                waitTimer = 0f;
             }
             else
-                rect.TextureRect = spriteSheet.GetTextureRect(0, 1);
+            {
+                waitTimer += GameLoop.GameTime.deltaTime;
+                velocity.X = 0f;
+            }
+
+            rect.TextureRect = spriteSheet.GetTextureRect(0, 0);
+
+            rect.TextureRect = spriteSheet.GetTextureRect(0, 1);
 
         }
     }

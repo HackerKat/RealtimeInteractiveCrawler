@@ -1,20 +1,16 @@
 ﻿using SFML.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 using SFML.Window;
-using SFML.System;
-using System.IO;
 using NetworkLib;
-using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
     class AwesomeGame : GameLoop
     {
+        public static World world;
+        public static Random Rand;
+
         private const uint DEFAULT_WIDTH = 1280;
         private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "OBAMA CARES";
@@ -27,11 +23,10 @@ namespace RealtimeInteractiveCrawler
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
 
-        private World world;
-        NpcSlime slime;
 
-        List<NpcSlime> slimes = new List<NpcSlime>();
+        private NpcSlime slime;
 
+        private List<NpcSlime> slimes = new List<NpcSlime>();
 
         private bool pPressed = false;
 
@@ -40,27 +35,19 @@ namespace RealtimeInteractiveCrawler
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
+
+            Rand = new Random();
         }
 
         public override void Initialize()
         {
-            networkManager.Connect("localhost");
+            //networkManager.Connect("localhost");
             world = new World();
-            //world.GenerateWorld();
 
-            // Create player
-            //player = new Player(world);
-            //player.Spawn(300, 150);
-            // Create example enemy
-            slime = new NpcSlime(world);
-            slime.Spawn(500, 150);
-            for (int i = 0; i < 1; i++)
-            {
-                var slime = new NpcSlime(world);        
-                slime.Direction = MainClass.Rand.Next(0, 2) == 0 ? 1 : -1;
-                slime.Spawn(MainClass.Rand.Next(150, 600), 150);
-                slimes.Add(slime);
-            }
+            player = new Player();
+            player.Spawn(650, 300);
+
+            world.GenerateWorld(5);
         }
 
         public override void LoadContent()
@@ -101,7 +88,7 @@ namespace RealtimeInteractiveCrawler
 
             Console.WriteLine("init data get processed");
             Console.WriteLine("my connection id is: " + connectionId);
-            player = new Player(world);
+            player = new Player();
             player.Spawn(spawnX, spawnY);
             world.GenerateWorld(seed);
             isDataReadyToInit = true;
@@ -152,19 +139,17 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
-            if (isDataReadyToInit)
+            //if (isDataReadyToInit)
+            //{
+            if (hasFocus)
             {
-                if (hasFocus)
-                {
-                    player.Update();
-                    SendPlayerUpdate();
-                }
+                player.Update();
+                // SendPlayerUpdate();
             }
-            
-            slime.Update();
+            //}
 
-            //foreach (var s in slimes)
-            //    s.Update();
+            // TODO revert debug change
+            return;
 
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
@@ -190,25 +175,27 @@ namespace RealtimeInteractiveCrawler
                 Window.Close();
             }
         }
+
         public override void Draw(GameTime gameTime)
         {
-            //DebugUtility.DrawPerformanceData(this, Color.White);
-            if (isDataReadyToInit)
-            {
-                Window.Draw(world);
-                Window.Draw(player);
-                Window.Draw(slime);
-                foreach (NetworkPlayer np in players.Values)
-                {
-                    Window.Draw(np);
-                }
-            }
+            //DebugUtility.DrawPerformanceData(Color.White);
 
-            //foreach (var s in slimes)
-            //    Window.Draw(s);
+            // TODO remove debug
+            Window.Draw(world);
+            Window.Draw(player);
 
             DebugRender.Draw(Window);
-            //Window.Draw(sprite);
+
+            //if (isDataReadyToInit)
+            //{
+            //    Window.Draw(world);
+            //    Window.Draw(player);
+            //    foreach (NetworkPlayer np in players.Values)
+            //    {
+            //        Window.Draw(np);
+            //    }
+            //}
+
         }
     }
 }

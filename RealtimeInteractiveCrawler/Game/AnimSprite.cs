@@ -79,12 +79,12 @@ namespace RealtimeInteractiveCrawler
         SpriteSheet spriteSheet;
 
         // Probably to replace
-        SortedDictionary<MovementType, Animation> animations = new SortedDictionary<MovementType, Animation>();
+        public SortedDictionary<MovementType, Animation> animations = new SortedDictionary<MovementType, Animation>();
         MovementType currAnimType;
 
         Animation currAnim;
 
-        public Color color
+        public Color Color
         {
             set { rectShape.FillColor = value; }
             get { return rectShape.FillColor; }
@@ -95,18 +95,17 @@ namespace RealtimeInteractiveCrawler
         public AnimSprite(Texture texture, SpriteSheet spriteSheet)
         {
             this.spriteSheet = spriteSheet;
-            float size = 1;
-            rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size))
+            float size = 2;
+            rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight))
             {
-                Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubHeight * size * 0.5f),
+                Origin = new Vector2f(spriteSheet.SubWidth * 0.5f, spriteSheet.SubHeight * 0.5f),
                 Texture = texture
             };
+            rectShape.Scale *= size;
         }
 
         public void AddAnimation(MovementType type, Animation animation)
         {
-
-
             animations[type] = animation;
             currAnim = animation;
             currAnimType = type;

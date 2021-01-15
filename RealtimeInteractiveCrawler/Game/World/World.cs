@@ -2,13 +2,14 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
     // TODO Singleton
     class World : Transformable, Drawable
     {
-        public const int WORLD_SIZE = 5;
+        public const int WORLD_SIZE = 3;
 
         Chunk[][] chunks;
 
@@ -20,44 +21,11 @@ namespace RealtimeInteractiveCrawler
             {
                 chunks[i] = new Chunk[WORLD_SIZE];
             }
-
         }
 
         public void GenerateWorld(int seed)
         {
-            if (false)
-            {/*
-            // Ground
-            int[] xCords = { 3, 46 };
-            int[] yCords = { 18, 32 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            // Grass
-            xCords = new int[]{ 3, 46 };
-            yCords = new int[] { 17, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GRASS, x, y);
 
-            // Random Walls
-            xCords = new int[] { 3, 4 };
-            yCords = new int[] { 1, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            xCords = new int[] { 45, 46 };
-            yCords = new int[] { 1, 17 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            xCords = new int[] { 3, 46 };
-            yCords = new int[] { 1, 2 };
-            for (int x = xCords[0]; x <= xCords[1]; x++)
-                for (int y = yCords[0]; y <= yCords[1]; y++)
-                    SetTile(TileType.GROUND, x, y);
-            */
-            }
             int size = WORLD_SIZE * Chunk.CHUNK_SIZE;
             MapHandler mapHandler = new MapHandler(size, size, 30, seed);
             for (int i = 0; i < 6; i++)
@@ -65,8 +33,8 @@ namespace RealtimeInteractiveCrawler
                 mapHandler.DoSimulationStep();
             }
 
-            for (int x = 0; x < mapHandler.MapHeight; x++)
-                for (int y = 0; y < mapHandler.MapWidth; y++)
+            for (int x = 0; x < mapHandler.MapWidth; x++)
+                for (int y = 0; y < mapHandler.MapHeight; y++)
                     SetTile(mapHandler.Map[x, y], x, y);
 
             List<Vector2i> treasures = mapHandler.PlaceTreasure();
@@ -102,12 +70,23 @@ namespace RealtimeInteractiveCrawler
         public Tile GetTile(int x, int y)
         {
             Chunk chunk = GetChunk(x, y);
+            
             if (chunk == null)
                 return null;
 
             Vector2i tilePos = GetTilePosFromChunk(x, y);
 
             return chunk.GetTile(tilePos.X, tilePos.Y);
+        }
+
+        public Tile GetTileAbsolutPos(int x, int y)
+        {
+            Tile tile = GetTile(x, y);
+            Chunk chunk = GetChunk(x, y);
+            int X = x + chunk.chunkPos.X * Chunk.CHUNK_SIZE;
+            int Y = y + chunk.chunkPos.Y * Chunk.CHUNK_SIZE;
+
+            return null;
         }
 
         public Chunk GetChunk(int x, int y)
@@ -127,14 +106,9 @@ namespace RealtimeInteractiveCrawler
 
                 return chunks[X][Y];
             }
-            catch (Exception)
-            {
-
-                return null;
-            }
-
+            catch (Exception){ return null; }
+                
         }
-
         public Vector2i GetTilePosFromChunk(int x, int y)
         {
             int X = x / Chunk.CHUNK_SIZE;

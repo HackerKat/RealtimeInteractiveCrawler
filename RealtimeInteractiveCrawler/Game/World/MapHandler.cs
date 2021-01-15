@@ -17,15 +17,13 @@ namespace RealtimeInteractiveCrawler
         public int MapHeight { get; set; }
         public int PercentAreWalls { get; set; }
 
-        private Random rand;
-
         public MapHandler(int mapWidth, int mapHeight, int percentAreWalls, int seed)
         {
             MapWidth = mapWidth;
             MapHeight = mapHeight;
             PercentAreWalls = percentAreWalls;
 
-            rand = new Random(seed);
+            AwesomeGame.Rand = new Random(seed);
 
             RandomFillMap();
         }
@@ -231,7 +229,7 @@ namespace RealtimeInteractiveCrawler
 
         TileType RandomPercent(int percent)
         {
-            if (percent >= rand.Next(1, 101))
+            if (percent >= AwesomeGame.Rand.Next(1, 101))
             {
                 return TileType.GRASS;
             }

@@ -2,6 +2,7 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +14,15 @@ namespace RealtimeInteractiveCrawler
     {
         public Vector2f StartPosition;
 
+        public float Health;
+        public float Attack;
+        public float Defense;
+
         protected RectangleShape rect;
         protected Vector2f velocity;
         protected Vector2f movement;
         protected World world;
-        protected bool isFlying = true;
         protected bool isRectVisible = true;
-        protected bool useGravity = true;
 
 
         public int Direction
@@ -36,9 +39,9 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
-        public Npc(World world)
+        public Npc()
         {
-            this.world = world;
+            this.world = AwesomeGame.world;
         }
 
         public void Spawn()
@@ -59,6 +62,7 @@ namespace RealtimeInteractiveCrawler
             UpdatePhysics();
 
             Position += movement + velocity;
+
             // Fell down outside the window
             if (Position.Y > GameLoop.Window.Size.Y)
                 OnKill();
@@ -76,60 +80,45 @@ namespace RealtimeInteractiveCrawler
 
         private void UpdatePhysics()
         {
-            bool isFalling = true;
-
             velocity.X *= 0.99f;
-
-            // Gravity
-            if (useGravity)
-                velocity.Y += 0.25f;
 
             Vector2f nextPos = Position + velocity - rect.Origin;
             FloatRect playerRect = new FloatRect(nextPos, rect.Size);
 
-            int physicsX = (int)((Position.X - rect.Origin.X + rect.Size.X * 0.5f) / Tile.TILE_SIZE);
-            int physicsY = (int)((Position.Y + rect.Size.Y) / Tile.TILE_SIZE);
-            Tile tile = world.GetTile(physicsX, physicsY);
+            int pX = (int)((Position.X - rect.Origin.X + rect.Size.X * 0.5f) / Tile.TILE_SIZE);
+            int pY = (int)((Position.Y + rect.Size.Y * 0.5f) / Tile.TILE_SIZE);
 
-            if (tile != null)
-            {
-
-                FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
-
-                DebugRender.AddRectangle(tileRect, Color.Red);
-
-                isFalling = !playerRect.Intersects(tileRect);
-                isFlying = isFalling;
-                if (!useGravity)
-                    isFalling = false;
-            }
-            if (!isFalling)
-            {
-                velocity.Y = 0;
-            }
-
-            UpdatePhysicsWall(playerRect, physicsX, physicsY);
+            UpdatePhysicsWall(playerRect, pX, pY);
         }
 
-        private void UpdatePhysicsWall(FloatRect playerRect, int physicsX, int physicsY)
+        private void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
         {
             // TODO all directions
             Tile[] walls = new Tile[]
             {
                 // Left
-                world.GetTile(physicsX - 2, physicsY),
+                world.GetTile(pX - 1, pY),
+                world.GetTile(pX - 1, pY - 1),
+                world.GetTile(pX - 1, pY + 1),
                 // Right
-                world.GetTile(physicsX + 2, physicsY),
+                world.GetTile(pX + 1, pY),
+                world.GetTile(pX + 1, pY - 1),
+                world.GetTile(pX + 1, pY + 1),
                 // Top
-                world.GetTile(physicsX, physicsY - 2),
+                world.GetTile(pX, pY - 1),
+                world.GetTile(pX - 1, pY - 1),
+                world.GetTile(pX + 1, pY - 1),
                 // Down
-                world.GetTile(physicsX, physicsY + 2),
+                world.GetTile(pX, pY),
+                world.GetTile(pX - 1, pY),
+                world.GetTile(pX + 1, pY),
 
             };
 
             foreach (var tile in walls)
             {
-                if (tile == null) continue;
+               
+                if (tile == null || tile.type == TileType.GROUND) continue;
 
                 FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
                 DebugRender.AddRectangle(tileRect, Color.Yellow);
@@ -147,24 +136,32 @@ namespace RealtimeInteractiveCrawler
                     {
                         Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
+                        velocity.X = 0;
+                        //Position = new Vector2f(Position.X + 10, Position.Y);
                     }
                     // Right walls
                     else if (offset.X < 0)
                     {
                         Position = new Vector2f(tileRect.Left - playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
+                        velocity.X = 0;
+                        //Position = new Vector2f(Position.X - 2, Position.Y);
                     }
                     // Top walls
                     else if (offset.Y > 0)
                     {
                         Position = new Vector2f(Position.X, (tileRect.Top + tileRect.Height) + playerRect.Height * 0.5f);
                         movement.Y = 0;
+                        velocity.Y = 0;
+                        //Position = new Vector2f(Position.X, Position.Y + 2);
                     }
                     // Down walls
                     else if (offset.Y < 0)
                     {
                         Position = new Vector2f(Position.X, tileRect.Top - playerRect.Height * 0.5f);
                         movement.Y = 0;
+                        velocity.Y = 0;
+                        //Position = new Vector2f(Position.X, Position.Y - 2);
                     }
 
                     OnWallCollided();

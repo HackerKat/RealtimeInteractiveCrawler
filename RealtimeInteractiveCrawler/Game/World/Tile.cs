@@ -18,19 +18,20 @@ namespace RealtimeInteractiveCrawler
         ENEMY
     }
 
-    class Tile : Transformable, Drawable
+    public class Tile : Transformable, Drawable
     {
         public const int TILE_SIZE = 16;
 
-        TileType type = TileType.GROUND;
-        RectangleShape rectShape;
-        SpriteSheet spriteSheet;
+        public TileType type = TileType.GROUND;
+
+        private RectangleShape rectShape;
+        private SpriteSheet spriteSheet;
 
         // Neighbours
-        Tile upTile;
-        Tile downTile;
-        Tile leftTile;
-        Tile rightTile;
+        private Tile upTile;
+        private Tile downTile;
+        private Tile leftTile;
+        private Tile rightTile;
 
         public Tile UpTile
         {
@@ -124,7 +125,7 @@ namespace RealtimeInteractiveCrawler
 
         public void UpdateView()
         {
-            int i = MainClass.Rand.Next(0, 3);
+            int i = AwesomeGame.Rand.Next(0, 3);
             // When tile has neighbours on each side
             if (upTile != null && downTile != null && leftTile != null && rightTile != null)
             {
@@ -186,6 +187,11 @@ namespace RealtimeInteractiveCrawler
         {
             states.Transform *= Transform;
             target.Draw(rectShape, states);
+        }
+
+        public FloatRect GetFloatRect()
+        {
+            return new FloatRect(Position, new Vector2f(TILE_SIZE, TILE_SIZE));
         }
     }
 }
