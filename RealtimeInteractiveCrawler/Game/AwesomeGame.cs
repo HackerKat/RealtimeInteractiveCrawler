@@ -8,6 +8,9 @@ namespace RealtimeInteractiveCrawler
 {
     class AwesomeGame : GameLoop
     {
+        public static World world;
+        public static Random Rand;
+
         private const uint DEFAULT_WIDTH = 1280;
         private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "OBAMA CARES";
@@ -18,17 +21,18 @@ namespace RealtimeInteractiveCrawler
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
 
-        private World world;
-        NpcSlime slime;
 
-        List<NpcSlime> slimes = new List<NpcSlime>();
+        private NpcSlime slime;
 
+        private List<NpcSlime> slimes = new List<NpcSlime>();
 
         private bool pPressed = false;
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
+
+            Rand = new Random();
         }
 
         public override void Draw(GameTime gameTime)
@@ -49,11 +53,11 @@ namespace RealtimeInteractiveCrawler
         public override void Initialize()
         {
             //networkManager.Connect("localhost");
-            world = new World();
+            world = new World(6);
             world.GenerateWorld();
 
             // Create player
-            player = new Player(world);
+            player = new Player();
             player.Spawn(650, 300);
             // Create example enemy
             //slime = new NpcSlime(world);
@@ -61,9 +65,9 @@ namespace RealtimeInteractiveCrawler
             for (int i = 0; i < 1; i++)
             {
                 return;
-                var slime = new NpcSlime(world);        
-                slime.Direction = MainClass.Rand.Next(0, 2) == 0 ? 1 : -1;
-                slime.Spawn(MainClass.Rand.Next(150, 600), 150);
+                var slime = new NpcSlime();        
+                slime.Direction = Rand.Next(0, 2) == 0 ? 1 : -1;
+                slime.Spawn(Rand.Next(150, 600), 150);
                 slimes.Add(slime);
             }
         }

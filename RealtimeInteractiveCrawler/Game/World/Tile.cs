@@ -121,7 +121,7 @@ namespace RealtimeInteractiveCrawler
 
         public void UpdateView()
         {
-            int i = MainClass.Rand.Next(0, 3);
+            int i = AwesomeGame.Rand.Next(0, 3);
             // When tile has neighbours on each side
             if (upTile != null && downTile != null && leftTile != null && rightTile != null)
             {
@@ -183,6 +183,11 @@ namespace RealtimeInteractiveCrawler
         {
             states.Transform *= Transform;
             target.Draw(rectShape, states);
+        }
+
+        public FloatRect GetFloatRect()
+        {
+            return new FloatRect(Position, new Vector2f(TILE_SIZE, TILE_SIZE));
         }
     }
 }

@@ -14,13 +14,15 @@ namespace RealtimeInteractiveCrawler
     {
         public Vector2f StartPosition;
 
+        public float Health;
+        public float Attack;
+        public float Defense;
+
         protected RectangleShape rect;
         protected Vector2f velocity;
         protected Vector2f movement;
         protected World world;
-        protected bool isFlying = true;
         protected bool isRectVisible = true;
-        protected bool useGravity = true;
 
 
         public int Direction
@@ -37,9 +39,9 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
-        public Npc(World world)
+        public Npc()
         {
-            this.world = world;
+            this.world = AwesomeGame.world;
         }
 
         public void Spawn()
@@ -60,6 +62,7 @@ namespace RealtimeInteractiveCrawler
             UpdatePhysics();
 
             Position += movement + velocity;
+
             // Fell down outside the window
             if (Position.Y > GameLoop.Window.Size.Y)
                 OnKill();
@@ -77,13 +80,7 @@ namespace RealtimeInteractiveCrawler
 
         private void UpdatePhysics()
         {
-            bool isFalling = true;
-
             velocity.X *= 0.99f;
-
-            // Gravity
-            if (useGravity)
-                velocity.Y += 0.25f;
 
             Vector2f nextPos = Position + velocity - rect.Origin;
             FloatRect playerRect = new FloatRect(nextPos, rect.Size);

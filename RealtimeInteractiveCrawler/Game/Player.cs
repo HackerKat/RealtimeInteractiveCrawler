@@ -12,7 +12,6 @@ namespace RealtimeInteractiveCrawler
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;
 
-
         private float positionX;
         private float positionY;
 
@@ -20,10 +19,9 @@ namespace RealtimeInteractiveCrawler
         private SpriteSheet spriteSheet;
         private MovementType lastAnim;
 
-        public Player(World world) : base(world)
+        public Player() : base()
         {
             isRectVisible = true;
-            useGravity = false;
 
             spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
@@ -33,7 +31,7 @@ namespace RealtimeInteractiveCrawler
             //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
             //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
-       
+
             AssignAnimations(animSprite, MovementType.Idle, 2, 1);
             AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
             AssignAnimations(animSprite, MovementType.Up, 0, 9);
@@ -49,12 +47,28 @@ namespace RealtimeInteractiveCrawler
         }
 
         public override void OnWallCollided()
-        {         
+        {
         }
 
         public override void UpdateNPC()
         {
             UpdateMovement();
+
+            var mousePos = Mouse.GetPosition(GameLoop.Window);
+            var tile = world.GerTileByWorldPos(mousePos.X, mousePos.Y);
+            if (tile != null)
+            {
+                FloatRect tileRect = tile.GetFloatRect();
+                DebugRender.AddRectangle(tileRect, Color.Green);
+                // Debug
+                if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                {
+                    int i = (int)(mousePos.X / Tile.TILE_SIZE);
+                    int j = (int)(mousePos.Y / Tile.TILE_SIZE);
+                    world.SetTile(TileType.GROUND, i, j);
+                }
+            }
+
 
             // For server
             positionX = Position.X;
@@ -75,7 +89,9 @@ namespace RealtimeInteractiveCrawler
 
             bool movingOnX = movingLeft || movingRight;
             bool movingOnY = movingUp || movingDown;
-            if (movingOnY){
+
+            if (movingOnY)
+            {
                 if (movingDown)
                 {
                     if (movement.Y < 0)
