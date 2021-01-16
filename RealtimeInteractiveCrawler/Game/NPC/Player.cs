@@ -94,21 +94,25 @@ namespace RealtimeInteractiveCrawler
             }
 
             // Mouse
-            Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
-            Tile tile = world.GetTile(mousePos.X / Tile.TILE_SIZE, mousePos.Y / Tile.TILE_SIZE);
-            if (tile != null)
+            if (UIManager.Over == null && UIManager.Drag == null)
             {
-                FloatRect tileRect = tile.GetFloatRect();
-                DebugRender.AddRectangle(tileRect, Color.Green);
-                // Left Mouse to Erase
-                if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
+                Tile tile = world.GetTile(mousePos.X / Tile.TILE_SIZE, mousePos.Y / Tile.TILE_SIZE);
+                if (tile != null)
                 {
-                    int i = (mousePos.X) / Tile.TILE_SIZE;
-                    int j = (mousePos.Y) / Tile.TILE_SIZE;
-                    if (world.GetTile(i, j).type != TileType.ITEM)
-                        world.SetTile(TileType.GROUND, i, j);
+                    FloatRect tileRect = tile.GetFloatRect();
+                    DebugRender.AddRectangle(tileRect, Color.Green);
+                    // Left Mouse to Erase
+                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    {
+                        int i = (mousePos.X) / Tile.TILE_SIZE;
+                        int j = (mousePos.Y) / Tile.TILE_SIZE;
+                        if (world.GetTile(i, j).type != TileType.ITEM)
+                            world.SetTile(TileType.GROUND, i, j);
+                    }
                 }
             }
+
         }
 
         private void CheckForItems(Side side)

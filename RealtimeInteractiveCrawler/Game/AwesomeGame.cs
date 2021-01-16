@@ -31,6 +31,8 @@ namespace RealtimeInteractiveCrawler
             DebugRender.Enabled = true;
 
             Rand = new Random();
+
+            UIManager.AddControl(new UIWindow());
         }
 
         public override void Initialize()
@@ -139,7 +141,8 @@ namespace RealtimeInteractiveCrawler
                 // SendPlayerUpdate();
             }
             //}
-
+            UIManager.UpdateOver();
+            UIManager.Update();
             // TODO revert debug change
             return;
 
@@ -177,6 +180,7 @@ namespace RealtimeInteractiveCrawler
             Window.Draw(player);
 
             DebugRender.Draw(Window);
+            UIManager.Draw();
 
             //if (isDataReadyToInit)
             //{
