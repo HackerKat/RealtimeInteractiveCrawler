@@ -1,10 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -92,7 +88,7 @@ namespace RealtimeInteractiveCrawler
 
         public RectangleShape RectShape { get => rectShape;}
 
-        public AnimSprite(Texture texture, SpriteSheet spriteSheet)
+        public AnimSprite(SpriteSheet spriteSheet)
         {
             // TODO here, or in player etc. class?
             this.spriteSheet = spriteSheet;
@@ -100,7 +96,7 @@ namespace RealtimeInteractiveCrawler
             rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight))
             {
                 Origin = new Vector2f(spriteSheet.SubWidth * 0.5f, spriteSheet.SubHeight * 0.5f),
-                Texture = texture
+                Texture = spriteSheet.Texture
             };
             rectShape.Scale *= size;
         }

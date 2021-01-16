@@ -21,7 +21,6 @@ namespace RealtimeInteractiveCrawler
         private Dictionary<int, NetworkPlayer> players = new Dictionary<int, NetworkPlayer>();
 
         private float movementSpeed = 5f;
-        private Sprite sprite; // player debug
 
         private bool pPressed = false;
 
@@ -48,9 +47,6 @@ namespace RealtimeInteractiveCrawler
         public override void LoadContent()
         {
             Content.Load();
-
-            sprite = new Sprite();
-            sprite.Texture = Content.TexPlayer;
         }
 
         public void ProcessPacket(Packet p)

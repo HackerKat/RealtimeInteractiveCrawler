@@ -32,8 +32,8 @@ namespace RealtimeInteractiveCrawler
         {
             isRectVisible = true;
 
-            spriteSheet = new SpriteSheet(9, 4, true, 0, Content.TexPlayer);
-            animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
+            spriteSheet = Content.SpritePlayer;
+            animSprite = new AnimSprite(spriteSheet);
             //animSprite.color = Color.Red;
             rect = animSprite.RectShape;
             rect = animSprite.RectShape;

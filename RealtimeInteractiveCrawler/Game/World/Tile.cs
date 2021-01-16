@@ -103,29 +103,29 @@ namespace RealtimeInteractiveCrawler
             switch (type)
             {
                 case TileType.GRASS:
-                    rectShape.Texture = Content.TexGrass;
+                    SpriteSheet = Content.SpriteGrass;
                     break;
                 case TileType.GROUND:
-                    rectShape.Texture = Content.TexGround;                
+                    SpriteSheet = Content.SpriteGround;                
                     break;
                 case TileType.PLAYER:
-                    rectShape.Texture = Content.TexPlayer;
+                    SpriteSheet = Content.SpritePlayer;
                     break;
                 case TileType.SLIME:
-                    rectShape.Texture = Content.Enemy1;
+                    SpriteSheet = Content.SpriteEnemy;
                     break;
                 case TileType.ENEMY:
-                    rectShape.Texture = Content.Enemy2;
+                    SpriteSheet = Content.SpriteEnemy;
                     break;
-                case TileType.ITEM:
-                    rectShape.Texture = Content.TexHealth;
+                case TileType.ITEM: // TODO remove?
+                    SpriteSheet = Content.SpriteHealth;
                     rectShape.Size *= 0.125f;
                     break;
                 default:
                     break;
             }
 
-            SpriteSheet = new SpriteSheet(TILE_SIZE, TILE_SIZE, false, 1, rectShape.Texture);
+            rectShape.Texture = SpriteSheet.Texture;
 
             UpdateView();
         }

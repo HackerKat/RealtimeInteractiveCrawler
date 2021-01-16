@@ -11,32 +11,30 @@ namespace RealtimeInteractiveCrawler
     {
         public const string CONTENT_DIR = "..\\Assets\\";
 
-        public static Texture TexGround; // Ground
-        public static Texture TexGrass; // Grass
+        public static SpriteSheet SpriteGround { get; set; } // Ground
+        public static SpriteSheet SpriteGrass { get; set; } // Grass
+        public static SpriteSheet SpriteEnemy { get; set; } // Enemy
+        public static Font Font { get; set; } //font
 
-        public static Texture Enemy1; // Enemy
-        public static Texture Enemy2; // Enemy
-        public static Font Font; //font
-
-        public static Texture TexPlayer { get; set; } // Player
-        public static Texture TexHealth { get; set; } // Health
-        public static Texture TexAttack { get; set; } // Attack
-        public static Texture TexDefense { get; set; } // Defense
+        public static SpriteSheet SpritePlayer { get; set; } // Player
+        public static SpriteSheet SpriteHealth { get; set; } // Health
+        public static SpriteSheet SpriteAttack { get; set; } // Attack
+        public static SpriteSheet SpriteDefense { get; set; } // Defense
 
         public static void Load()
         {
-            TexGround = new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_0.png");
-            TexGrass = new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_1.png");
+            SpriteGround = new SpriteSheet(Tile.TILE_SIZE, Tile.TILE_SIZE, false, 1, new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_0.png"));
+            SpriteGrass = new SpriteSheet(Tile.TILE_SIZE, Tile.TILE_SIZE, false, 1, new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_1.png"));
 
-            TexPlayer = new Texture(CONTENT_DIR + "Character\\" + "human_base.png");
+            
+            SpritePlayer = new SpriteSheet(9, 4, true, 0, new Texture(CONTENT_DIR + "Character\\" + "human_base.png"));
 
-            TexHealth = new Texture(CONTENT_DIR + "Items\\" + "Health.png");
-            TexAttack = new Texture(CONTENT_DIR + "Items\\" + "Attack.png");
-            TexDefense = new Texture(CONTENT_DIR + "Items\\" + "Defense.png");
-
-
-            Enemy1 = new Texture(CONTENT_DIR + "NPC\\" + "slime.png");
-            Enemy2 = new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png");
+            
+            SpriteHealth = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Health.png"));
+            SpriteAttack = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Attack.png"));
+            SpriteDefense = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Defense.png"));
+           
+            SpriteEnemy = new SpriteSheet(Tile.TILE_SIZE, Tile.TILE_SIZE, false, 1, new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png"));
 
             Font = new Font(CONTENT_DIR + "Fonts\\arial\\arial.ttf");
         }

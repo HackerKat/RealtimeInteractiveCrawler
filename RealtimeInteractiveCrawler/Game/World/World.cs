@@ -27,9 +27,9 @@ namespace RealtimeInteractiveCrawler
                 chunks[i] = new Chunk[WORLD_SIZE];
             }
 
-            itemSpriteSheets.Add(new SpriteSheet(128, 128, false, 0, Content.TexHealth));
-            itemSpriteSheets.Add(new SpriteSheet(128, 128, false, 0, Content.TexAttack));
-            itemSpriteSheets.Add(new SpriteSheet(128, 128, false, 0, Content.TexDefense));
+            itemSpriteSheets.Add(Content.SpriteHealth);
+            itemSpriteSheets.Add(Content.SpriteAttack);
+            itemSpriteSheets.Add(Content.SpriteDefense);
             // TODO other items
         }
 
@@ -48,24 +48,32 @@ namespace RealtimeInteractiveCrawler
                     SetTile(mapHandler.Map[x, y], x, y);
 
             // Items
+            ItemType[] itemTypes = new ItemType[]
+            {
+                ItemType.ATTACK,
+                ItemType.DEFENSE,
+                ItemType.HEALTH
+            };
+            
             List<Vector2i> itemsAttack = mapHandler.PlaceTreasure(4);
             for (int i = 0; i < itemsAttack.Count; i++)
             {
                 mapHandler.Map[itemsAttack[i].X, itemsAttack[i].Y] = TileType.ITEM;
-                SetItem(ItemType.ATTACK, itemsAttack[i].X, itemsAttack[i].Y);
+                int nextType = AwesomeGame.Rand.Next(0, itemTypes.Length);
+                SetItem(itemTypes[nextType], itemsAttack[i].X, itemsAttack[i].Y);
             }
-            List<Vector2i> itemsDefense = mapHandler.PlaceTreasure(5);
-            for (int i = 0; i < itemsDefense.Count; i++)
-            {
-                mapHandler.Map[itemsDefense[i].X, itemsDefense[i].Y] = TileType.ITEM;
-                SetItem(ItemType.DEFENSE, itemsDefense[i].X, itemsDefense[i].Y);
-            }
-            List<Vector2i> itemsHealth = mapHandler.PlaceTreasure(6);
-            for (int i = 0; i < itemsHealth.Count; i++)
-            {
-                mapHandler.Map[itemsHealth[i].X, itemsHealth[i].Y] = TileType.ITEM;
-                SetItem(ItemType.HEALTH, itemsHealth[i].X, itemsHealth[i].Y);
-            }
+            //List<Vector2i> itemsDefense = mapHandler.PlaceTreasure(5);
+            //for (int i = 0; i < itemsDefense.Count; i++)
+            //{
+            //    mapHandler.Map[itemsDefense[i].X, itemsDefense[i].Y] = TileType.ITEM;
+            //    SetItem(ItemType.DEFENSE, itemsDefense[i].X, itemsDefense[i].Y);
+            //}
+            //List<Vector2i> itemsHealth = mapHandler.PlaceTreasure(6);
+            //for (int i = 0; i < itemsHealth.Count; i++)
+            //{
+            //    mapHandler.Map[itemsHealth[i].X, itemsHealth[i].Y] = TileType.ITEM;
+            //    SetItem(ItemType.HEALTH, itemsHealth[i].X, itemsHealth[i].Y);
+            //}
 
 
 
