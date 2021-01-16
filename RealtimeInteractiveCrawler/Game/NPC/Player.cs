@@ -23,7 +23,7 @@ namespace RealtimeInteractiveCrawler
         {
             isRectVisible = true;
 
-            spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
+            spriteSheet = new SpriteSheet(9, 4, true, 0, Content.TexPlayer);
             animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
             //animSprite.color = Color.Red;
             rect = animSprite.RectShape;
@@ -58,9 +58,7 @@ namespace RealtimeInteractiveCrawler
             //Debug.WriteLine(chunk.ToString() + " chunk pos");
             if (tile != null)
             {
-                Debug.WriteLine(tile.Position.X + " tile pos");
                 FloatRect tileRect = tile.GetFloatRect();
-                //tileRect = new FloatRect(new Vector2f(mousePos.X, mousePos.Y), new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
                 DebugRender.AddRectangle(tileRect, Color.Green);
                 // Debug
                 if (Mouse.IsButtonPressed(Mouse.Button.Left))
@@ -68,6 +66,7 @@ namespace RealtimeInteractiveCrawler
                     int i = (int)(mousePos.X) / Tile.TILE_SIZE;
                     int j = (int)(mousePos.Y) / Tile.TILE_SIZE;
                     world.SetTile(TileType.GROUND, i, j);
+                    Debug.WriteLine(mousePos);
                 }
             }
 

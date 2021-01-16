@@ -17,7 +17,7 @@ namespace RealtimeInteractiveCrawler
 
         public NpcSlime() : base()
         {
-            spriteSheet = new SpriteSheet(1, 2, 0, (int)Content.TexPlay1.Size.X, (int)Content.TexPlay1.Size.Y);
+            spriteSheet = new SpriteSheet(1, 2, true, 0, Content.Enemy1);
 
             // Size of rectangle
             rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * 0.8f, spriteSheet.SubHeight * 0.8f));
@@ -25,7 +25,7 @@ namespace RealtimeInteractiveCrawler
             rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
             rect.FillColor = new Color(0, 255, 0, 127);
 
-            rect.Texture = Content.TexPlay1;
+            rect.Texture = Content.Enemy1;
             rect.TextureRect = spriteSheet.GetTextureRect(0, 0);
         }
 

@@ -18,7 +18,7 @@ namespace RealtimeInteractiveCrawler
 
         public NetworkPlayer(int x, int y)
         {
-            spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlayer.Size.X, (int)Content.TexPlayer.Size.Y);
+            spriteSheet = new SpriteSheet(9, 4, true, 0, Content.TexPlayer);
             //animSprite = new AnimSprite(Content.TexPlayer, spriteSheet);
             
            

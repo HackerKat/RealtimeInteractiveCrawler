@@ -15,17 +15,18 @@ namespace RealtimeInteractiveCrawler
         GRASS,
         SLIME,
         PLAYER,
-        ENEMY
+        ENEMY, 
+        ITEM
     }
 
     public class Tile : Transformable, Drawable
     {
         public const int TILE_SIZE = 16;
-
         public TileType type = TileType.GROUND;
+        public SpriteSheet SpriteSheet { get; set; }
+
 
         private RectangleShape rectShape;
-        private SpriteSheet spriteSheet;
 
         // Neighbours
         private Tile upTile;
@@ -97,28 +98,34 @@ namespace RealtimeInteractiveCrawler
                 rightTile.LeftTile = this;
             }
 
+            Texture selectedTex;
+
             switch (type)
             {
                 case TileType.GRASS:
                     rectShape.Texture = Content.TexGrass;
                     break;
                 case TileType.GROUND:
-                    rectShape.Texture = Content.TextGround;                
+                    rectShape.Texture = Content.TexGround;                
                     break;
                 case TileType.PLAYER:
                     rectShape.Texture = Content.TexPlayer;
                     break;
                 case TileType.SLIME:
-                    rectShape.Texture = Content.TexPlay1;
+                    rectShape.Texture = Content.Enemy1;
                     break;
                 case TileType.ENEMY:
-                    rectShape.Texture = Content.TexPlay2;
+                    rectShape.Texture = Content.Enemy2;
+                    break;
+                case TileType.ITEM:
+                    rectShape.Texture = Content.TexHealth;
+                    rectShape.Size *= 0.125f;
                     break;
                 default:
                     break;
             }
 
-            spriteSheet = new SpriteSheet(TILE_SIZE, TILE_SIZE, 1);
+            SpriteSheet = new SpriteSheet(TILE_SIZE, TILE_SIZE, false, 1, rectShape.Texture);
 
             UpdateView();
         }
@@ -129,56 +136,56 @@ namespace RealtimeInteractiveCrawler
             // When tile has neighbours on each side
             if (upTile != null && downTile != null && leftTile != null && rightTile != null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(1 + i, 1);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(1 + i, 1);
             }
             // When tile has no neighbours
             else if(upTile == null && downTile == null && leftTile == null && rightTile == null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(9 + i, 3);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(9 + i, 3);
             }
 
             // ------------------------------------ up / down / left / right
             // When there is no up neighbour
             else if (upTile == null && downTile != null && leftTile != null && rightTile != null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(1 + i, 0);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(1 + i, 0);
             }
             // When there is no down neighbour
             else if (upTile != null && downTile == null && leftTile != null && rightTile != null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(1 + i, 2);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(1 + i, 2);
             }
             // When there is no left neighbour
             else if (upTile != null && downTile != null && leftTile == null && rightTile != null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(0, i);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(0, i);
             }
             // When there is no right neighbour
             else if (upTile != null && downTile != null && leftTile != null && rightTile == null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(4, i);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(4, i);
             }
 
             // ------------------------------------
             // when there is no up and left neighbour
             else if (upTile == null && downTile != null && leftTile == null && rightTile != null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(i * 2, 3);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(i * 2, 3);
             }
             // when there is no up and right neighbour
             else if (upTile == null && downTile != null && leftTile != null && rightTile == null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(1 + i * 2, 3);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(1 + i * 2, 3);
             }
             // when there is no down and left neighbour
             else if (upTile != null && downTile == null && leftTile == null && rightTile != null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(i * 2, 4);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(i * 2, 4);
             }
             // when there is no down and right neighbour
             else if (upTile != null && downTile == null && leftTile != null && rightTile == null)
             {
-                rectShape.TextureRect = spriteSheet.GetTextureRect(1 + i * 2, 4);
+                rectShape.TextureRect = SpriteSheet.GetTextureRect(1 + i * 2, 4);
             }
 
         }

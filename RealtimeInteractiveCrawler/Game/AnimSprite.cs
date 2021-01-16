@@ -94,6 +94,7 @@ namespace RealtimeInteractiveCrawler
 
         public AnimSprite(Texture texture, SpriteSheet spriteSheet)
         {
+            // TODO here, or in player etc. class?
             this.spriteSheet = spriteSheet;
             float size = 2;
             rectShape = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight))

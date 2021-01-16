@@ -138,6 +138,7 @@ namespace RealtimeInteractiveCrawler
             //{
             if (hasFocus)
             {
+                world.Update();
                 player.Update();
                 // SendPlayerUpdate();
             }

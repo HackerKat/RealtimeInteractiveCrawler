@@ -11,24 +11,28 @@ namespace RealtimeInteractiveCrawler
     {
         public const string CONTENT_DIR = "..\\Assets\\";
 
-        public static Texture TextGround; // Ground
+        public static Texture TexGround; // Ground
         public static Texture TexGrass; // Grass
 
-        private static Texture texPlayer; // Player
-        public static Texture TexPlay1; // Enemy
-        public static Texture TexPlay2; // Enemy
+        public static Texture Enemy1; // Enemy
+        public static Texture Enemy2; // Enemy
         public static Font Font; //font
 
-        public static Texture TexPlayer { get => texPlayer;}
+        public static Texture TexPlayer { get; set; } // Player
+        public static Texture TexHealth { get; set; } // Player
 
         public static void Load()
         {
-            TextGround = new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_0.png");
+            TexGround = new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_0.png");
             TexGrass = new Texture(CONTENT_DIR + "TerrariaImages\\" + "Tiles_1.png");
 
-            texPlayer = new Texture(CONTENT_DIR + "Character\\" + "human_base.png");
-            TexPlay1 = new Texture(CONTENT_DIR + "NPC\\" + "slime.png");
-            TexPlay2 = new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png");
+            TexPlayer = new Texture(CONTENT_DIR + "Character\\" + "human_base.png");
+
+            TexHealth = new Texture(CONTENT_DIR + "Items\\" + "Health.png");
+
+
+            Enemy1 = new Texture(CONTENT_DIR + "NPC\\" + "slime.png");
+            Enemy2 = new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png");
 
             Font = new Font(CONTENT_DIR + "Fonts\\arial\\arial.ttf");
         }
