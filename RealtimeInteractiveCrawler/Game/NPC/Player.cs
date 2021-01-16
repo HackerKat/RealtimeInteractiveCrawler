@@ -148,9 +148,14 @@ namespace RealtimeInteractiveCrawler
                     break;
             }
 
-            if (tilesTowardsPlayer.Exists(item => item.type == TileType.ITEM))
+            Tile foundItem = tilesTowardsPlayer.Find(item => item.type == TileType.ITEM);
+            if (foundItem != null)
             {
-                Debug.WriteLine("huray, item!");
+
+                World.Items.TryGetValue(foundItem, out Item actualItem);
+                if (actualItem == null) return;
+                Debug.WriteLine("huray, item! " + actualItem.TypeItem.ToString());
+                actualItem.IsDestroyed = true;
             }
         }
 

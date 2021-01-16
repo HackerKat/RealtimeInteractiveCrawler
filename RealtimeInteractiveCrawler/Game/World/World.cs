@@ -16,7 +16,7 @@ namespace RealtimeInteractiveCrawler
         // 0 = health, 1 = attack, 2 = defense, 3 = eraser
         private List<SpriteSheet> itemSpriteSheets = new List<SpriteSheet>();
         //private List<Item> items = new List<Item>();
-        public Dictionary<Tile, Item> Items = new Dictionary<Tile, Item>();
+        public static Dictionary<Tile, Item> Items = new Dictionary<Tile, Item>();
 
         public World()
         {
@@ -90,7 +90,7 @@ namespace RealtimeInteractiveCrawler
 
             item.Spawn(tile.Position.X, tile.Position.Y);
 
-            
+
         }
 
         public void SetTile(TileType tileType, int x, int y)
@@ -163,13 +163,16 @@ namespace RealtimeInteractiveCrawler
 
         public void Update()
         {
+            Tile keyWhereToRemove = null;
             foreach (var item in Items)
             {
                 if (item.Value.IsDestroyed)
-                    Items.Remove(item.Key);
+                    keyWhereToRemove = item.Key;
                 else
                     item.Value.Update();
             }
+            if (keyWhereToRemove != null)
+                Items.Remove(keyWhereToRemove);
         }
 
         public void Draw(RenderTarget target, RenderStates states)
