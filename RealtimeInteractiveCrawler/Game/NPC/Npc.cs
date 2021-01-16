@@ -12,9 +12,9 @@ namespace RealtimeInteractiveCrawler
 {
     abstract class Npc : Entity
     {      
-        public float Health;
-        public float Attack;
-        public float Defense;
+        public int Health;
+        public int Attack;
+        public int Defense;
 
         public int Direction
         {

@@ -28,6 +28,8 @@ namespace RealtimeInteractiveCrawler
             }
 
             itemSpriteSheets.Add(new SpriteSheet(128, 128, false, 0, Content.TexHealth));
+            itemSpriteSheets.Add(new SpriteSheet(128, 128, false, 0, Content.TexAttack));
+            itemSpriteSheets.Add(new SpriteSheet(128, 128, false, 0, Content.TexDefense));
             // TODO other items
         }
 
@@ -45,13 +47,28 @@ namespace RealtimeInteractiveCrawler
                 for (int x = 0; x < mapHandler.MapWidth; x++)
                     SetTile(mapHandler.Map[x, y], x, y);
 
-            List<Vector2i> treasures = mapHandler.PlaceTreasure();
-            for (int i = 0; i < treasures.Count; i++)
+            // Items
+            List<Vector2i> itemsAttack = mapHandler.PlaceTreasure(4);
+            for (int i = 0; i < itemsAttack.Count; i++)
             {
-                mapHandler.Map[treasures[i].X, treasures[i].Y] = TileType.ITEM;
-                SetItem(ItemType.HEALTH, treasures[i].X, treasures[i].Y);
-                //SetTile(TileType.ENEMY, (int)treasures[i].X, (int)treasures[i].Y);
+                mapHandler.Map[itemsAttack[i].X, itemsAttack[i].Y] = TileType.ITEM;
+                SetItem(ItemType.ATTACK, itemsAttack[i].X, itemsAttack[i].Y);
             }
+            List<Vector2i> itemsDefense = mapHandler.PlaceTreasure(5);
+            for (int i = 0; i < itemsDefense.Count; i++)
+            {
+                mapHandler.Map[itemsDefense[i].X, itemsDefense[i].Y] = TileType.ITEM;
+                SetItem(ItemType.DEFENSE, itemsDefense[i].X, itemsDefense[i].Y);
+            }
+            List<Vector2i> itemsHealth = mapHandler.PlaceTreasure(6);
+            for (int i = 0; i < itemsHealth.Count; i++)
+            {
+                mapHandler.Map[itemsHealth[i].X, itemsHealth[i].Y] = TileType.ITEM;
+                SetItem(ItemType.HEALTH, itemsHealth[i].X, itemsHealth[i].Y);
+            }
+
+
+
 
             //List<Vector2i> enemies = mapHandler.PlaceEnemies();
             //for (int i = 0; i < enemies.Count; i++)

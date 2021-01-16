@@ -311,12 +311,12 @@ namespace RealtimeInteractiveCrawler
         }
 
 
-        public List<Vector2i> PlaceTreasure()
+        public List<Vector2i> PlaceTreasure(int hiddenLimit)
         {
-            List<Vector2i> allSlimes = new List<Vector2i>();
+            List<Vector2i> allItems = new List<Vector2i>();
             //How hidden does a spot need to be for treasure?
             //I find 5 or 6 is good. 6 for very rare treasure.
-            int treasureHiddenLimit = 5;
+            int treasureHiddenLimit = hiddenLimit;
             for (int x = 0; x < MapWidth; x++)
             {
                 for (int y = 0; y < MapHeight; y++)
@@ -326,13 +326,13 @@ namespace RealtimeInteractiveCrawler
                         int nbs = CountAliveNeighbours(x, y);
                         if (nbs >= treasureHiddenLimit)
                         {
-                            allSlimes.Add(new Vector2i(x, y));
+                            allItems.Add(new Vector2i(x, y));
                         }
                     }
                 }
             }
 
-            return allSlimes;
+            return allItems;
         }
 
         public List<Vector2i> PlaceEnemies()

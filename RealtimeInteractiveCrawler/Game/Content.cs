@@ -19,7 +19,9 @@ namespace RealtimeInteractiveCrawler
         public static Font Font; //font
 
         public static Texture TexPlayer { get; set; } // Player
-        public static Texture TexHealth { get; set; } // Player
+        public static Texture TexHealth { get; set; } // Health
+        public static Texture TexAttack { get; set; } // Attack
+        public static Texture TexDefense { get; set; } // Defense
 
         public static void Load()
         {
@@ -29,6 +31,8 @@ namespace RealtimeInteractiveCrawler
             TexPlayer = new Texture(CONTENT_DIR + "Character\\" + "human_base.png");
 
             TexHealth = new Texture(CONTENT_DIR + "Items\\" + "Health.png");
+            TexAttack = new Texture(CONTENT_DIR + "Items\\" + "Attack.png");
+            TexDefense = new Texture(CONTENT_DIR + "Items\\" + "Defense.png");
 
 
             Enemy1 = new Texture(CONTENT_DIR + "NPC\\" + "slime.png");

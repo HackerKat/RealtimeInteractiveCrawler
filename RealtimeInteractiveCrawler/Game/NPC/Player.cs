@@ -77,18 +77,15 @@ namespace RealtimeInteractiveCrawler
                 switch (lastAnim)
                 {
                     case MovementType.Horizontal:
-                        Debug.WriteLine("Horizontal");
                         Side side;
                         side = Direction == 1 ? Side.RIGHT : Side.LEFT;
                         CheckForItems(side);
                         break;
                     case MovementType.Up:
-                        Debug.WriteLine("UP");
                         CheckForItems(Side.UP);
                         break;
                     case MovementType.Down:
                     case MovementType.Idle:
-                        Debug.WriteLine("Down");
                         CheckForItems(Side.DOWN);
                         break;
                     default:
@@ -138,6 +135,9 @@ namespace RealtimeInteractiveCrawler
                     tilesTowardsPlayer.Add(world.GetTile(pX, pY + 1));
                     tilesTowardsPlayer.Add(world.GetTile(pX - 1, pY + 1));
                     tilesTowardsPlayer.Add(world.GetTile(pX + 1, pY + 1));
+                    tilesTowardsPlayer.Add(world.GetTile(pX, pY));
+                    tilesTowardsPlayer.Add(world.GetTile(pX - 1, pY));
+                    tilesTowardsPlayer.Add(world.GetTile(pX + 1, pY));
                     break;
                 case Side.LEFT:
                     tilesTowardsPlayer.Add(world.GetTile(pX - 1, pY));
@@ -155,8 +155,41 @@ namespace RealtimeInteractiveCrawler
                 World.Items.TryGetValue(foundItem, out Item actualItem);
                 if (actualItem == null) return;
                 Debug.WriteLine("huray, item! " + actualItem.TypeItem.ToString());
+                switch (actualItem.TypeItem)
+                {
+                    case Item.ItemType.HEALTH:
+                        ChangeHealth(10);
+                        break;
+                    case Item.ItemType.ATTACK:
+                        ChangeAttack(2);
+                        break;
+                    case Item.ItemType.DEFENSE:
+                        ChangeDefense(5);
+                        break;
+                    case Item.ItemType.ERASER:
+                        break;
+                    default:
+                        break;
+                }
                 actualItem.IsDestroyed = true;
+                foundItem.type = TileType.GROUND;
             }
+        }
+
+        public void ChangeHealth(int health)
+        {
+            Health += health;
+            Debug.WriteLine(Health + " my health");
+        }
+        public void ChangeAttack(int attack)
+        {
+            Attack += attack;
+            Debug.WriteLine(Attack + " my attack");
+        }
+        public void ChangeDefense(int defense)
+        {
+            Defense += defense;
+            Debug.WriteLine(Defense + " my defense");
         }
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
