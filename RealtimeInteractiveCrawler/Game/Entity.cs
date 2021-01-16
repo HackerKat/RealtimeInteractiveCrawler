@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using System;
+using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -79,7 +80,7 @@ namespace RealtimeInteractiveCrawler
             };
 
             foreach (var tile in walls)
-            {
+            {            
                 if (tile == null || tile.type == TileType.GROUND) continue;
 
                 FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
@@ -96,10 +97,10 @@ namespace RealtimeInteractiveCrawler
                     // Left walls
                     if (offset.X > 0)
                     {
+                        // Sends the player one tile away
                         Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
                         velocity.X = 0;
-                        //Position = new Vector2f(Position.X + 10, Position.Y);
                     }
                     // Right walls
                     else if (offset.X < 0)
