@@ -7,17 +7,21 @@ namespace Server
         public const int CHUNK_SIZE = 25;
 
         Tile[][] tiles;
-        Vector2 chunkPos;
+        public Vector2 chunkPos;
         public Vector2 Position
         {
             get;
             set;
         }
 
+        public Vector2 Origin { get; set; }
+
         public Chunk(Vector2 chunkPos)
         {
             this.chunkPos = chunkPos;
             Position = new Vector2(chunkPos.X * CHUNK_SIZE * Tile.TILE_SIZE, chunkPos.Y * CHUNK_SIZE * Tile.TILE_SIZE);
+
+            Origin = new Vector2(Position.X + Tile.TILE_SIZE * CHUNK_SIZE * 0.5f, Position.Y + Tile.TILE_SIZE * CHUNK_SIZE * 0.5f);
 
             tiles = new Tile[CHUNK_SIZE][];
 

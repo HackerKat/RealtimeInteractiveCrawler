@@ -223,6 +223,8 @@ namespace Server
                 pb.Add(enemy.Id);
                 pb.Add(enemy.Position.X);
                 pb.Add(enemy.Position.Y);
+                pb.Add(enemy.chunk.chunkPos.X);
+                pb.Add(enemy.chunk.chunkPos.Y);
             }
             Packet packet = pb.Build();
 

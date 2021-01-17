@@ -171,6 +171,9 @@ namespace RealtimeInteractiveCrawler
                 int id = pr.GetInt();
                 int x = (int)pr.GetFloat();
                 int y = (int)pr.GetFloat();
+                float chunkX = pr.GetFloat();
+                float chunkY = pr.GetFloat();
+                enemies[id].Chunk = world.GetChunk((int)chunkX, (int)chunkY);
                 enemies[id].UpdatePos(x, y);
             }
         }

@@ -10,7 +10,7 @@ namespace Server
     {
         public const int WORLD_SIZE = 3;
 
-        Chunk[][] chunks;
+        public Chunk[][] chunks;
         public ConcurrentBag<Entity> enemies = new ConcurrentBag<Entity>();
         private int entityId = 1000;
         
@@ -67,13 +67,11 @@ namespace Server
             List<Vector2> enemyTiles = mapHandler.PlaceEnemies();
             for (int i = 0; i < enemyTiles.Count; i++)
             {
-                mapHandler.Map[(int)enemyTiles[i].X, (int)enemyTiles[i].Y] = TileType.ENEMY;
-                SetTile(TileType.ENEMY, (int)enemyTiles[i].X, (int)enemyTiles[i].Y);
-
                 Tile t = GetTile((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
                 Vector2 absolPos = t.Position;
+                Chunk chunk = GetChunk((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
 
-                enemies.Add(new Entity((int)absolPos.X, (int)absolPos.Y, entityId++));
+                enemies.Add(new Entity((int)absolPos.X, (int)absolPos.Y, entityId++, chunk));
             }
             Console.WriteLine(enemyTiles.Count);
         }
