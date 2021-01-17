@@ -21,7 +21,9 @@ namespace RealtimeInteractiveCrawler
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;
 
-        public static UIInventory Inventory;
+        public bool ClientPlayer;
+
+        //public static UIInventory Inventory;
 
         private float positionX;
         private float positionY;
@@ -61,6 +63,8 @@ namespace RealtimeInteractiveCrawler
 
         public override void UpdateNPC()
         {
+            if (!ClientPlayer) return;
+
             UpdateMovement();
             UpdateInteractions();
 
@@ -96,8 +100,8 @@ namespace RealtimeInteractiveCrawler
             }
 
             // Mouse
-            if (UIManager.Over == null && UIManager.Drag == null)
-            {
+            //if (UIManager.Over == null && UIManager.Drag == null)
+            //{
                 Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
                 Tile tile = world.GetTile(mousePos.X / Tile.TILE_SIZE, mousePos.Y / Tile.TILE_SIZE);
                 if (tile != null)
@@ -113,7 +117,7 @@ namespace RealtimeInteractiveCrawler
                             world.SetTile(TileType.GROUND, i, j);
                     }
                 }
-            }
+            //}
 
         }
 
@@ -283,6 +287,11 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
+        public void UpdatePos(int x, int y)
+        {
+            // TODO anim
+            Position = new Vector2f(x, y);
+        }
 
     }
 }

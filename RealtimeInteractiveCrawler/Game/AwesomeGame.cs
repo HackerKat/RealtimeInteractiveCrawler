@@ -18,7 +18,7 @@ namespace RealtimeInteractiveCrawler
         private NetworkManager networkManager = new NetworkManager();
         private Player player;
         private bool isDataReadyToInit = false;
-        private Dictionary<int, NetworkPlayer> players = new Dictionary<int, NetworkPlayer>();
+        private Dictionary<int, Player> players = new Dictionary<int, Player>();
 
         private float movementSpeed = 5f;
 
@@ -32,19 +32,19 @@ namespace RealtimeInteractiveCrawler
 
             Rand = new Random();
 
-            Player.Inventory = new UIInventory();
-            UIManager.AddControl(Player.Inventory);
+            //Player.Inventory = new UIInventory();
+            //UIManager.AddControl(Player.Inventory);
         }
 
         public override void Initialize()
         {
-            //networkManager.Connect("localhost");
+            networkManager.Connect("localhost");
             world = new World();
 
-            player = new Player();
-            player.Spawn(650, 300);
+            //player = new Player();
+            //player.Spawn(650, 300);
 
-            world.GenerateWorld(5);
+            //world.GenerateWorld(5);
         }
 
         public override void LoadContent()
@@ -82,8 +82,11 @@ namespace RealtimeInteractiveCrawler
 
             Console.WriteLine("init data get processed");
             Console.WriteLine("my connection id is: " + connectionId);
+
             player = new Player();
+            player.ClientPlayer = true;
             player.Spawn(spawnX, spawnY);
+            players.Add(connectionId, player);
             world.GenerateWorld(seed);
             isDataReadyToInit = true;
         }
@@ -97,8 +100,8 @@ namespace RealtimeInteractiveCrawler
             int spawnY = pr.GetInt();
 
             Console.WriteLine("new player data get processed");
-            NetworkPlayer newPlayer = new NetworkPlayer(spawnX, spawnY);
-            //newPlayer.Spawn(spawnX, spawnY);
+            Player newPlayer = new Player();
+            newPlayer.Spawn(spawnX, spawnY);
             players.Add(connId, newPlayer);
             Console.WriteLine("new player joined: " + connId);
         }
@@ -106,6 +109,7 @@ namespace RealtimeInteractiveCrawler
         public void SendPlayerUpdate()
         {
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_MY_POS);
+
             pb.Add(connectionId);
             pb.Add(player.Position.X);
             pb.Add(player.Position.Y);
@@ -124,7 +128,7 @@ namespace RealtimeInteractiveCrawler
             Console.WriteLine("Get data from player: " + id);
             if (players.ContainsKey(id))
             {
-                NetworkPlayer np = players[id];
+                Player np = players[id];
                 Console.WriteLine("network player has moved to x: " + np.Position.X);
                 Console.WriteLine("network player has moved to y: " + np.Position.Y);
                 np.UpdatePos(x, y);
@@ -133,19 +137,18 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
-            //if (isDataReadyToInit)
-            //{
-            if (hasFocus)
+            if (isDataReadyToInit)
             {
-                world.Update();
-                player.Update();
-                // SendPlayerUpdate();
+                if (hasFocus)
+                {
+                    world.Update();
+                    player.Update();
+                    SendPlayerUpdate();
+                }
             }
-            //}
-            UIManager.UpdateOver();
-            UIManager.Update();
+            //UIManager.UpdateOver();
+            //UIManager.Update();
             // TODO revert debug change
-            return;
 
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
@@ -177,21 +180,20 @@ namespace RealtimeInteractiveCrawler
             //DebugUtility.DrawPerformanceData(Color.White);
 
             // TODO remove debug
-            Window.Draw(world);
-            Window.Draw(player);
+            //Window.Draw(world);
+            //Window.Draw(player);
 
             DebugRender.Draw(Window);
-            UIManager.Draw();
+            //UIManager.Draw();
 
-            //if (isDataReadyToInit)
-            //{
-            //    Window.Draw(world);
-            //    Window.Draw(player);
-            //    foreach (NetworkPlayer np in players.Values)
-            //    {
-            //        Window.Draw(np);
-            //    }
-            //}
+            if (isDataReadyToInit)
+            {
+                Window.Draw(world);
+                foreach (Player np in players.Values)
+                {
+                    Window.Draw(np);
+                }
+            }
 
         }
     }

@@ -58,9 +58,10 @@
     <Compile Include="Game\AnimSprite.cs" />
     <Compile Include="Game\AwesomeGame.cs" />
     <Compile Include="Game\Items\Item.cs" />
-    <Compile Include="Game\NetworkPlayer.cs" />
+    <Compile Include="Game\NPC\NetworkPlayer.cs" />
     <Compile Include="Game\UI\UIBase.cs" />
     <Compile Include="Game\UI\UIInventory.cs" />
+    <Compile Include="Game\UI\UIInventoryCell.cs" />
     <Compile Include="Game\UI\UIManager.cs" />
     <Compile Include="Game\UI\UIWindow.cs" />
     <Compile Include="Game\World\Chunk.cs" />

@@ -9,13 +9,14 @@ using static RealtimeInteractiveCrawler.AnimSprite;
 
 namespace RealtimeInteractiveCrawler
 {
-    class NetworkPlayer : Transformable, Drawable
+    class NetworkPlayer : Npc
     {
         AnimSprite animSprite;
 
         private SpriteSheet spriteSheet;
         private RectangleShape rect;
 
+        // TODO sprite
         public NetworkPlayer(int x, int y)
         {
             spriteSheet = Content.SpritePlayer;
@@ -44,8 +45,25 @@ namespace RealtimeInteractiveCrawler
             target.Draw(rect, states);
         }
 
+        public override void DrawNPC(RenderTarget target, RenderStates states)
+        {
+        }
+
+        public override void OnKill()
+        {
+        }
+
+        public override void OnWallCollided()
+        {
+        }
+
+        public override void UpdateNPC()
+        {
+        }
+
         public void UpdatePos(int x, int y)
         {
+            // TODO anim
             Position = new Vector2f(x, y);
         }
     }
