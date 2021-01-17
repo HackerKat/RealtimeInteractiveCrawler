@@ -21,6 +21,8 @@ namespace RealtimeInteractiveCrawler
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;
 
+        public static UIInventory Inventory;
+
         private float positionX;
         private float positionY;
 

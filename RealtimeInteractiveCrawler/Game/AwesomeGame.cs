@@ -32,7 +32,8 @@ namespace RealtimeInteractiveCrawler
 
             Rand = new Random();
 
-            UIManager.AddControl(new UIWindow());
+            Player.Inventory = new UIInventory();
+            UIManager.AddControl(Player.Inventory);
         }
 
         public override void Initialize()

@@ -2,6 +2,7 @@
 using SFML.System;
 using SFML.Window;
 using System;
+using System.Collections.Generic;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -9,6 +10,7 @@ namespace RealtimeInteractiveCrawler
     {
         public UIBase OldParent = null;
         public UIBase Parent = null;
+        public List<UIBase> Children = new List<UIBase>();
 
         public new Vector2i Position
         {
@@ -85,24 +87,43 @@ namespace RealtimeInteractiveCrawler
                 if(UIManager.Drag != this)
                 {
                     UIManager.Over = this;
-                } 
+                }
+
+                for (int i = 0; i < Children.Count; i++)
+                {
+                    Children[i].UpdateOver(mousePos);
+                }
+
             }
         }
 
         public virtual void Update()
         {
-
+            foreach (var c in Children)
+            {
+                c.Update();
+            }
         }
 
         public virtual void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
             target.Draw(rectShape, states);
+
+            foreach (var c in Children)
+            {
+                if (c != UIManager.Drag)
+                    target.Draw(c, states);
+            }
         }
 
         public virtual void OnDragBegin()
         {
             OldParent = Parent;
+
+            if (Parent != null)
+                Parent.Children.Remove(this);
+
             Parent = null;
         }
 
@@ -113,6 +134,9 @@ namespace RealtimeInteractiveCrawler
 
         public virtual void OnCancelDrag()
         {
+            if (OldParent != null)
+                OldParent.Children.Add(this);
+
             Parent = OldParent;
             Position = new Vector2i();
         }

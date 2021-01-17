@@ -39,7 +39,7 @@ namespace RealtimeInteractiveCrawler
                     var mousePosLocal = Mouse.GetPosition(GameLoop.Window);
                     Drag.Position = mousePosLocal - Drag.DragOffset;
                 }
-                else
+                else // Mouser released
                 {
                     if (Over != null)
                         Over.OnDrop(Drag);

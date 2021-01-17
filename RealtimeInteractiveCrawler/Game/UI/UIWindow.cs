@@ -16,7 +16,7 @@ namespace RealtimeInteractiveCrawler
 
         public UIWindow()
         {
-            rectShape = new RectangleShape(new Vector2f(400, 300));
+            rectShape = new RectangleShape(new Vector2f(400, 100));
             rectShapeTitleBar = new RectangleShape(new Vector2f(rectShape.Size.X, TITLE_BAR_HEIGHT));
 
             ApplyColors();
