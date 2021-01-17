@@ -26,6 +26,24 @@ namespace Server
             }
         }
 
+        public Vector2 GetSpawnPoint(Random rand)
+        {
+            Chunk firstChunk = chunks[0][0];
+            int tx = rand.Next(Chunk.CHUNK_SIZE);
+            int ty = rand.Next(Chunk.CHUNK_SIZE);
+
+            while(firstChunk.GetTile(tx, ty).type != TileType.GROUND)
+            {
+                tx = rand.Next(Chunk.CHUNK_SIZE);
+                ty = rand.Next(Chunk.CHUNK_SIZE);
+            }
+
+            float x = firstChunk.GetTile(tx, ty).Position.X;
+            float y = firstChunk.GetTile(tx, ty).Position.Y;
+
+            return new Vector2(x, y);
+        }
+
         public void GenerateWorld(int seed)
         {
             int size = WORLD_SIZE * Chunk.CHUNK_SIZE;

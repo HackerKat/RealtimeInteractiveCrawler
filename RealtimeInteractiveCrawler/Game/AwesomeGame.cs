@@ -82,8 +82,8 @@ namespace RealtimeInteractiveCrawler
 
             connectionId = pr.GetInt();
             int seed = pr.GetInt();
-            int spawnX = pr.GetInt();
-            int spawnY = pr.GetInt();
+            float spawnX = pr.GetFloat();
+            float spawnY = pr.GetFloat();
             int enemyCount = pr.GetInt();
             world.GenerateWorld(seed);
             for (int i = 0; i < enemyCount; i++)
@@ -111,8 +111,8 @@ namespace RealtimeInteractiveCrawler
             PacketReader pr = new PacketReader(p);
 
             int connId = pr.GetInt();
-            int spawnX = (int)pr.GetFloat();
-            int spawnY = (int)pr.GetFloat();
+            float spawnX = pr.GetFloat();
+            float spawnY = pr.GetFloat();
 
             Player newPlayer = new Player();
             newPlayer.Spawn(spawnX, spawnY);

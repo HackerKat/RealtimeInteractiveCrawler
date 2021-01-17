@@ -13,13 +13,14 @@ namespace Server
     public class Server
     {
         public static World world;
+        public static Random rand;
         static void Main(string[] args)
         {
-            Random rand = new Random();
+            rand = new Random();
             int seed = rand.Next(1, int.MaxValue);
             world = new World();
-            NetworkManager networkManager = new NetworkManager(seed, world);
-            GameLoop gameLoop = new GameLoop(rand, seed, networkManager);
+            NetworkManager networkManager = new NetworkManager(seed);
+            GameLoop gameLoop = new GameLoop(seed, networkManager);
 
             Thread t = new Thread(gameLoop.Run);
             t.Start();

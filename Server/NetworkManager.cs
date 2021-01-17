@@ -25,12 +25,10 @@ namespace Server
         } = new ConcurrentDictionary<int, Player>();
         private int connectionId;
         private int seed;
-        private World world;
 
-        public NetworkManager(int seed, World world)
+        public NetworkManager(int seed)
         {
             this.seed = seed;
-            this.world = world;
         }
 
         public void SendData(Packet packet, NetworkStream stream)
@@ -156,20 +154,22 @@ namespace Server
 
         public void SendAcceptPacket(TcpClient client)
         {
+            Vector2 spawnPoint = Server.world.GetSpawnPoint(Server.rand);
+
             PacketBuilder pb = new PacketBuilder(PacketType.INIT);
             int clientId = connections[client];
             pb.Add(clientId); //connection id
             pb.Add(seed); //seed
-            pb.Add(250); //spawn posX
-            pb.Add(250); //spawn posY
-            pb.Add(world.enemies.Count); //count of enemies
-            foreach(Entity enemy in world.enemies)
+            pb.Add(spawnPoint.X); //spawn posX
+            pb.Add(spawnPoint.Y); //spawn posY
+            pb.Add(Server.world.enemies.Count); //count of enemies
+            foreach(Entity enemy in Server.world.enemies)
             {
                 pb.Add(enemy.Id);
                 pb.Add(enemy.Position.X); //position is float
                 pb.Add(enemy.Position.Y);
             }
-            Player pl = new Player(250, 250, clientId);
+            Player pl = new Player(spawnPoint.X, spawnPoint.Y, clientId);
             Players.TryAdd(clientId, pl);
             Packet packet = pb.Build();
             Console.WriteLine("Init packet is built");
@@ -216,9 +216,9 @@ namespace Server
         public void SendEnemyUpdate()
         {
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ENEMY);
-            int enemieCount = world.enemies.Count;
-            pb.Add(world.enemies.Count);
-            foreach(Entity enemy in world.enemies)
+            int enemieCount = Server.world.enemies.Count;
+            pb.Add(Server.world.enemies.Count);
+            foreach(Entity enemy in Server.world.enemies)
             {
                 pb.Add(enemy.Id);
                 pb.Add(enemy.Position.X);

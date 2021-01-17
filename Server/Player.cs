@@ -21,7 +21,7 @@ namespace Server
             set;
         } = new Vector2();
 
-        public Player(int x, int y, int connId)
+        public Player(float x, float y, int connId)
         {
             ConnId = connId;
             Position = new Vector2(x, y);

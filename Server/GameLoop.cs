@@ -13,8 +13,6 @@ namespace Server
         public const int FPS = 30;
         public const float TIME_TILL_UPDATE = 1f / FPS;
         public Stopwatch stopwatch;
-        public static World world;
-        private Random rand;
         private NetworkManager netMan;
 
         public static GameTime GameTime
@@ -23,10 +21,8 @@ namespace Server
             protected set;
         }
 
-        public GameLoop(Random rand, int seed, NetworkManager networkManager)
+        public GameLoop(int seed, NetworkManager networkManager)
         {
-            this.rand = rand;
-            world = Server.world;
             this.netMan = networkManager;
 
             GameTime = new GameTime();
@@ -63,9 +59,9 @@ namespace Server
 
         public void Init()
         {
-            foreach(Entity entity in world.enemies)
+            foreach(Entity entity in Server.world.enemies)
             {
-                entity.Behaviour = new Wander(entity, rand);
+                entity.Behaviour = new Wander(entity, Server.rand);
             }
         }
 
@@ -82,7 +78,7 @@ namespace Server
                     }
                     else
                     {
-                        enemy.Behaviour = new Wander(enemy, rand);
+                        enemy.Behaviour = new Wander(enemy, Server.rand);
                     }
                 }
                 enemy.Update(GameTime);
