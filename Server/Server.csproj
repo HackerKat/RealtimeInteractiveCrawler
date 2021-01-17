@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviours\NullBehaviour.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="GameLoop.cs" />
     <Compile Include="GameTime.cs" />
     <Compile Include="NetworkManager.cs" />
     <Compile Include="Player.cs" />

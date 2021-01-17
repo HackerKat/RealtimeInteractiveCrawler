@@ -287,11 +287,6 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
-        public void UpdatePos(int x, int y)
-        {
-            // TODO anim
-            Position = new Vector2f(x, y);
-        }
 
     }
 }

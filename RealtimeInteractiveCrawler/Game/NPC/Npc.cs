@@ -71,6 +71,12 @@ namespace RealtimeInteractiveCrawler
             animSprite.AddAnimation(animType, new Animation(animFrame));
         }
 
+        public void UpdatePos(int x, int y)
+        {
+            // TODO anim
+            Position = new Vector2f(x, y);
+        }
+
         public abstract void OnKill();
         public abstract void UpdateNPC();
         public abstract void DrawNPC(RenderTarget target, RenderStates states);

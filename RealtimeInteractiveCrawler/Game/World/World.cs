@@ -8,13 +8,11 @@ using static RealtimeInteractiveCrawler.Item;
 namespace RealtimeInteractiveCrawler
 {
     // TODO Singleton
-    public class World : Transformable, Drawable
+    class World : Transformable, Drawable
     {
         public const int WORLD_SIZE = 3;
 
-
-        public List<Enemy> enemies = new List<Enemy>();
-       
+        //public List<Enemy> enemies = new List<Enemy>();
 
         private Chunk[][] chunks;
         // 0 = health, 1 = attack, 2 = defense, 3 = eraser
@@ -66,40 +64,19 @@ namespace RealtimeInteractiveCrawler
                 int nextType = AwesomeGame.Rand.Next(0, itemTypes.Length);
                 SetItem(itemTypes[nextType], itemsAttack[i].X, itemsAttack[i].Y);
             }
-            //List<Vector2i> itemsDefense = mapHandler.PlaceTreasure(5);
-            //for (int i = 0; i < itemsDefense.Count; i++)
-            //{
-            //    mapHandler.Map[itemsDefense[i].X, itemsDefense[i].Y] = TileType.ITEM;
-            //    SetItem(ItemType.DEFENSE, itemsDefense[i].X, itemsDefense[i].Y);
-            //}
-            //List<Vector2i> itemsHealth = mapHandler.PlaceTreasure(6);
-            //for (int i = 0; i < itemsHealth.Count; i++)
-            //{
-            //    mapHandler.Map[itemsHealth[i].X, itemsHealth[i].Y] = TileType.ITEM;
-            //    SetItem(ItemType.HEALTH, itemsHealth[i].X, itemsHealth[i].Y);
-            //}
 
+			//List<Vector2i> enemyTiles = mapHandler.PlaceTreasure(4);
+   //         for (int i = 0; i < enemyTiles.Count; i++)
+   //         {
+   //             mapHandler.Map[(int)enemyTiles[i].X, (int)enemyTiles[i].Y] = TileType.ENEMY;
+   //             SetTile(TileType.ENEMY, (int)enemyTiles[i].X, (int)enemyTiles[i].Y);
 
-
-
-            //List<Vector2i> enemies = mapHandler.PlaceEnemies();
-            //for (int i = 0; i < enemies.Count; i++)
-            //{
-            //    mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
-            //    SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
-            //}
-			
-			List<Vector2i> enemyTiles = mapHandler.PlaceEnemies();
-            for (int i = 0; i < enemyTiles.Count; i++)
-            {
-                mapHandler.Map[(int)enemyTiles[i].X, (int)enemyTiles[i].Y] = TileType.ENEMY;
-                SetTile(TileType.ENEMY, (int)enemyTiles[i].X, (int)enemyTiles[i].Y);
-
-                Tile t = GetTile((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
-                Vector2f absolPos = t.Position;
-
-                enemies.Add(new Enemy((int)absolPos.X, (int)absolPos.Y));
-			}
+   //             Tile t = GetTile((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
+   //             Vector2f absolPos = t.Position;
+   //             Enemy enemy = new Enemy();
+   //             enemies.Add(enemy);
+   //             enemy.Spawn((int)absolPos.X, (int)absolPos.Y);
+			//}
         }
 
         public void SetItem(ItemType itemType, int x, int y)
@@ -159,19 +136,6 @@ namespace RealtimeInteractiveCrawler
             Vector2i tilePos = GetTilePosFromChunk(x, y);
 
             return chunk.GetTile(tilePos.X, tilePos.Y);
-        }
-
-        // Gets absolut pos
-        public Tile GetTileAbsolutPos(int x, int y)
-        {
-            Chunk chunk = GetChunk(x, y);
-            if (chunk == null)
-                return null;
-
-            int X = x + chunk.chunkPos.X * Chunk.CHUNK_SIZE;
-            int Y = y + chunk.chunkPos.Y * Chunk.CHUNK_SIZE;
-
-            return chunk.GetTile(X, Y);
         }
 
         public Chunk GetChunk(int x, int y)

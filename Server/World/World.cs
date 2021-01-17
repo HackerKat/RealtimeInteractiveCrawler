@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Collections.Concurrent;
 
 namespace Server
 {
     // TODO Singleton
-    class World
+    public class World
     {
-        public const int WORLD_SIZE = 5;
+        public const int WORLD_SIZE = 3;
 
         Chunk[][] chunks;
-
-        public List<Entity> enemies = new List<Entity>();
+        public ConcurrentBag<Entity> enemies = new ConcurrentBag<Entity>();
+        private int entityId = 1000;
+        
+        //public static Dictionary<Tile, Item> Items = new Dictionary<Tile, Item>();
 
         public World()
         {
@@ -52,8 +55,9 @@ namespace Server
                 Tile t = GetTile((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
                 Vector2 absolPos = t.Position;
 
-                enemies.Add(new Entity((int)absolPos.X, (int)absolPos.Y));
+                enemies.Add(new Entity((int)absolPos.X, (int)absolPos.Y, entityId++));
             }
+            Console.WriteLine(enemyTiles.Count);
         }
 
         public void SetTile(TileType type, int x, int y)

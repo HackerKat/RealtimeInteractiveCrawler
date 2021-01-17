@@ -43,17 +43,35 @@ namespace Server
             }
         }
 
-        public Entity(int x, int y)
+        public SteeringBehaviour Behaviour
+        {
+            get;
+            set;
+        } = new NullBehaviour();
+
+        public int Id
+        {
+            get;
+            private set;
+        }
+
+        public Entity(int x, int y, int id)
         {
             Position = new Vector2(x, y);
+            this.Id = id;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            SteeringOutput steering = Behaviour.GetSteering();
+            UpdatePos(steering, gameTime);
         }
 
         public void UpdatePos(SteeringOutput steering, GameTime gameTime)
         {
             Position = new Vector2(Position.X + (steering.velocity.X * gameTime.deltaTime),
-                                   Position.Y + (steering.velocity.Y * gameTime.deltaTime)); //velocity * gameTime + 0.5f * steering.angular ?!!! gameTime * gameTime
-
-            Orientation += steering.rotation * gameTime.deltaTime; //rotation * gameTime.deltaTime + 0.5f * steering.angular??!! gameTime.deltaTime * gameTime.deltaTime
+                                   Position.Y + (steering.velocity.Y * gameTime.deltaTime)); 
+            Orientation += steering.rotation * gameTime.deltaTime; 
         }
 
         public float getNewOrientation(float currOrientation, Vector2 velocity)

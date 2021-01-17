@@ -11,22 +11,20 @@ namespace RealtimeInteractiveCrawler
     class NpcSlime : Npc
     {
         const float TIME_WAIT_JUMP = 1f;
-
-        SpriteSheet spriteSheet;
         float waitTimer;
 
         public NpcSlime() : base()
         {
-            spriteSheet = Content.SpriteEnemy;
+            SpriteSheet = Content.SpriteEnemy;
 
             // Size of rectangle
-            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * 0.8f, spriteSheet.SubHeight * 0.8f));
+            rect = new RectangleShape(new Vector2f(SpriteSheet.SubWidth * 0.8f, SpriteSheet.SubHeight * 0.8f));
             // Center of rectangle
             rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
             rect.FillColor = new Color(0, 255, 0, 127);
 
-            rect.Texture = spriteSheet.Texture;
-            rect.TextureRect = spriteSheet.GetTextureRect(0, 0);
+            rect.Texture = SpriteSheet.Texture;
+            rect.TextureRect = SpriteSheet.GetTextureRect(0, 0);
         }
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
@@ -58,9 +56,9 @@ namespace RealtimeInteractiveCrawler
                 velocity.X = 0f;
             }
 
-            rect.TextureRect = spriteSheet.GetTextureRect(0, 0);
+            rect.TextureRect = SpriteSheet.GetTextureRect(0, 0);
 
-            rect.TextureRect = spriteSheet.GetTextureRect(0, 1);
+            rect.TextureRect = SpriteSheet.GetTextureRect(0, 1);
 
         }
     }

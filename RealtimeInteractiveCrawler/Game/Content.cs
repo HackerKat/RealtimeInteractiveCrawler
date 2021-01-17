@@ -39,7 +39,7 @@ namespace RealtimeInteractiveCrawler
 
             SpriteDefense = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "UI\\" + "Ladder.png"));
            
-            SpriteEnemy = new SpriteSheet(Tile.TILE_SIZE, Tile.TILE_SIZE, false, 1, new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png"));
+            SpriteEnemy = new SpriteSheet(54, 54, false, 0, new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png"));
 
             Font = new Font(CONTENT_DIR + "Fonts\\arial\\arial.ttf");
         }

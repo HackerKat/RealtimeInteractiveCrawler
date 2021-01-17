@@ -16,18 +16,16 @@ namespace Server
         private List<Thread> clients;
         //private bool threadShouldEnd = false;
         private TcpListener server;
-        private ConcurrentDictionary<TcpClient, int> connections;
+        private ConcurrentDictionary<TcpClient, int> connections = new ConcurrentDictionary<TcpClient, int>();
         private ConcurrentDictionary<int, Player> players = new ConcurrentDictionary<int, Player>();
         private int connectionId;
-        private Random rand = new Random();
         private int seed;
         private World world;
-        
-        public NetworkManager()
+
+        public NetworkManager(int seed, World world)
         {
-            seed = rand.Next(1, int.MaxValue);
-            world = new World();
-            world.GenerateWorld(seed);
+            this.seed = seed;
+            this.world = world;
         }
 
         public void SendData(Packet packet, NetworkStream stream)
@@ -51,8 +49,6 @@ namespace Server
 
         public void StopNetwork()
         {
-            //threadShouldEnd = true;
-            
             foreach(TcpClient client in connections.Keys)
             {
                 client.Close();
@@ -70,7 +66,6 @@ namespace Server
             {
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
                 server = new TcpListener(localAddr, 12534);
-                connections = new ConcurrentDictionary<TcpClient, int>();
                 clients = new List<Thread>();
                 server.Start();
                 Console.WriteLine("Server started");
@@ -116,7 +111,6 @@ namespace Server
             while (client.Connected)
             {
                 Packet p = ReadData(client.GetStream());
-                SendEnemyUpdate(client);
                 switch (p.PacketType)
                 {
                     case PacketType.PING:
@@ -149,7 +143,10 @@ namespace Server
                 }
             }
             Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
+            lock (client)
+            {
+                SendData(packet, client.GetStream());
+            }
         }
 
         public void SendAcceptPacket(TcpClient client)
@@ -158,14 +155,23 @@ namespace Server
             int clientId = connections[client];
             pb.Add(clientId); //connection id
             pb.Add(seed); //seed
-            int x = rand.Next(50, 500);
-            int y = rand.Next(50, 500);
-            pb.Add(x); //spawn posX
-            pb.Add(y); //spawn posY
-            Player pl = new Player(x, y, clientId);
+            pb.Add(250); //spawn posX
+            pb.Add(250); //spawn posY
+            pb.Add(world.enemies.Count); //count of enemies
+            foreach(Entity enemy in world.enemies)
+            {
+                pb.Add(enemy.Id);
+                pb.Add(enemy.Position.X); //position is float
+                pb.Add(enemy.Position.Y);
+            }
+            Player pl = new Player(250, 250, clientId);
             players.TryAdd(clientId, pl);
             Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
+            Console.WriteLine("Init packet is built");
+            lock (client)
+            {
+                SendData(packet, client.GetStream());
+            }
 
             foreach (int id in players.Keys)
             {
@@ -174,7 +180,7 @@ namespace Server
                     SendNewPlayerJoined(client, id);
                 }
             }
-            SendEnemyUpdate(client);
+           
         }
 
         public void SendPlayerUpdate(TcpClient client, Packet p)
@@ -195,23 +201,34 @@ namespace Server
             {
                 if(c != client)
                 {
-                    SendData(packet, c.GetStream());
+                    lock (c)
+                    {
+                        SendData(packet, c.GetStream());
+                    }
                 }
             }
         }
 
-        public void SendEnemyUpdate(TcpClient client)
+        public void SendEnemyUpdate()
         {
-            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_OTHER_POS);
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ENEMY);
             int enemieCount = world.enemies.Count;
             pb.Add(world.enemies.Count);
             foreach(Entity enemy in world.enemies)
             {
+                pb.Add(enemy.Id);
                 pb.Add(enemy.Position.X);
                 pb.Add(enemy.Position.Y);
             }
             Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
+
+            foreach(TcpClient client in connections.Keys)
+            {
+                lock (client)
+                {
+                    SendData(packet, client.GetStream());
+                }
+            }
         }
     }
 }
