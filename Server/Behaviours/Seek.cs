@@ -21,14 +21,16 @@ namespace Server
         public SteeringOutput GetSteering()
         {
             SteeringOutput steeringOutput = new SteeringOutput();
-            steeringOutput.velocity = target.Position - entity.Position;
-            steeringOutput.velocity = Vector2.Normalize(steeringOutput.velocity); 
-            steeringOutput.velocity *= Entity.MAX_SPEED;
             
+            steeringOutput.velocity = target.Position - entity.Position;
+            steeringOutput.velocity = Vector2.Normalize(steeringOutput.velocity);
+            steeringOutput.velocity *= Entity.MAX_SPEED;
+
 
             entity.Orientation = entity.getNewOrientation(entity.Orientation, steeringOutput.velocity);
 
             steeringOutput.rotation = 0;
+            
             return steeringOutput;
         }
     }

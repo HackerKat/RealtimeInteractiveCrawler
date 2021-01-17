@@ -111,8 +111,8 @@ namespace RealtimeInteractiveCrawler
             PacketReader pr = new PacketReader(p);
 
             int connId = pr.GetInt();
-            int spawnX = pr.GetInt();
-            int spawnY = pr.GetInt();
+            int spawnX = (int)pr.GetFloat();
+            int spawnY = (int)pr.GetFloat();
 
             Player newPlayer = new Player();
             newPlayer.Spawn(spawnX, spawnY);
@@ -136,8 +136,8 @@ namespace RealtimeInteractiveCrawler
             PacketReader pr = new PacketReader(p);
 
             int id = pr.GetInt();
-            int x = pr.GetInt();
-            int y = pr.GetInt();
+            int x = (int)pr.GetFloat();
+            int y = (int)pr.GetFloat();
             if (players.ContainsKey(id))
             {
                 Player np = players[id];

@@ -71,10 +71,20 @@ namespace Server
 
         public void Update()
         {
-            
-
-            foreach(Entity enemy in world.enemies)
+            foreach (Entity enemy in world.enemies)
             {
+                foreach(Player player in netMan.Players.Values)
+                {
+                    if (enemy.CheckIfSeekPlayer(player))
+                    {
+                        enemy.Behaviour = new Seek(enemy, player);
+                        break;
+                    }
+                    else
+                    {
+                        enemy.Behaviour = new Wander(enemy, rand);
+                    }
+                }
                 enemy.Update(GameTime);
             }
             netMan.SendEnemyUpdate();

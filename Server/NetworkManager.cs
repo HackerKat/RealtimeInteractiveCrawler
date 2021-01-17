@@ -8,6 +8,7 @@ using System.Net;
 using NetworkLib;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Numerics;
 
 namespace Server
 {
@@ -17,7 +18,11 @@ namespace Server
         //private bool threadShouldEnd = false;
         private TcpListener server;
         private ConcurrentDictionary<TcpClient, int> connections = new ConcurrentDictionary<TcpClient, int>();
-        private ConcurrentDictionary<int, Player> players = new ConcurrentDictionary<int, Player>();
+        public ConcurrentDictionary<int, Player> Players
+        {
+            get;
+            private set;
+        } = new ConcurrentDictionary<int, Player>();
         private int connectionId;
         private int seed;
         private World world;
@@ -133,13 +138,13 @@ namespace Server
         public void SendNewPlayerJoined(TcpClient client, int newClientId)
         {
             PacketBuilder pb = new PacketBuilder(PacketType.NEW_PLAYER);
-            foreach(Player p in players.Values)
+            foreach(Player p in Players.Values)
             {
                 if(p.ConnId == newClientId)
                 {
                     pb.Add(p.ConnId);
-                    pb.Add(p.PosX); 
-                    pb.Add(p.PosY);
+                    pb.Add(p.Position.X); 
+                    pb.Add(p.Position.Y);
                 }
             }
             Packet packet = pb.Build();
@@ -165,7 +170,7 @@ namespace Server
                 pb.Add(enemy.Position.Y);
             }
             Player pl = new Player(250, 250, clientId);
-            players.TryAdd(clientId, pl);
+            Players.TryAdd(clientId, pl);
             Packet packet = pb.Build();
             Console.WriteLine("Init packet is built");
             lock (client)
@@ -173,7 +178,7 @@ namespace Server
                 SendData(packet, client.GetStream());
             }
 
-            foreach (int id in players.Keys)
+            foreach (int id in Players.Keys)
             {
                 if (id != clientId)
                 {
@@ -189,13 +194,12 @@ namespace Server
             int id = pr.GetInt();
             float x = pr.GetFloat();
             float y = pr.GetFloat();
-            Player netplayer = players[id];
-            netplayer.PosX = (int)x;
-            netplayer.PosY = (int)y;
+            Player netplayer = Players[id];
+            netplayer.Position = new Vector2(x, y);
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_OTHER_POS);
             pb.Add(id);
-            pb.Add(netplayer.PosX);
-            pb.Add(netplayer.PosY);
+            pb.Add(netplayer.Position.X);
+            pb.Add(netplayer.Position.Y);
             Packet packet = pb.Build();
             foreach(TcpClient c in connections.Keys)
             {

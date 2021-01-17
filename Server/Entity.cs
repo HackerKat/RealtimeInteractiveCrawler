@@ -55,10 +55,15 @@ namespace Server
             private set;
         }
 
+        public const float AGGRO_RADIUS = 100f;
+       // protected World world;
+
         public Entity(int x, int y, int id)
         {
             Position = new Vector2(x, y);
             this.Id = id;
+
+            //world = AwesomeGame.world;
         }
 
         public void Update(GameTime gameTime)
@@ -82,5 +87,87 @@ namespace Server
             }
             return currOrientation;
         }
+
+        public bool CheckIfSeekPlayer(Player target)
+        {
+            return (Position - target.Position).Length() <= AGGRO_RADIUS;
+        }
+
+        //private void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
+        //{
+        //    Tile[] walls = new Tile[]
+        //    {
+        //        // Left
+        //        world.GetTile(pX - 1, pY),
+        //        world.GetTile(pX - 1, pY - 1),
+        //        world.GetTile(pX - 1, pY + 1),
+        //        // Right
+        //        world.GetTile(pX + 1, pY),
+        //        world.GetTile(pX + 1, pY - 1),
+        //        world.GetTile(pX + 1, pY + 1),
+        //        // Top
+        //        world.GetTile(pX, pY - 1),
+        //        world.GetTile(pX - 1, pY - 1),
+        //        world.GetTile(pX + 1, pY - 1),
+        //        // Down
+        //        world.GetTile(pX, pY),
+        //        world.GetTile(pX - 1, pY),
+        //        world.GetTile(pX + 1, pY),
+
+        //    };
+
+        //    foreach (var tile in walls)
+        //    {
+        //        if (tile == null || tile.type == TileType.GROUND) continue;
+
+        //        FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
+        //        DebugRender.AddRectangle(tileRect, Color.Yellow);
+
+        //        if (playerRect.Intersects(tileRect))
+        //        {
+        //            Vector2f offset = new Vector2f(playerRect.Left - tileRect.Left, playerRect.Top - tileRect.Top);
+        //            offset.X /= Math.Abs(offset.X);
+        //            offset.Y /= Math.Abs(offset.Y);
+
+        //            float speed = Math.Abs(movement.X);
+
+        //            // Left walls
+        //            if (offset.X > 0)
+        //            {
+        //                // Sends the player one tile away
+        //                Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
+        //                movement.X = 0;
+        //                velocity.X = 0;
+        //            }
+        //            // Right walls
+        //            else if (offset.X < 0)
+        //            {
+        //                Position = new Vector2f(tileRect.Left - playerRect.Width * 0.5f, Position.Y);
+        //                movement.X = 0;
+        //                velocity.X = 0;
+        //                //Position = new Vector2f(Position.X - 2, Position.Y);
+        //            }
+        //            // Top walls
+        //            else if (offset.Y > 0)
+        //            {
+        //                Position = new Vector2f(Position.X, (tileRect.Top + tileRect.Height) + playerRect.Height * 0.5f);
+        //                movement.Y = 0;
+        //                velocity.Y = 0;
+        //                //Position = new Vector2f(Position.X, Position.Y + 2);
+        //            }
+        //            // Down walls
+        //            else if (offset.Y < 0)
+        //            {
+        //                Position = new Vector2f(Position.X, tileRect.Top - playerRect.Height * 0.5f);
+        //                movement.Y = 0;
+        //                velocity.Y = 0;
+        //                //Position = new Vector2f(Position.X, Position.Y - 2);
+        //            }
+
+        //            OnWallCollided();
+
+        //        }
+        //    }
+        //}
     }
 }
