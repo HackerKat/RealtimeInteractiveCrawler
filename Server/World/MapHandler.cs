@@ -22,7 +22,7 @@ namespace Server
             MapWidth = mapWidth;
             MapHeight = mapHeight;
             PercentAreWalls = percentAreWalls;
-
+            
             rand = new Random(seed);
 
             RandomFillMap();

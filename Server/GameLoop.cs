@@ -13,7 +13,7 @@ namespace Server
         public const int FPS = 30;
         public const float TIME_TILL_UPDATE = 1f / FPS;
         public Stopwatch stopwatch;
-        public World world;
+        public static World world;
         private Random rand;
         private NetworkManager netMan;
 
@@ -23,10 +23,10 @@ namespace Server
             protected set;
         }
 
-        public GameLoop(Random rand, int seed, World world, NetworkManager networkManager)
+        public GameLoop(Random rand, int seed, NetworkManager networkManager)
         {
             this.rand = rand;
-            this.world = world;
+            world = Server.world;
             this.netMan = networkManager;
 
             GameTime = new GameTime();
@@ -34,7 +34,7 @@ namespace Server
             stopwatch = new Stopwatch();
             stopwatch.Start();
            
-            world.GenerateWorld(seed);
+            Server.world.GenerateWorld(seed);
         }
 
         public void Run()
@@ -71,7 +71,7 @@ namespace Server
 
         public void Update()
         {
-            foreach (Entity enemy in world.enemies)
+            foreach (Entity enemy in Server.world.enemies)
             {
                 foreach(Player player in netMan.Players.Values)
                 {

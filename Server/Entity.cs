@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using System.Drawing;
 
 namespace Server
 {
@@ -56,14 +57,18 @@ namespace Server
         }
 
         public const float AGGRO_RADIUS = 100f;
-       // protected World world;
+        public const int SIZE = 54;
+        private World world;
+        private Rectangle rect;
 
         public Entity(int x, int y, int id)
         {
             Position = new Vector2(x, y);
             this.Id = id;
 
-            //world = AwesomeGame.world;
+            world = Server.world;
+
+            rect = new Rectangle(x, y, SIZE, SIZE);
         }
 
         public void Update(GameTime gameTime)
@@ -74,9 +79,12 @@ namespace Server
 
         public void UpdatePos(SteeringOutput steering, GameTime gameTime)
         {
+            UpdatePhysicsWall();
             Position = new Vector2(Position.X + (steering.velocity.X * gameTime.deltaTime),
                                    Position.Y + (steering.velocity.Y * gameTime.deltaTime)); 
-            Orientation += steering.rotation * gameTime.deltaTime; 
+            Orientation += steering.rotation * gameTime.deltaTime;
+
+            rect = new Rectangle((int)Position.X, (int)Position.Y, SIZE, SIZE);
         }
 
         public float getNewOrientation(float currOrientation, Vector2 velocity)
@@ -93,81 +101,79 @@ namespace Server
             return (Position - target.Position).Length() <= AGGRO_RADIUS;
         }
 
-        //private void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
-        //{
-        //    Tile[] walls = new Tile[]
-        //    {
-        //        // Left
-        //        world.GetTile(pX - 1, pY),
-        //        world.GetTile(pX - 1, pY - 1),
-        //        world.GetTile(pX - 1, pY + 1),
-        //        // Right
-        //        world.GetTile(pX + 1, pY),
-        //        world.GetTile(pX + 1, pY - 1),
-        //        world.GetTile(pX + 1, pY + 1),
-        //        // Top
-        //        world.GetTile(pX, pY - 1),
-        //        world.GetTile(pX - 1, pY - 1),
-        //        world.GetTile(pX + 1, pY - 1),
-        //        // Down
-        //        world.GetTile(pX, pY),
-        //        world.GetTile(pX - 1, pY),
-        //        world.GetTile(pX + 1, pY),
+        private void UpdatePhysicsWall()
+        {
+            int entityTileX = (int)(Position.X / Tile.TILE_SIZE);
+            int entityTileY = (int)(Position.Y / Tile.TILE_SIZE);
 
-        //    };
+            Tile[] walls = new Tile[]
+            {
+                // Left
+                Server.world.GetTile(entityTileX - 1, entityTileY),
+                Server.world.GetTile(entityTileX - 1, entityTileY - 1),
+                Server.world.GetTile(entityTileX - 1, entityTileY + 1),
+                // Right
+                Server.world.GetTile(entityTileX + 1, entityTileY),
+                Server.world.GetTile(entityTileX + 1, entityTileY - 1),
+                Server.world.GetTile(entityTileX + 1, entityTileY + 1),
+                // Top
+                Server.world.GetTile(entityTileX, entityTileY - 1),
+                Server.world.GetTile(entityTileX - 1, entityTileY - 1),
+                Server.world.GetTile(entityTileX + 1, entityTileY - 1),
+                // Down
+                Server.world.GetTile(entityTileX, entityTileY),
+                Server.world.GetTile(entityTileX - 1, entityTileY),
+                Server.world.GetTile(entityTileX + 1, entityTileY),
+            };
 
-        //    foreach (var tile in walls)
-        //    {
-        //        if (tile == null || tile.type == TileType.GROUND) continue;
+            foreach (var tile in walls)
+            {
+                if (tile == null || tile.type == TileType.GROUND) continue;
 
-        //        FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
-        //        DebugRender.AddRectangle(tileRect, Color.Yellow);
+                Rectangle tileRect = new Rectangle((int)tile.Position.X, (int)tile.Position.Y, Tile.TILE_SIZE, Tile.TILE_SIZE);
+                //DebugRender.AddRectangle(tileRect, Color.Yellow);
 
-        //        if (playerRect.Intersects(tileRect))
-        //        {
-        //            Vector2f offset = new Vector2f(playerRect.Left - tileRect.Left, playerRect.Top - tileRect.Top);
-        //            offset.X /= Math.Abs(offset.X);
-        //            offset.Y /= Math.Abs(offset.Y);
+                if (rect.IntersectsWith(tileRect))
+                {
+                    Vector2 offset = new Vector2(rect.Left - tileRect.Left, rect.Top - tileRect.Top);
+                    offset.X /= Math.Abs(offset.X);
+                    offset.Y /= Math.Abs(offset.Y);
 
-        //            float speed = Math.Abs(movement.X);
+                    //float speed = Math.Abs(movement.X);
 
-        //            // Left walls
-        //            if (offset.X > 0)
-        //            {
-        //                // Sends the player one tile away
-        //                Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
-        //                movement.X = 0;
-        //                velocity.X = 0;
-        //            }
-        //            // Right walls
-        //            else if (offset.X < 0)
-        //            {
-        //                Position = new Vector2f(tileRect.Left - playerRect.Width * 0.5f, Position.Y);
-        //                movement.X = 0;
-        //                velocity.X = 0;
-        //                //Position = new Vector2f(Position.X - 2, Position.Y);
-        //            }
-        //            // Top walls
-        //            else if (offset.Y > 0)
-        //            {
-        //                Position = new Vector2f(Position.X, (tileRect.Top + tileRect.Height) + playerRect.Height * 0.5f);
-        //                movement.Y = 0;
-        //                velocity.Y = 0;
-        //                //Position = new Vector2f(Position.X, Position.Y + 2);
-        //            }
-        //            // Down walls
-        //            else if (offset.Y < 0)
-        //            {
-        //                Position = new Vector2f(Position.X, tileRect.Top - playerRect.Height * 0.5f);
-        //                movement.Y = 0;
-        //                velocity.Y = 0;
-        //                //Position = new Vector2f(Position.X, Position.Y - 2);
-        //            }
+                    // Left walls
+                    if (offset.X > 0)
+                    {
+                        // Sends the player one tile away
+                        Position = new Vector2((tileRect.Left + tileRect.Width) + rect.Width * 0.5f, Position.Y);
+                        Velocity = new Vector2(0, Velocity.Y);
+                   }
+                    // Right walls
+                    else if (offset.X < 0)
+                   {
+                       Position = new Vector2(tileRect.Left - rect.Width * 0.5f, Position.Y);
+                        Velocity = new Vector2(0, Velocity.Y);
+                        //Position = new Vector2f(Position.X - 2, Position.Y);
+                    }
+                    // Top walls
+                    else if (offset.Y > 0)
+                    {
+                        Position = new Vector2(Position.X, (tileRect.Top + tileRect.Height) + rect.Height * 0.5f);
+                        Velocity = new Vector2(Velocity.X, 0);
+                        //Position = new Vector2f(Position.X, Position.Y + 2);
+                    }
+                    // Down walls
+                    else if (offset.Y < 0)
+                    {
+                        Position = new Vector2(Position.X, tileRect.Top - rect.Height * 0.5f);
+                        Velocity = new Vector2(Velocity.X, 0);
+                        //Position = new Vector2f(Position.X, Position.Y - 2);
+                    }
 
-        //            OnWallCollided();
+                    //OnWallCollided();
 
-        //        }
-        //    }
-        //}
+                }
+            }
+        }
     }
 }

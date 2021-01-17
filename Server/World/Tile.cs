@@ -21,7 +21,7 @@ namespace Server
     {
         public const int TILE_SIZE = 16;
 
-        TileType type = TileType.GROUND;
+        public TileType type = TileType.GROUND;
         
         // Neighbours
         Tile upTile;

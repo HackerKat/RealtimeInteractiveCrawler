@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace RealtimeInteractiveCrawler
 {
-
-
     public class MapHandler
     {
         public TileType[,] Map;
