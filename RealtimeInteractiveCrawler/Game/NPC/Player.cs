@@ -86,13 +86,16 @@ namespace RealtimeInteractiveCrawler
                         Side side;
                         side = Direction == 1 ? Side.RIGHT : Side.LEFT;
                         CheckForItems(side);
+                        AttackEnemy(side);
                         break;
                     case MovementType.Up:
                         CheckForItems(Side.UP);
+                        AttackEnemy(Side.UP);
                         break;
                     case MovementType.Down:
                     case MovementType.Idle:
                         CheckForItems(Side.DOWN);
+                        AttackEnemy(Side.DOWN);
                         break;
                     default:
                         break;
@@ -116,7 +119,6 @@ namespace RealtimeInteractiveCrawler
                 {
                     int i = (mousePos.X) / Tile.TILE_SIZE;
                     int j = (mousePos.Y) / Tile.TILE_SIZE;
-                    Debug.WriteLine(tile.Position);
                     int boderMax = World.WORLD_SIZE * Chunk.CHUNK_SIZE * Tile.TILE_SIZE - Tile.TILE_SIZE;
                     bool noBorders = tile.Position.X != 0 && tile.Position.Y != 0 && tile.Position.X != boderMax && tile.Position.Y != boderMax;
                     if (tile.type != TileType.ITEM && tile.type != TileType.GROUND && noBorders)
@@ -127,7 +129,7 @@ namespace RealtimeInteractiveCrawler
 
         }
 
-        private void CheckForItems(Side side)
+        private List<Tile> GetTilesAroundPlayer(Side side)
         {
             int pX = (int)((Position.X - rect.Origin.X + rect.Size.X * 0.5f) / Tile.TILE_SIZE);
             int pY = (int)((Position.Y + rect.Size.Y * 0.5f) / Tile.TILE_SIZE);
@@ -163,6 +165,13 @@ namespace RealtimeInteractiveCrawler
                 default:
                     break;
             }
+
+            return tilesTowardsPlayer;
+        }
+
+        private void CheckForItems(Side side)
+        {
+            List<Tile> tilesTowardsPlayer = GetTilesAroundPlayer(side);
 
             Tile foundItem = tilesTowardsPlayer.Find(item => item.type == TileType.ITEM);
             if (foundItem != null)
@@ -206,6 +215,11 @@ namespace RealtimeInteractiveCrawler
         {
             Defense += defense;
             Debug.WriteLine(Defense + " my defense");
+        }
+
+        private void AttackEnemy(Side side)
+        {
+            List<Tile> tilesTowardsPlayer = GetTilesAroundPlayer(side);
         }
 
         public override void DrawNPC(RenderTarget target, RenderStates states)

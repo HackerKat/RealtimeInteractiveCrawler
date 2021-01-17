@@ -15,8 +15,8 @@ namespace RealtimeInteractiveCrawler
         public static Dictionary<int, Player> Players = new Dictionary<int, Player>();
         public static Player Player;
 
-        private const uint DEFAULT_WIDTH = 600;
-        private const uint DEFAULT_HEIGHT = 500;
+        private const uint DEFAULT_WIDTH = 1280;
+        private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         private NetworkManager networkManager = new NetworkManager();

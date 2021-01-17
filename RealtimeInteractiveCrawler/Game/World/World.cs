@@ -10,7 +10,7 @@ namespace RealtimeInteractiveCrawler
     // TODO Singleton
     class World : Transformable, Drawable
     {
-        public const int WORLD_SIZE = 3;
+        public const int WORLD_SIZE = 5;
 
         private Chunk[][] chunks;
         // 0 = health, 1 = attack, 2 = defense, 3 = eraser
@@ -62,28 +62,6 @@ namespace RealtimeInteractiveCrawler
                 int nextType = AwesomeGame.Rand.Next(0, itemTypes.Length);
                 SetItem(itemTypes[nextType], itemsAttack[i].X, itemsAttack[i].Y);
             }
-            //List<Vector2i> itemsDefense = mapHandler.PlaceTreasure(5);
-            //for (int i = 0; i < itemsDefense.Count; i++)
-            //{
-            //    mapHandler.Map[itemsDefense[i].X, itemsDefense[i].Y] = TileType.ITEM;
-            //    SetItem(ItemType.DEFENSE, itemsDefense[i].X, itemsDefense[i].Y);
-            //}
-            //List<Vector2i> itemsHealth = mapHandler.PlaceTreasure(6);
-            //for (int i = 0; i < itemsHealth.Count; i++)
-            //{
-            //    mapHandler.Map[itemsHealth[i].X, itemsHealth[i].Y] = TileType.ITEM;
-            //    SetItem(ItemType.HEALTH, itemsHealth[i].X, itemsHealth[i].Y);
-            //}
-
-
-
-
-            //List<Vector2i> enemies = mapHandler.PlaceEnemies();
-            //for (int i = 0; i < enemies.Count; i++)
-            //{
-            //    mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
-            //    SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
-            //}
         }
 
         public void SetItem(ItemType itemType, int x, int y)
@@ -188,6 +166,7 @@ namespace RealtimeInteractiveCrawler
 
         public void Update()
         {
+            // Items
             Tile keyWhereToRemove = null;
             foreach (var item in Items)
             {

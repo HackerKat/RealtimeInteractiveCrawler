@@ -98,8 +98,6 @@ namespace RealtimeInteractiveCrawler
                 rightTile.LeftTile = this;
             }
 
-            Texture selectedTex;
-
             switch (type)
             {
                 case TileType.GRASS:
@@ -193,7 +191,21 @@ namespace RealtimeInteractiveCrawler
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
+
+            double distance = CheckDistance(AwesomeGame.Player.Position);
+            if (distance > TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
+                return;
+
             target.Draw(rectShape, states);
+        }
+
+        private double CheckDistance(Vector2f target)
+        {
+            double distX = Math.Pow((target.X - Position.X), 2);
+            double distY = Math.Pow((target.Y - Position.Y), 2);
+            double distance = Math.Sqrt(distX + distY);
+
+            return distance;
         }
 
         public FloatRect GetFloatRect()
