@@ -34,10 +34,18 @@ namespace RealtimeInteractiveCrawler
             protected set;
         }
 
+        public View GameView
+        {
+            get;
+            protected set;
+        }
+
         protected GameLoop(uint width, uint height, string title, Color windowColor)
         {
             WindowClearColor = windowColor;
             Window = new RenderWindow(new VideoMode(width, height), title, Styles.Titlebar | Styles.Close);
+            GameView = new View(new Vector2f(350f, 300f), new Vector2f(width, height));  // TODO set to player pos
+
             GameTime = new GameTime();
             Window.Closed += WindowClosed;
             Window.Resized += WindowResized;
@@ -74,8 +82,10 @@ namespace RealtimeInteractiveCrawler
                     Update(GameTime);
 
                     Window.Clear(WindowClearColor);
+                    Window.SetView(GameView);
                     Draw(GameTime);
                     Window.Display();
+                   
                 }
             }
         }

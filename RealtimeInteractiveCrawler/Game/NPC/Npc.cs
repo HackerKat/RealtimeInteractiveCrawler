@@ -42,10 +42,6 @@ namespace RealtimeInteractiveCrawler
             base.Update();
 
             Position += movement + velocity;
-
-            // Fell down outside the window
-            if (Position.Y > GameLoop.Window.Size.Y)
-                OnKill();
         }
 
         public override void Draw(RenderTarget target, RenderStates states)

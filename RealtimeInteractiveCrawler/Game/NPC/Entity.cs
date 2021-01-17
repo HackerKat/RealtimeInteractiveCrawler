@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
@@ -19,7 +20,7 @@ namespace RealtimeInteractiveCrawler
 
         protected Sprite sprite;
 
-        public Entity() 
+        public Entity()
         {
             world = AwesomeGame.world;
         }
@@ -58,7 +59,7 @@ namespace RealtimeInteractiveCrawler
 
         private void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
         {
-            Tile[] walls = new Tile[]
+            List<Tile> walls = new List<Tile>
             {
                 // Left
                 world.GetTile(pX - 1, pY),
@@ -76,11 +77,16 @@ namespace RealtimeInteractiveCrawler
                 world.GetTile(pX, pY),
                 world.GetTile(pX - 1, pY),
                 world.GetTile(pX + 1, pY),
-
             };
 
+            //for (int i = 0; i < AwesomeGame.PlayerTiles.Count; i++)
+            //{
+            //    walls.Add(AwesomeGame.PlayerTiles[i]);
+            //    AwesomeGame.PlayerTiles[i].Position = AwesomeGame.Players[i].Position;
+            //}
+
             foreach (var tile in walls)
-            {            
+            {
                 if (tile == null || tile.type == TileType.GROUND) continue;
 
                 FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));

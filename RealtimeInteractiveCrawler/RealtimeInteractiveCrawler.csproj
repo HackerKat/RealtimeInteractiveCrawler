@@ -68,7 +68,7 @@
     <Compile Include="Game\Content.cs" />
     <Compile Include="Game\Debug\DebugRender.cs" />
     <Compile Include="Game\Debug\DebugUtility.cs" />
-    <Compile Include="Game\Entity.cs" />
+    <Compile Include="Game\NPC\Entity.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\GameTime.cs" />
     <Compile Include="Game\InputManager.cs" />

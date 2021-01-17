@@ -37,7 +37,7 @@ namespace RealtimeInteractiveCrawler
             SpriteAttack = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Attack.png"));
             SpriteDefense = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Defense.png"));
 
-            SpriteDefense = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "UI\\" + "Ladder.png"));
+            SpriteInventory = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "UI\\" + "Ladder.png"));
            
             SpriteEnemy = new SpriteSheet(Tile.TILE_SIZE, Tile.TILE_SIZE, false, 1, new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter.png"));
 

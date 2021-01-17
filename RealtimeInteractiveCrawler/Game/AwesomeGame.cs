@@ -11,16 +11,17 @@ namespace RealtimeInteractiveCrawler
         public static World world;
         public static Random Rand;
 
-        private const uint DEFAULT_WIDTH = 1280;
-        private const uint DEFAULT_HEIGHT = 720;
-        private const string TITLE = "OBAMA CARES";
+        public static List<Tile> PlayerTiles = new List<Tile>();
+        public static Dictionary<int, Player> Players = new Dictionary<int, Player>();
+        public static Player Player;
+
+        private const uint DEFAULT_WIDTH = 600;
+        private const uint DEFAULT_HEIGHT = 500;
+        private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         private NetworkManager networkManager = new NetworkManager();
-        private Player player;
-        private bool isDataReadyToInit = false;
-        private Dictionary<int, Player> players = new Dictionary<int, Player>();
 
-        private float movementSpeed = 5f;
+        private bool isDataReadyToInit = false;
 
         private bool pPressed = false;
 
@@ -34,17 +35,24 @@ namespace RealtimeInteractiveCrawler
 
             //Player.Inventory = new UIInventory();
             //UIManager.AddControl(Player.Inventory);
+
+            foreach (var player in Players.Values)
+            {
+                PlayerTiles.Add(new Tile(TileType.PLAYER, null));
+            }
         }
 
         public override void Initialize()
         {
-            networkManager.Connect("localhost");
+            // Network
+            //networkManager.Connect("localhost");
             world = new World();
+            // Single
+            Player = new Player();
+            Player.Spawn(650, 300);
+            Player.ClientPlayer = true;
+            world.GenerateWorld(5);
 
-            //player = new Player();
-            //player.Spawn(650, 300);
-
-            //world.GenerateWorld(5);
         }
 
         public override void LoadContent()
@@ -83,10 +91,10 @@ namespace RealtimeInteractiveCrawler
             Console.WriteLine("init data get processed");
             Console.WriteLine("my connection id is: " + connectionId);
 
-            player = new Player();
-            player.ClientPlayer = true;
-            player.Spawn(spawnX, spawnY);
-            players.Add(connectionId, player);
+            Player = new Player();
+            Player.ClientPlayer = true;
+            Player.Spawn(spawnX, spawnY);
+            Players.Add(connectionId, Player);
             world.GenerateWorld(seed);
             isDataReadyToInit = true;
         }
@@ -102,7 +110,7 @@ namespace RealtimeInteractiveCrawler
             Console.WriteLine("new player data get processed");
             Player newPlayer = new Player();
             newPlayer.Spawn(spawnX, spawnY);
-            players.Add(connId, newPlayer);
+            Players.Add(connId, newPlayer);
             Console.WriteLine("new player joined: " + connId);
         }
 
@@ -111,8 +119,8 @@ namespace RealtimeInteractiveCrawler
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_MY_POS);
 
             pb.Add(connectionId);
-            pb.Add(player.Position.X);
-            pb.Add(player.Position.Y);
+            pb.Add(Player.Position.X);
+            pb.Add(Player.Position.Y);
             Packet packet = pb.Build();
             networkManager.SendData(packet);
         }
@@ -126,9 +134,9 @@ namespace RealtimeInteractiveCrawler
             int x = pr.GetInt();
             int y = pr.GetInt();
             Console.WriteLine("Get data from player: " + id);
-            if (players.ContainsKey(id))
+            if (Players.ContainsKey(id))
             {
-                Player np = players[id];
+                Player np = Players[id];
                 Console.WriteLine("network player has moved to x: " + np.Position.X);
                 Console.WriteLine("network player has moved to y: " + np.Position.Y);
                 np.UpdatePos(x, y);
@@ -137,25 +145,29 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
-            if (isDataReadyToInit)
+            // Network
+            //if (isDataReadyToInit)
+            //{
+            if (hasFocus)
             {
-                if (hasFocus)
-                {
-                    world.Update();
-                    player.Update();
-                    SendPlayerUpdate();
-                }
+                world.Update();
+                Player.Update();
+                GameView.Center = Player.Position;
+                // Network
+                //SendPlayerUpdate();
             }
+            //}
             //UIManager.UpdateOver();
             //UIManager.Update();
             // TODO revert debug change
 
-            MessageQueue messageQueue = networkManager.MessageQueue;
-            Packet p;
-            while ((p = messageQueue.Pop()) != null)
-            {
-                ProcessPacket(p);
-            }
+            // Network
+            //MessageQueue messageQueue = networkManager.MessageQueue;
+            //Packet p;
+            //while ((p = messageQueue.Pop()) != null)
+            //{
+            //    ProcessPacket(p);
+            //}
 
             if (inputManager.getKeyDown(Keyboard.Key.P) && !pPressed)
             {
@@ -180,20 +192,21 @@ namespace RealtimeInteractiveCrawler
             //DebugUtility.DrawPerformanceData(Color.White);
 
             // TODO remove debug
-            //Window.Draw(world);
-            //Window.Draw(player);
+            Window.Draw(world);
+            Window.Draw(Player);
 
             DebugRender.Draw(Window);
             //UIManager.Draw();
 
-            if (isDataReadyToInit)
-            {
-                Window.Draw(world);
-                foreach (Player np in players.Values)
-                {
-                    Window.Draw(np);
-                }
-            }
+            // Network
+            //if (isDataReadyToInit)
+            //{
+            //    Window.Draw(world);
+            //    foreach (Player np in Players.Values)
+            //    {
+            //        Window.Draw(np);
+            //    }
+            //}
 
         }
     }

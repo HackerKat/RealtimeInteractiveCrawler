@@ -102,21 +102,24 @@ namespace RealtimeInteractiveCrawler
             // Mouse
             //if (UIManager.Over == null && UIManager.Drag == null)
             //{
-                Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
-                Tile tile = world.GetTile(mousePos.X / Tile.TILE_SIZE, mousePos.Y / Tile.TILE_SIZE);
-                if (tile != null)
+            
+            Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
+            mousePos = (Vector2i)GameLoop.Window.MapPixelToCoords(mousePos);
+
+            Tile tile = world.GetTile(mousePos.X / Tile.TILE_SIZE, mousePos.Y / Tile.TILE_SIZE);
+            if (tile != null)
+            {
+                FloatRect tileRect = tile.GetFloatRect();
+                DebugRender.AddRectangle(tileRect, Color.Green);
+                // Left Mouse to Erase
+                if (Mouse.IsButtonPressed(Mouse.Button.Left))
                 {
-                    FloatRect tileRect = tile.GetFloatRect();
-                    DebugRender.AddRectangle(tileRect, Color.Green);
-                    // Left Mouse to Erase
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
-                    {
-                        int i = (mousePos.X) / Tile.TILE_SIZE;
-                        int j = (mousePos.Y) / Tile.TILE_SIZE;
-                        if (world.GetTile(i, j).type != TileType.ITEM)
-                            world.SetTile(TileType.GROUND, i, j);
-                    }
+                    int i = (mousePos.X) / Tile.TILE_SIZE;
+                    int j = (mousePos.Y) / Tile.TILE_SIZE;
+                    if (world.GetTile(i, j).type != TileType.ITEM)
+                        world.SetTile(TileType.GROUND, i, j);
                 }
+            }
             //}
 
         }
@@ -287,27 +290,28 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
+        // For Network players
         public void UpdatePos(int x, int y)
         {
             // move right
-            if(Position.X < x)
+            if (Position.X < x)
             {
                 Direction = 1;
                 animSprite.Play(MovementType.Horizontal);
             }
             // move left
-            else if(Position.X > x)
+            else if (Position.X > x)
             {
                 Direction = -1;
                 animSprite.Play(MovementType.Horizontal);
             }
             // move down
-            else if(Position.Y < y)
+            else if (Position.Y < y)
             {
                 animSprite.Play(MovementType.Down);
             }
             // move up
-            else if(Position.Y > y)
+            else if (Position.Y > y)
             {
                 animSprite.Play(MovementType.Up);
             }
