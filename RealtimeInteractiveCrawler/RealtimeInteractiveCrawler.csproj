@@ -72,7 +72,6 @@
     <Compile Include="Game\World\MapHandler.cs" />
     <Compile Include="Game\NPC\Npc.cs" />
     <Compile Include="Game\NPC\NpcSlime.cs" />
-    <Compile Include="Game\Player.cs" />
     <Compile Include="Game\SpriteSheet.cs" />
     <Compile Include="Game\NetworkManager.cs" />
     <Compile Include="Game\Player.cs" />

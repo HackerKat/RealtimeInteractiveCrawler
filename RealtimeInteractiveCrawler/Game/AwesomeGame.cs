@@ -15,6 +15,9 @@ namespace RealtimeInteractiveCrawler
 {
     class AwesomeGame : GameLoop
     {
+        public static World world;
+        public static Random Rand;
+
         private const uint DEFAULT_WIDTH = 1280;
         private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "OBAMA CARES";
@@ -39,15 +42,16 @@ namespace RealtimeInteractiveCrawler
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
+            Rand = new Random();
         }
 
         public override void Initialize()
         {
-            networkManager.Connect("localhost");
+            //networkManager.Connect("localhost");
             world = new World();
+            
 
-
-            player = new Player();
+            player = new Player(world);
             player.Spawn(650, 300);
 
             world.GenerateWorld(5);
@@ -151,8 +155,8 @@ namespace RealtimeInteractiveCrawler
 
         public override void Update(GameTime gameTime)
         {
-            if (isDataReadyToInit)
-            {
+            //if (isDataReadyToInit)
+            //{
 
                 player.Update();
                 // SendPlayerUpdate();
@@ -163,9 +167,9 @@ namespace RealtimeInteractiveCrawler
                     Enemy enemy = world.enemies[i];
                     enemy.UpdatePos(steering, gameTime);
                 }
-            }
-            
-            slime.Update();
+            //}
+
+            return;
 
             //foreach (var s in slimes)
             //    s.Update();
@@ -197,16 +201,16 @@ namespace RealtimeInteractiveCrawler
         public override void Draw(GameTime gameTime)
         {
             //DebugUtility.DrawPerformanceData(this, Color.White);
-            if (isDataReadyToInit)
-            {
+            //if (isDataReadyToInit)
+            //{
                 Window.Draw(world);
                 Window.Draw(player);
-                Window.Draw(slime);
-                foreach (NetworkPlayer np in players.Values)
-                {
-                    Window.Draw(np);
-                }
-            }
+
+                //foreach (NetworkPlayer np in players.Values)
+                //{
+                    //Window.Draw(np);
+                //}
+            //}
 
 
             // TODO remove debug

@@ -199,9 +199,9 @@ namespace Server
         public void SendEnemyUpdate(TcpClient client)
         {
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_OTHER_POS);
-            pb.Add(id);
-            pb.Add(netplayer.PosX);
-            pb.Add(netplayer.PosY);
+            //pb.Add(id);
+            //pb.Add(netplayer.PosX);
+            //pb.Add(netplayer.PosY);
             Packet packet = pb.Build();
             foreach (TcpClient c in connections.Keys)
             {

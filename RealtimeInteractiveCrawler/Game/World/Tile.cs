@@ -18,7 +18,7 @@ namespace RealtimeInteractiveCrawler
         ENEMY
     }
 
-    class Tile : Transformable, Drawable
+    public class Tile : Transformable, Drawable
     {
         public const int TILE_SIZE = 16;
 
