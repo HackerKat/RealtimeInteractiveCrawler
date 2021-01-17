@@ -20,7 +20,7 @@ namespace Server
         public SteeringOutput GetSteering()
         {
             SteeringOutput steering = new SteeringOutput();
-            steering.velocity = Entity.MAX_SPEED * entity.OrientVector;
+            steering.velocity = Entity.MIN_SPEED * entity.OrientVector;
 
             steering.rotation = randomBinomial() * Entity.MAX_ROTATION;
             return steering;

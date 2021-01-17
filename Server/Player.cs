@@ -17,14 +17,28 @@ namespace Server
 
         public Vector2 Position
         {
+            get
+            {
+                return Origin;
+            }
+            set 
+            {
+                Origin = new Vector2(value.X + Tile.TILE_SIZE * 0.5f, value.Y - Tile.TILE_SIZE);
+            }
+        }
+
+        public Vector2 Origin
+        {
             get;
             set;
-        } = new Vector2();
+        }
 
         public Player(float x, float y, int connId)
         {
             ConnId = connId;
             Position = new Vector2(x, y);
+
+            
         }
     }
 }
