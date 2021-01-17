@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using System;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -55,12 +56,6 @@ namespace RealtimeInteractiveCrawler
                     target.Draw(tiles[x][y]);
                 }
             }
-        }
-
-        
-        public override string ToString()
-        {
-            return chunkPos.X + " " + chunkPos.Y;
         }
 
     }

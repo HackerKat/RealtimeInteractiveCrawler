@@ -14,13 +14,13 @@ namespace RealtimeInteractiveCrawler
         public static List<Tile> PlayerTiles = new List<Tile>();
         public static Dictionary<int, Player> Players { get; set; } = new Dictionary<int, Player>();
         public static Player Player;
+        public static Dictionary<int, Enemy> Enemies = new Dictionary<int, Enemy>();
 
         private const uint DEFAULT_WIDTH = 1280;
         private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         private NetworkManager networkManager = new NetworkManager();
-        private Dictionary<int, Enemy> enemies = new Dictionary<int, Enemy>();
 
         private bool isDataReadyToInit = false;
 
@@ -105,7 +105,7 @@ namespace RealtimeInteractiveCrawler
                 float y = pr.GetFloat();
 
                 Enemy enemy = new Enemy();
-                enemies.Add(id, enemy);
+                Enemies.Add(id, enemy);
                 enemy.Spawn(x, y);
             }
            
@@ -167,7 +167,7 @@ namespace RealtimeInteractiveCrawler
                 int id = pr.GetInt();
                 int x = (int)pr.GetFloat();
                 int y = (int)pr.GetFloat();
-                enemies[id].UpdatePos(x, y);
+                Enemies[id].UpdatePos(x, y);
             }
         }
 
