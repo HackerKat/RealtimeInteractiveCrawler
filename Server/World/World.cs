@@ -41,7 +41,7 @@ namespace Server
             float x = firstChunk.GetTile(tx, ty).Position.X;
             float y = firstChunk.GetTile(tx, ty).Position.Y;
 
-            return new Vector2(x, y);
+            return new Vector2((float)tx, (float)ty);
         }
 
         public void GenerateWorld(int seed)
