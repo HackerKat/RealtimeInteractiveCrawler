@@ -116,7 +116,10 @@ namespace RealtimeInteractiveCrawler
                 {
                     int i = (mousePos.X) / Tile.TILE_SIZE;
                     int j = (mousePos.Y) / Tile.TILE_SIZE;
-                    if (world.GetTile(i, j).type != TileType.ITEM)
+                    Debug.WriteLine(tile.Position);
+                    int boderMax = World.WORLD_SIZE * Chunk.CHUNK_SIZE * Tile.TILE_SIZE - Tile.TILE_SIZE;
+                    bool noBorders = tile.Position.X != 0 && tile.Position.Y != 0 && tile.Position.X != boderMax && tile.Position.Y != boderMax;
+                    if (tile.type != TileType.ITEM && tile.type != TileType.GROUND && noBorders)
                         world.SetTile(TileType.GROUND, i, j);
                 }
             }
