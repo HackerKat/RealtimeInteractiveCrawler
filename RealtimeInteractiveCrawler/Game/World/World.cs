@@ -12,6 +12,8 @@ namespace RealtimeInteractiveCrawler
     {
         public const int WORLD_SIZE = 5;
 
+        //public List<Enemy> enemies = new List<Enemy>();
+
         private Chunk[][] chunks;
         // 0 = health, 1 = attack, 2 = defense, 3 = eraser
         private List<SpriteSheet> itemSpriteSheets = new List<SpriteSheet>();
@@ -83,6 +85,7 @@ namespace RealtimeInteractiveCrawler
                     break;
                 default:
                     break;
+
             }
 
             Tile tile = GetTile(x, y);
@@ -120,19 +123,6 @@ namespace RealtimeInteractiveCrawler
             Vector2i tilePos = GetTilePosFromChunk(x, y);
 
             return chunk.GetTile(tilePos.X, tilePos.Y);
-        }
-
-        // Gets absolut pos
-        public Tile GetTileAbsolutPos(int x, int y)
-        {
-            Chunk chunk = GetChunk(x, y);
-            if (chunk == null)
-                return null;
-
-            int X = x + chunk.chunkPos.X * Chunk.CHUNK_SIZE;
-            int Y = y + chunk.chunkPos.Y * Chunk.CHUNK_SIZE;
-
-            return chunk.GetTile(X, Y);
         }
 
         public Chunk GetChunk(int x, int y)

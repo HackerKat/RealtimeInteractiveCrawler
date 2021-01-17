@@ -20,8 +20,10 @@ namespace RealtimeInteractiveCrawler
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         private NetworkManager networkManager = new NetworkManager();
+        private Dictionary<int, Enemy> enemies = new Dictionary<int, Enemy>();
 
         private bool isDataReadyToInit = false;
+
 
         private bool pPressed = false;
 
@@ -30,6 +32,7 @@ namespace RealtimeInteractiveCrawler
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
+
 
             Rand = new Random();
 
@@ -76,6 +79,12 @@ namespace RealtimeInteractiveCrawler
                 case PacketType.UPDATE_OTHER_POS:
                     GetOtherPlayerData(p);
                     break;
+                case PacketType.UPDATE_ENEMY:
+                    if (isDataReadyToInit)
+                    {
+                        UpdateEnemyData(p);
+                    }
+                    break;
             }
         }
 
@@ -85,17 +94,27 @@ namespace RealtimeInteractiveCrawler
 
             connectionId = pr.GetInt();
             int seed = pr.GetInt();
-            int spawnX = pr.GetInt();
-            int spawnY = pr.GetInt();
+            float spawnX = pr.GetFloat();
+            float spawnY = pr.GetFloat();
+            int enemyCount = pr.GetInt();
+            world.GenerateWorld(seed);
+            for (int i = 0; i < enemyCount; i++)
+            {
+                int id = pr.GetInt();
+                float x = pr.GetFloat();
+                float y = pr.GetFloat();
 
-            Console.WriteLine("init data get processed");
+                Enemy enemy = new Enemy();
+                enemies.Add(id, enemy);
+                enemy.Spawn(x, y);
+            }
+           
             Console.WriteLine("my connection id is: " + connectionId);
 
-            Player = new Player();
-            Player.ClientPlayer = true;
-            Player.Spawn(spawnX, spawnY);
-            Players.Add(connectionId, Player);
-            world.GenerateWorld(seed);
+            player = new Player();
+            player.ClientPlayer = true;
+            player.Spawn(spawnX, spawnY);
+            players.Add(connectionId, player);
             isDataReadyToInit = true;
         }
 
@@ -104,10 +123,9 @@ namespace RealtimeInteractiveCrawler
             PacketReader pr = new PacketReader(p);
 
             int connId = pr.GetInt();
-            int spawnX = pr.GetInt();
-            int spawnY = pr.GetInt();
+            float spawnX = pr.GetFloat();
+            float spawnY = pr.GetFloat();
 
-            Console.WriteLine("new player data get processed");
             Player newPlayer = new Player();
             newPlayer.Spawn(spawnX, spawnY);
             Players.Add(connId, newPlayer);
@@ -127,19 +145,29 @@ namespace RealtimeInteractiveCrawler
 
         public void GetOtherPlayerData(Packet p)
         {
-            Console.WriteLine("Client got data about other players position");
             PacketReader pr = new PacketReader(p);
 
             int id = pr.GetInt();
-            int x = pr.GetInt();
-            int y = pr.GetInt();
-            Console.WriteLine("Get data from player: " + id);
-            if (Players.ContainsKey(id))
+            int x = (int)pr.GetFloat();
+            int y = (int)pr.GetFloat();
+            if (players.ContainsKey(id))
             {
-                Player np = Players[id];
-                Console.WriteLine("network player has moved to x: " + np.Position.X);
-                Console.WriteLine("network player has moved to y: " + np.Position.Y);
+                Player np = players[id];
                 np.UpdatePos(x, y);
+            }
+        }
+
+        public void UpdateEnemyData(Packet p)
+        {
+            //Console.WriteLine("Client got data about enemy position");
+            PacketReader pr = new PacketReader(p);
+            int count = pr.GetInt();
+            for (int i = 0; i < count; i++)
+            {
+                int id = pr.GetInt();
+                int x = (int)pr.GetFloat();
+                int y = (int)pr.GetFloat();
+                enemies[id].UpdatePos(x, y);
             }
         }
 
@@ -185,10 +213,15 @@ namespace RealtimeInteractiveCrawler
             {
                 Window.Close();
             }
+            
         }
 
         public override void Draw(GameTime gameTime)
         {
+            // TODO remove debug
+          
+            //Window.Draw(sprite);
+
             //DebugUtility.DrawPerformanceData(Color.White);
 
             // TODO remove debug
@@ -199,14 +232,18 @@ namespace RealtimeInteractiveCrawler
             //UIManager.Draw();
 
             // Network
-            //if (isDataReadyToInit)
-            //{
-            //    Window.Draw(world);
-            //    foreach (Player np in Players.Values)
-            //    {
-            //        Window.Draw(np);
-            //    }
-            //}
+            // if (isDataReadyToInit)
+            // {
+            //     Window.Draw(world);
+            //     foreach (Player np in players.Values)
+            //     {
+            //         Window.Draw(np);
+            //     }
+            //     foreach (Enemy enemy in enemies.Values)
+            //     {
+            //         Window.Draw(enemy);
+            //     }
+            // }
 
         }
     }

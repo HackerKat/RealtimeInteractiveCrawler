@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Server
+{
+    public class NullBehaviour : SteeringBehaviour
+    {
+        public SteeringOutput GetSteering()
+        {
+            return new SteeringOutput();
+        }
+    }
+}

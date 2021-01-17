@@ -51,7 +51,6 @@ namespace RealtimeInteractiveCrawler
             Window.Resized += WindowResized;
             Window.GainedFocus += WindowFocus;
             Window.LostFocus += WindowUnfocus;
-
         }
 
         public void Run()

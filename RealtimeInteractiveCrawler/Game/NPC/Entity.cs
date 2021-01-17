@@ -11,6 +11,7 @@ namespace RealtimeInteractiveCrawler
         public Vector2f StartPosition;
         public bool IsDestroyed;
         public bool IsItem;
+        public SpriteSheet SpriteSheet;
 
         protected RectangleShape rect;
         protected Vector2f velocity;
@@ -19,8 +20,7 @@ namespace RealtimeInteractiveCrawler
         protected bool isRectVisible = true;
 
         protected Sprite sprite;
-
-        public Entity()
+        public Entity() 
         {
             world = AwesomeGame.world;
         }

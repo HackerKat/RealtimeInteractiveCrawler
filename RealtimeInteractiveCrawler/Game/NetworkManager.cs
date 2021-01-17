@@ -46,6 +46,9 @@ namespace RealtimeInteractiveCrawler
             byte[] data = new byte[size];
             stream.Read(data, 0, size);
 
+            Console.WriteLine("PacketType: " + packetType.ToString());
+            Console.WriteLine("Packet size: " + size);
+
             return new Packet(packetType, size, data);
         }
 

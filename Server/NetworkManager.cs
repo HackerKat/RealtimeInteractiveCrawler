@@ -8,6 +8,7 @@ using System.Net;
 using NetworkLib;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Numerics;
 
 namespace Server
 {
@@ -16,15 +17,18 @@ namespace Server
         private List<Thread> clients;
         //private bool threadShouldEnd = false;
         private TcpListener server;
-        private ConcurrentDictionary<TcpClient, int> connections;
-        private ConcurrentDictionary<int, Player> players = new ConcurrentDictionary<int, Player>();
-        private int connectionId;
-        private Random rand = new Random();
-        private int seed;
-        
-        public NetworkManager()
+        private ConcurrentDictionary<TcpClient, int> connections = new ConcurrentDictionary<TcpClient, int>();
+        public ConcurrentDictionary<int, Player> Players
         {
-            seed = rand.Next(1, int.MaxValue);
+            get;
+            private set;
+        } = new ConcurrentDictionary<int, Player>();
+        private int connectionId;
+        private int seed;
+
+        public NetworkManager(int seed)
+        {
+            this.seed = seed;
         }
 
         public void SendData(Packet packet, NetworkStream stream)
@@ -48,8 +52,6 @@ namespace Server
 
         public void StopNetwork()
         {
-            //threadShouldEnd = true;
-            
             foreach(TcpClient client in connections.Keys)
             {
                 client.Close();
@@ -67,7 +69,6 @@ namespace Server
             {
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
                 server = new TcpListener(localAddr, 12534);
-                connections = new ConcurrentDictionary<TcpClient, int>();
                 clients = new List<Thread>();
                 server.Start();
                 Console.WriteLine("Server started");
@@ -113,7 +114,6 @@ namespace Server
             while (client.Connected)
             {
                 Packet p = ReadData(client.GetStream());
-
                 switch (p.PacketType)
                 {
                     case PacketType.PING:
@@ -136,41 +136,56 @@ namespace Server
         public void SendNewPlayerJoined(TcpClient client, int newClientId)
         {
             PacketBuilder pb = new PacketBuilder(PacketType.NEW_PLAYER);
-            foreach(Player p in players.Values)
+            foreach(Player p in Players.Values)
             {
                 if(p.ConnId == newClientId)
                 {
                     pb.Add(p.ConnId);
-                    pb.Add(p.PosX); 
-                    pb.Add(p.PosY);
+                    pb.Add(p.Position.X); 
+                    pb.Add(p.Position.Y);
                 }
             }
             Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
+            lock (client)
+            {
+                SendData(packet, client.GetStream());
+            }
         }
 
         public void SendAcceptPacket(TcpClient client)
         {
+            Vector2 spawnPoint = Server.world.GetSpawnPoint(Server.rand);
+
             PacketBuilder pb = new PacketBuilder(PacketType.INIT);
             int clientId = connections[client];
             pb.Add(clientId); //connection id
             pb.Add(seed); //seed
-            int x = rand.Next(50, 500);
-            int y = rand.Next(50, 500);
-            pb.Add(x); //spawn posX
-            pb.Add(y); //spawn posY
-            Player pl = new Player(x, y, clientId);
-            players.TryAdd(clientId, pl);
+            pb.Add(spawnPoint.X); //spawn posX
+            pb.Add(spawnPoint.Y); //spawn posY
+            pb.Add(Server.world.enemies.Count); //count of enemies
+            foreach(Entity enemy in Server.world.enemies)
+            {
+                pb.Add(enemy.Id);
+                pb.Add(enemy.Position.X); //position is float
+                pb.Add(enemy.Position.Y);
+            }
+            Player pl = new Player(spawnPoint.X, spawnPoint.Y, clientId);
+            Players.TryAdd(clientId, pl);
             Packet packet = pb.Build();
-            SendData(packet, client.GetStream());
+            Console.WriteLine("Init packet is built");
+            lock (client)
+            {
+                SendData(packet, client.GetStream());
+            }
 
-            foreach (int id in players.Keys)
+            foreach (int id in Players.Keys)
             {
                 if (id != clientId)
                 {
                     SendNewPlayerJoined(client, id);
                 }
             }
+           
         }
 
         public void SendPlayerUpdate(TcpClient client, Packet p)
@@ -179,19 +194,43 @@ namespace Server
             int id = pr.GetInt();
             float x = pr.GetFloat();
             float y = pr.GetFloat();
-            Player netplayer = players[id];
-            netplayer.PosX = (int)x;
-            netplayer.PosY = (int)y;
+            Player netplayer = Players[id];
+            netplayer.Position = new Vector2(x, y);
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_OTHER_POS);
             pb.Add(id);
-            pb.Add(netplayer.PosX);
-            pb.Add(netplayer.PosY);
+            pb.Add(netplayer.Position.X);
+            pb.Add(netplayer.Position.Y);
             Packet packet = pb.Build();
             foreach(TcpClient c in connections.Keys)
             {
                 if(c != client)
                 {
-                    SendData(packet, c.GetStream());
+                    lock (c)
+                    {
+                        SendData(packet, c.GetStream());
+                    }
+                }
+            }
+        }
+
+        public void SendEnemyUpdate()
+        {
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ENEMY);
+            int enemieCount = Server.world.enemies.Count;
+            pb.Add(Server.world.enemies.Count);
+            foreach(Entity enemy in Server.world.enemies)
+            {
+                pb.Add(enemy.Id);
+                pb.Add(enemy.Position.X);
+                pb.Add(enemy.Position.Y);
+            }
+            Packet packet = pb.Build();
+
+            foreach(TcpClient client in connections.Keys)
+            {
+                lock (client)
+                {
+                    SendData(packet, client.GetStream());
                 }
             }
         }

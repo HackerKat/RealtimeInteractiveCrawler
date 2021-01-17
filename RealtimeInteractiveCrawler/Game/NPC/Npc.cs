@@ -20,13 +20,6 @@ namespace RealtimeInteractiveCrawler
         public float AttackWaitingTime;
         public bool AllowAttack = true;
 
-        // Debug
-        float totalTimeElapsed;
-        float deltaTime;
-        float previousTimeElapsed;
-        float startTime;
-        Clock clock;
-
         public int Direction
         {
             set
@@ -86,6 +79,10 @@ namespace RealtimeInteractiveCrawler
             AttackWaitingTime = 0;
             Debug.WriteLine(TimeTillNextAttack);
                        
+        public void UpdatePos(int x, int y)
+        {
+            // TODO anim
+            Position = new Vector2f(x, y);
         }
 
         public abstract void OnKill();

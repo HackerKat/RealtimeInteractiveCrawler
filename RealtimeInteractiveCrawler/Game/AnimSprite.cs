@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RealtimeInteractiveCrawler
 {
-    class AnimationFrame
+    public class AnimationFrame
     {
         public int i, j;
         public float time;
@@ -17,7 +17,7 @@ namespace RealtimeInteractiveCrawler
         }
     }
 
-    class Animation
+    public class Animation
     {
         AnimationFrame[] frames;
         float timer;
@@ -60,7 +60,7 @@ namespace RealtimeInteractiveCrawler
 
     }
 
-    class AnimSprite : Transformable, Drawable
+    public class AnimSprite : Transformable, Drawable
     {
         public enum MovementType
         {

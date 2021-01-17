@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Collections.Concurrent;
 
 namespace Server
 {
     // TODO Singleton
-    class World
+    public class World
     {
-        public const int WORLD_SIZE = 5;
+        public const int WORLD_SIZE = 3;
 
         Chunk[][] chunks;
+        public ConcurrentBag<Entity> enemies = new ConcurrentBag<Entity>();
+        private int entityId = 1000;
+        
+        //public static Dictionary<Tile, Item> Items = new Dictionary<Tile, Item>();
 
         public World()
         {
@@ -19,6 +24,24 @@ namespace Server
             {
                 chunks[i] = new Chunk[WORLD_SIZE];
             }
+        }
+
+        public Vector2 GetSpawnPoint(Random rand)
+        {
+            Chunk firstChunk = chunks[0][0];
+            int tx = rand.Next(Chunk.CHUNK_SIZE);
+            int ty = rand.Next(Chunk.CHUNK_SIZE);
+
+            while(firstChunk.GetTile(tx, ty).type != TileType.GROUND)
+            {
+                tx = rand.Next(Chunk.CHUNK_SIZE);
+                ty = rand.Next(Chunk.CHUNK_SIZE);
+            }
+
+            float x = firstChunk.GetTile(tx, ty).Position.X;
+            float y = firstChunk.GetTile(tx, ty).Position.Y;
+
+            return new Vector2(x, y);
         }
 
         public void GenerateWorld(int seed)
@@ -41,12 +64,18 @@ namespace Server
                 SetTile(TileType.SLIME, (int)treasures[i].X, (int)treasures[i].Y);
             }
 
-            List<Vector2> enemies = mapHandler.PlaceEnemies();
-            for (int i = 0; i < enemies.Count; i++)
+            List<Vector2> enemyTiles = mapHandler.PlaceEnemies();
+            for (int i = 0; i < enemyTiles.Count; i++)
             {
-                mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
-                SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
+                mapHandler.Map[(int)enemyTiles[i].X, (int)enemyTiles[i].Y] = TileType.ENEMY;
+                SetTile(TileType.ENEMY, (int)enemyTiles[i].X, (int)enemyTiles[i].Y);
+
+                Tile t = GetTile((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
+                Vector2 absolPos = t.Position;
+
+                enemies.Add(new Entity((int)absolPos.X, (int)absolPos.Y, entityId++));
             }
+            Console.WriteLine(enemyTiles.Count);
         }
 
         public void SetTile(TileType type, int x, int y)
