@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RealtimeInteractiveCrawler
 {
-    class SpriteSheet
+    public class SpriteSheet
     {
         int subW, subH; // width and height of sprite
         int borderSize; // border between sprite elements in one picture

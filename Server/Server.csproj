@@ -47,10 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity.cs" />
+    <Compile Include="GameTime.cs" />
     <Compile Include="NetworkManager.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="Behaviours\Seek.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Behaviours\SteeringBehaviour.cs" />
+    <Compile Include="Behaviours\SteeringOutput.cs" />
+    <Compile Include="Behaviours\Wander.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\MapHandler.cs" />
     <Compile Include="World\Tile.cs" />

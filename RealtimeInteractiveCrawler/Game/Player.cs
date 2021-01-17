@@ -7,7 +7,7 @@ using static RealtimeInteractiveCrawler.AnimSprite;
 
 namespace RealtimeInteractiveCrawler
 {
-    class Player : Npc
+    public class Player : Npc
     {
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;

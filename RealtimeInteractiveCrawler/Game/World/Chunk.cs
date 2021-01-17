@@ -3,7 +3,7 @@ using SFML.System;
 
 namespace RealtimeInteractiveCrawler
 {
-    class Chunk : Transformable, Drawable
+    public class Chunk : Transformable, Drawable
     {
         public const int CHUNK_SIZE = 25;
 

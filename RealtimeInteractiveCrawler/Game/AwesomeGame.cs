@@ -27,8 +27,7 @@ namespace RealtimeInteractiveCrawler
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
 
-        private World world;
-        NpcSlime slime;
+        private List<SteeringBehaviour> behaviours =  new List<SteeringBehaviour>();
 
         List<NpcSlime> slimes = new List<NpcSlime>();
 
@@ -46,20 +45,16 @@ namespace RealtimeInteractiveCrawler
         {
             networkManager.Connect("localhost");
             world = new World();
-            //world.GenerateWorld();
 
-            // Create player
-            //player = new Player(world);
-            //player.Spawn(300, 150);
-            // Create example enemy
-            slime = new NpcSlime(world);
-            slime.Spawn(500, 150);
-            for (int i = 0; i < 1; i++)
+
+            player = new Player();
+            player.Spawn(650, 300);
+
+            world.GenerateWorld(5);
+
+            foreach (Enemy enemy in world.enemies)
             {
-                var slime = new NpcSlime(world);        
-                slime.Direction = MainClass.Rand.Next(0, 2) == 0 ? 1 : -1;
-                slime.Spawn(MainClass.Rand.Next(150, 600), 150);
-                slimes.Add(slime);
+                behaviours.Add(new Wander(enemy, Rand));
             }
         }
 
@@ -104,6 +99,10 @@ namespace RealtimeInteractiveCrawler
             player = new Player(world);
             player.Spawn(spawnX, spawnY);
             world.GenerateWorld(seed);
+            foreach(Enemy enemy in world.enemies)
+            {
+                behaviours.Add(new Wander(enemy, Rand));
+            }
             isDataReadyToInit = true;
         }
 
@@ -154,10 +153,15 @@ namespace RealtimeInteractiveCrawler
         {
             if (isDataReadyToInit)
             {
-                if (hasFocus)
+
+                player.Update();
+                // SendPlayerUpdate();
+                for(int i = 0; i < behaviours.Count; i++)
                 {
-                    player.Update();
-                    SendPlayerUpdate();
+                    SteeringBehaviour wander = behaviours[i];
+                    var steering = wander.GetSteering();
+                    Enemy enemy = world.enemies[i];
+                    enemy.UpdatePos(steering, gameTime);
                 }
             }
             
@@ -204,8 +208,14 @@ namespace RealtimeInteractiveCrawler
                 }
             }
 
-            //foreach (var s in slimes)
-            //    Window.Draw(s);
+
+            // TODO remove debug
+            Window.Draw(world);
+            Window.Draw(player);
+            foreach(Enemy enemy in world.enemies)
+            {
+                Window.Draw(enemy);
+            }
 
             DebugRender.Draw(Window);
             //Window.Draw(sprite);

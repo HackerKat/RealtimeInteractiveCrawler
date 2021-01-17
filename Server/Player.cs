@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace Server
 {
-    
-    class Player
+    public class Player
     {
         public int PosX
         {
@@ -25,11 +25,18 @@ namespace Server
             set;
         }
 
+        public Vector2 Position
+        {
+            get;
+            private set;
+        } = new Vector2();
+
         public Player(int x, int y, int connId)
         {
             PosX = x;
             PosY = y;
             ConnId = connId;
+            Position = new Vector2(x, y);
         }
     }
 }

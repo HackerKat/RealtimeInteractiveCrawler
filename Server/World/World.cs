@@ -11,6 +11,8 @@ namespace Server
 
         Chunk[][] chunks;
 
+        public List<Entity> enemies = new List<Entity>();
+
         public World()
         {
             chunks = new Chunk[WORLD_SIZE][];
@@ -41,11 +43,16 @@ namespace Server
                 SetTile(TileType.SLIME, (int)treasures[i].X, (int)treasures[i].Y);
             }
 
-            List<Vector2> enemies = mapHandler.PlaceEnemies();
-            for (int i = 0; i < enemies.Count; i++)
+            List<Vector2> enemyTiles = mapHandler.PlaceEnemies();
+            for (int i = 0; i < enemyTiles.Count; i++)
             {
-                mapHandler.Map[(int)enemies[i].X, (int)enemies[i].Y] = TileType.ENEMY;
-                SetTile(TileType.ENEMY, (int)enemies[i].X, (int)enemies[i].Y);
+                mapHandler.Map[(int)enemyTiles[i].X, (int)enemyTiles[i].Y] = TileType.ENEMY;
+                SetTile(TileType.ENEMY, (int)enemyTiles[i].X, (int)enemyTiles[i].Y);
+
+                Tile t = GetTile((int)enemyTiles[i].X, (int)enemyTiles[i].Y);
+                Vector2 absolPos = t.Position;
+
+                enemies.Add(new Entity((int)absolPos.X, (int)absolPos.Y));
             }
         }
 

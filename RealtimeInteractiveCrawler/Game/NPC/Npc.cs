@@ -9,7 +9,7 @@ using static RealtimeInteractiveCrawler.AnimSprite;
 
 namespace RealtimeInteractiveCrawler
 {
-    abstract class Npc : Transformable, Drawable
+    public abstract class Npc : Transformable, Drawable
     {
         public Vector2f StartPosition;
 
