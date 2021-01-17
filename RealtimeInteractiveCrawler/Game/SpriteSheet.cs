@@ -9,46 +9,61 @@ namespace RealtimeInteractiveCrawler
 {
     public class SpriteSheet
     {
-        int subW, subH; // width and height of sprite
         int borderSize; // border between sprite elements in one picture
 
-        public int SubWidth { get { return subW; } }
-        public int SubHeight { get { return subH; } }
+        public int SubWidth { get; private set; }
+        public int SubHeight { get; private set; }
+        public int SubCountX { get; private set; }
+        public int SubCountY { get; private set; }
 
-        // a and b size of one sprite OR amount of sprite along one axis
+        public Texture Texture;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="a">Amount of fragments on X axis or width of one fragment in px</param>
         /// <param name="b">Amount of fragments on Y axis or height of one fragment in px</param>
+        /// <param name="abIsCount">a and b is the amount of sprites in x and y direction</param>
         /// <param name="borderSize">Space between sprites</param>
-        /// <param name="texW">Width of texture in px</param>
-        /// <param name="texH">Height of texture in px</param>
-        public SpriteSheet(int a, int b, int borderSize, int texW = 0, int texH = 0)
+        /// <param name="texture"></param>
+        /// <param name="isSmooth"></param>
+        public SpriteSheet(int a, int b, bool abIsCount, int borderSize, Texture texture, bool isSmooth = false)
         {
+            Texture = texture;
+            texture.Smooth = isSmooth; // evil thing, try not to use
+
             if (borderSize > 0)
                 this.borderSize = borderSize + 1;
             else
                 this.borderSize = 0;
 
-            if(texW != 0 && texH != 0)
+            if (abIsCount)
             {
-                subW = (int)Math.Ceiling((float)texW / a);
-                subH = (int)Math.Ceiling((float)texH / b);
+                SubWidth = (int)Math.Ceiling((float)texture.Size.X / a);
+                SubHeight = (int)Math.Ceiling((float)texture.Size.Y / b);
+                SubCountX = a;
+                SubCountY = b;
             }
             else
             {
-                subW = a;
-                subH = b;
+                SubWidth = a;
+                SubHeight = b;
+                SubCountX = (int)Math.Ceiling((float)texture.Size.X / a);
+                SubCountY = (int)Math.Ceiling((float)texture.Size.Y / b);
             }
+        }
+
+        public void Dispose()
+        {
+            Texture.Dispose();
+            Texture = null;
         }
 
         public IntRect GetTextureRect(int i, int j)
         {
-            int x = i * subW + i * borderSize;
-            int y = j * subH + j * borderSize;
-            return new IntRect(x, y, subW, subH);
+            int x = i * SubWidth + i * borderSize;
+            int y = j * SubHeight + j * borderSize;
+            return new IntRect(x, y, SubWidth, SubHeight);
         }
 
     }

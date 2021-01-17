@@ -8,12 +8,8 @@ namespace RealtimeInteractiveCrawler
 {
     class MainClass
     {
-        public static Random Rand;
-
         public static void Main(string[] args)
         {
-            Rand = new Random();
-
             AwesomeGame game = new AwesomeGame();
             game.Run();
         }

@@ -1,15 +1,8 @@
 ﻿using SFML.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 using SFML.Window;
-using SFML.System;
-using System.IO;
 using NetworkLib;
-using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -25,12 +18,9 @@ namespace RealtimeInteractiveCrawler
         private NetworkManager networkManager = new NetworkManager();
         private Player player;
         private bool isDataReadyToInit = false;
-        private Dictionary<int, NetworkPlayer> players = new Dictionary<int, NetworkPlayer>();
+        private Dictionary<int, Player> players = new Dictionary<int, Player>();
 
         private float movementSpeed = 5f;
-        private Sprite sprite; // player debug
-
-        List<NpcSlime> slimes = new List<NpcSlime>();
 
 
         private bool pPressed = false;
@@ -40,13 +30,20 @@ namespace RealtimeInteractiveCrawler
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
+
+
             Rand = new Random();
+
+            //Player.Inventory = new UIInventory();
+            //UIManager.AddControl(Player.Inventory);
+
         }
 
         public override void Initialize()
         {
             networkManager.Connect("localhost");
             world = new World();
+
             
 
             player = new Player(world);
@@ -58,14 +55,18 @@ namespace RealtimeInteractiveCrawler
             {
                 behaviours.Add(new Wander(enemy, Rand));
             }
+
+
+            //player = new Player();
+            //player.Spawn(650, 300);
+
+            //world.GenerateWorld(5);
+
         }
 
         public override void LoadContent()
         {
             Content.Load();
-
-            sprite = new Sprite();
-            sprite.Texture = Content.TexPlayer;
         }
 
         public void ProcessPacket(Packet p)
@@ -98,8 +99,11 @@ namespace RealtimeInteractiveCrawler
 
             Console.WriteLine("init data get processed");
             Console.WriteLine("my connection id is: " + connectionId);
-            player = new Player(world);
+
+            player = new Player();
+            player.ClientPlayer = true;
             player.Spawn(spawnX, spawnY);
+            players.Add(connectionId, player);
             world.GenerateWorld(seed);
             foreach(Enemy enemy in world.enemies)
             {
@@ -117,8 +121,8 @@ namespace RealtimeInteractiveCrawler
             int spawnY = pr.GetInt();
 
             Console.WriteLine("new player data get processed");
-            NetworkPlayer newPlayer = new NetworkPlayer(spawnX, spawnY);
-            //newPlayer.Spawn(spawnX, spawnY);
+            Player newPlayer = new Player();
+            newPlayer.Spawn(spawnX, spawnY);
             players.Add(connId, newPlayer);
             Console.WriteLine("new player joined: " + connId);
         }
@@ -126,6 +130,7 @@ namespace RealtimeInteractiveCrawler
         public void SendPlayerUpdate()
         {
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_MY_POS);
+
             pb.Add(connectionId);
             pb.Add(player.Position.X);
             pb.Add(player.Position.Y);
@@ -144,7 +149,7 @@ namespace RealtimeInteractiveCrawler
             Console.WriteLine("Get data from player: " + id);
             if (players.ContainsKey(id))
             {
-                NetworkPlayer np = players[id];
+                Player np = players[id];
                 Console.WriteLine("network player has moved to x: " + np.Position.X);
                 Console.WriteLine("network player has moved to y: " + np.Position.Y);
                 np.UpdatePos(x, y);
@@ -160,6 +165,7 @@ namespace RealtimeInteractiveCrawler
                 // SendPlayerUpdate();
                 for(int i = 0; i < behaviours.Count; i++)
                 {
+
                     SteeringBehaviour wander = behaviours[i];
                     var steering = wander.GetSteering();
                     Enemy enemy = world.enemies[i];
@@ -169,8 +175,15 @@ namespace RealtimeInteractiveCrawler
 
             return;
 
-            //foreach (var s in slimes)
-            //    s.Update();
+                    world.Update();
+                    player.Update();
+                    SendPlayerUpdate();
+                }
+            }
+            //UIManager.UpdateOver();
+            //UIManager.Update();
+            // TODO revert debug change
+
 
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
@@ -196,8 +209,10 @@ namespace RealtimeInteractiveCrawler
                 Window.Close();
             }
         }
+
         public override void Draw(GameTime gameTime)
         {
+
             //DebugUtility.DrawPerformanceData(this, Color.White);
             //if (isDataReadyToInit)
             //{
@@ -221,6 +236,25 @@ namespace RealtimeInteractiveCrawler
 
             DebugRender.Draw(Window);
             //Window.Draw(sprite);
+
+            //DebugUtility.DrawPerformanceData(Color.White);
+
+            // TODO remove debug
+            //Window.Draw(world);
+            //Window.Draw(player);
+
+            DebugRender.Draw(Window);
+            //UIManager.Draw();
+
+            if (isDataReadyToInit)
+            {
+                Window.Draw(world);
+                foreach (Player np in players.Values)
+                {
+                    Window.Draw(np);
+                }
+            }
+
         }
     }
 }

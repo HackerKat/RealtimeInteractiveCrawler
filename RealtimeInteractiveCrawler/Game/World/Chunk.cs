@@ -6,9 +6,10 @@ namespace RealtimeInteractiveCrawler
     public class Chunk : Transformable, Drawable
     {
         public const int CHUNK_SIZE = 25;
+        public Vector2i chunkPos;
 
-        Tile[][] tiles;
-        Vector2i chunkPos;
+        private Tile[][] tiles;
+        
 
         public Chunk(Vector2i chunkPos)
         {
@@ -33,6 +34,7 @@ namespace RealtimeInteractiveCrawler
             tiles[x][y].Position = new Vector2f(x * Tile.TILE_SIZE, y * Tile.TILE_SIZE) + Position;
         }
         
+        // Gets relative position
         public Tile GetTile(int x, int y)
         {
             if (x < 0 || y < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE)
@@ -54,5 +56,12 @@ namespace RealtimeInteractiveCrawler
                 }
             }
         }
+
+        
+        public override string ToString()
+        {
+            return chunkPos.X + " " + chunkPos.Y;
+        }
+
     }
 }

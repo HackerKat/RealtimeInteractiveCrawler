@@ -37,7 +37,7 @@ namespace RealtimeInteractiveCrawler
         protected GameLoop(uint width, uint height, string title, Color windowColor)
         {
             WindowClearColor = windowColor;
-            Window = new RenderWindow(new VideoMode(width, height), title);
+            Window = new RenderWindow(new VideoMode(width, height), title, Styles.Titlebar | Styles.Close);
             GameTime = new GameTime();
             Window.Closed += WindowClosed;
             Window.Resized += WindowResized;

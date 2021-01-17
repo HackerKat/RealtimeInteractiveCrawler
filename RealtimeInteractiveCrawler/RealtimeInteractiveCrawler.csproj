@@ -57,7 +57,7 @@
   <ItemGroup>
     <Compile Include="Game\AnimSprite.cs" />
     <Compile Include="Game\AwesomeGame.cs" />
-    <Compile Include="Game\NPC\Enemy.cs" />
+    <Compile Include="Game\Enemy.cs" />
     <Compile Include="Game\NetworkPlayer.cs" />
     <Compile Include="Game\Steering.cs" />
     <Compile Include="Game\World\Chunk.cs" />
@@ -78,6 +78,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\World\Tile.cs" />
     <Compile Include="Game\World\World.cs" />
+    <Compile Include="Seek.cs" />
+    <Compile Include="SteeringBehaviour.cs" />
+    <Compile Include="SteeringOutput.cs" />
+    <Compile Include="Wander.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
