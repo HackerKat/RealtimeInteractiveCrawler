@@ -8,27 +8,9 @@ using SFML.System;
 
 namespace RealtimeInteractiveCrawler
 {
-    public class Enemy : Transformable, Drawable
+    public class Enemy : Npc
     {
-        private SpriteSheet spriteSheet;
-        private RectangleShape rect;
-        private Vector2f velocity = new Vector2f();
-        public float orientation;
-        private float rotation;
-        //simplify with super classes?
-        private Player playerTarget;
-        private List<NetworkPlayer> targets;
-        public const float MAX_SPEED = 20f;
-        public const float MAX_ROTATION = 7f;
-        public Vector2f OrientVector
-        {
-            get
-            {
-                return new Vector2f((float)Math.Cos(orientation), (float)Math.Sin(orientation));
-            }
-        }
-
-        public Enemy (int x, int y)
+        public Enemy () : base()
         {
             spriteSheet = new SpriteSheet(9, 4, 0, (int)Content.TexPlay2.Size.X, (int)Content.TexPlay2.Size.Y);
             float size = 1;

@@ -30,8 +30,6 @@ namespace RealtimeInteractiveCrawler
         private float movementSpeed = 5f;
         private Sprite sprite; // player debug
 
-        private List<SteeringBehaviour> behaviours =  new List<SteeringBehaviour>();
-
         List<NpcSlime> slimes = new List<NpcSlime>();
 
 
@@ -47,7 +45,7 @@ namespace RealtimeInteractiveCrawler
 
         public override void Initialize()
         {
-            //networkManager.Connect("localhost");
+            networkManager.Connect("localhost");
             world = new World();
             
 

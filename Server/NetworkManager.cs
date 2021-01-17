@@ -21,10 +21,13 @@ namespace Server
         private int connectionId;
         private Random rand = new Random();
         private int seed;
+        private World world;
         
         public NetworkManager()
         {
             seed = rand.Next(1, int.MaxValue);
+            world = new World();
+            world.GenerateWorld(seed);
         }
 
         public void SendData(Packet packet, NetworkStream stream)
@@ -113,7 +116,7 @@ namespace Server
             while (client.Connected)
             {
                 Packet p = ReadData(client.GetStream());
-
+                SendEnemyUpdate(client);
                 switch (p.PacketType)
                 {
                     case PacketType.PING:
@@ -171,6 +174,7 @@ namespace Server
                     SendNewPlayerJoined(client, id);
                 }
             }
+            SendEnemyUpdate(client);
         }
 
         public void SendPlayerUpdate(TcpClient client, Packet p)
@@ -199,17 +203,15 @@ namespace Server
         public void SendEnemyUpdate(TcpClient client)
         {
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_OTHER_POS);
-            //pb.Add(id);
-            //pb.Add(netplayer.PosX);
-            //pb.Add(netplayer.PosY);
-            Packet packet = pb.Build();
-            foreach (TcpClient c in connections.Keys)
+            int enemieCount = world.enemies.Count;
+            pb.Add(world.enemies.Count);
+            foreach(Entity enemy in world.enemies)
             {
-                if (c != client)
-                {
-                    SendData(packet, c.GetStream());
-                }
+                pb.Add(enemy.Position.X);
+                pb.Add(enemy.Position.Y);
             }
+            Packet packet = pb.Build();
+            SendData(packet, client.GetStream());
         }
     }
 }
