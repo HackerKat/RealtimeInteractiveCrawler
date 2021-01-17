@@ -81,7 +81,7 @@ namespace Server
         {
             UpdatePhysicsWall();
             Position = new Vector2(Position.X + (steering.velocity.X * gameTime.deltaTime),
-                                   Position.Y + (steering.velocity.Y * gameTime.deltaTime)); 
+                                   Position.Y + (steering.velocity.Y * gameTime.deltaTime));
             Orientation += steering.rotation * gameTime.deltaTime;
 
             rect = new Rectangle((int)Position.X, (int)Position.Y, SIZE, SIZE);
@@ -103,8 +103,11 @@ namespace Server
 
         private void UpdatePhysicsWall()
         {
-            int entityTileX = (int)(Position.X / Tile.TILE_SIZE);
-            int entityTileY = (int)(Position.Y / Tile.TILE_SIZE);
+            int entityTileX = (int)((Position.X - SIZE * 0.5f + SIZE * 0.5f) / Tile.TILE_SIZE);
+            int entityTileY = (int)((Position.Y + SIZE * 0.5f) / Tile.TILE_SIZE);
+
+            //int entityTileX = (int)(Position.X - rect. / Tile.TILE_SIZE);
+            //int entityTileY = (int)(Position.Y / Tile.TILE_SIZE);
 
             Tile[] walls = new Tile[]
             {
@@ -121,9 +124,9 @@ namespace Server
                 Server.world.GetTile(entityTileX - 1, entityTileY - 1),
                 Server.world.GetTile(entityTileX + 1, entityTileY - 1),
                 // Down
-                Server.world.GetTile(entityTileX, entityTileY),
-                Server.world.GetTile(entityTileX - 1, entityTileY),
-                Server.world.GetTile(entityTileX + 1, entityTileY),
+                Server.world.GetTile(entityTileX, entityTileY + 1),
+                Server.world.GetTile(entityTileX - 1, entityTileY + 1),
+                Server.world.GetTile(entityTileX + 1, entityTileY + 1),
             };
 
             foreach (var tile in walls)
@@ -131,7 +134,6 @@ namespace Server
                 if (tile == null || tile.type == TileType.GROUND) continue;
 
                 Rectangle tileRect = new Rectangle((int)tile.Position.X, (int)tile.Position.Y, Tile.TILE_SIZE, Tile.TILE_SIZE);
-                //DebugRender.AddRectangle(tileRect, Color.Yellow);
 
                 if (rect.IntersectsWith(tileRect))
                 {
@@ -145,27 +147,27 @@ namespace Server
                     if (offset.X > 0)
                     {
                         // Sends the player one tile away
-                        Position = new Vector2((tileRect.Left + tileRect.Width) + rect.Width * 0.5f, Position.Y);
+                        Position = new Vector2(tileRect.Left + rect.Width * 0.25f * 0.5f, Position.Y);
                         Velocity = new Vector2(0, Velocity.Y);
-                   }
+                    }
                     // Right walls
                     else if (offset.X < 0)
-                   {
-                       Position = new Vector2(tileRect.Left - rect.Width * 0.5f, Position.Y);
+                    {
+                        Position = new Vector2(tileRect.Left - rect.Width * 0.25f * 0.5f, Position.Y);
                         Velocity = new Vector2(0, Velocity.Y);
                         //Position = new Vector2f(Position.X - 2, Position.Y);
                     }
-                    // Top walls
+                    //// Top walls
                     else if (offset.Y > 0)
                     {
-                        Position = new Vector2(Position.X, (tileRect.Top + tileRect.Height) + rect.Height * 0.5f);
+                        Position = new Vector2(Position.X, (tileRect.Top + tileRect.Height) - rect.Height * 0.25f * 0.5f);
                         Velocity = new Vector2(Velocity.X, 0);
                         //Position = new Vector2f(Position.X, Position.Y + 2);
                     }
                     // Down walls
                     else if (offset.Y < 0)
                     {
-                        Position = new Vector2(Position.X, tileRect.Top - rect.Height * 0.5f);
+                        Position = new Vector2(Position.X, tileRect.Top + rect.Height * 0.25f);
                         Velocity = new Vector2(Velocity.X, 0);
                         //Position = new Vector2f(Position.X, Position.Y - 2);
                     }
