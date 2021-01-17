@@ -12,7 +12,7 @@ namespace RealtimeInteractiveCrawler
         public static Random Rand;
 
         public static List<Tile> PlayerTiles = new List<Tile>();
-        public static Dictionary<int, Player> Players = new Dictionary<int, Player>();
+        public static Dictionary<int, Player> Players { get; set; } = new Dictionary<int, Player>();
         public static Player Player;
 
         private const uint DEFAULT_WIDTH = 1280;
@@ -111,10 +111,10 @@ namespace RealtimeInteractiveCrawler
            
             Console.WriteLine("my connection id is: " + connectionId);
 
-            player = new Player();
-            player.ClientPlayer = true;
-            player.Spawn(spawnX, spawnY);
-            players.Add(connectionId, player);
+            Player = new Player();
+            Player.ClientPlayer = true;
+            Player.Spawn(spawnX, spawnY);
+            Players.Add(connectionId, Player);
             isDataReadyToInit = true;
         }
 
@@ -150,9 +150,9 @@ namespace RealtimeInteractiveCrawler
             int id = pr.GetInt();
             int x = (int)pr.GetFloat();
             int y = (int)pr.GetFloat();
-            if (players.ContainsKey(id))
+            if (Players.ContainsKey(id))
             {
-                Player np = players[id];
+                Player np = Players[id];
                 np.UpdatePos(x, y);
             }
         }

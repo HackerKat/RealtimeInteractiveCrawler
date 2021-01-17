@@ -36,8 +36,7 @@ namespace RealtimeInteractiveCrawler
 
         public Npc() : base()
         {
-            clock = new Clock();
-            
+
         }
 
 
@@ -78,6 +77,8 @@ namespace RealtimeInteractiveCrawler
             AllowAttack = true;
             AttackWaitingTime = 0;
             Debug.WriteLine(TimeTillNextAttack);
+
+        }
                        
         public void UpdatePos(int x, int y)
         {
