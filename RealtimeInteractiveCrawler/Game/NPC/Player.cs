@@ -289,7 +289,29 @@ namespace RealtimeInteractiveCrawler
 
         public void UpdatePos(int x, int y)
         {
-            // TODO anim
+            // move right
+            if(Position.X < x)
+            {
+                Direction = 1;
+                animSprite.Play(MovementType.Horizontal);
+            }
+            // move left
+            else if(Position.X > x)
+            {
+                Direction = -1;
+                animSprite.Play(MovementType.Horizontal);
+            }
+            // move down
+            else if(Position.Y < y)
+            {
+                animSprite.Play(MovementType.Down);
+            }
+            // move up
+            else if(Position.Y > y)
+            {
+                animSprite.Play(MovementType.Up);
+            }
+
             Position = new Vector2f(x, y);
         }
 
