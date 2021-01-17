@@ -23,10 +23,7 @@ namespace Server
         {
             SteeringOutput steeringOutput = new SteeringOutput();
 
-            float dX = target.Position.X - entity.Position.X;
-            float dY = target.Position.Y - entity.Position.Y;
-            double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
-            if (distance <= MinDistance) return steeringOutput;
+            if (entity.Distance(entity.Position, target.Position) <= MinDistance) return steeringOutput;
 
             steeringOutput.velocity = target.Position - entity.Position;
             steeringOutput.velocity = Vector2.Normalize(steeringOutput.velocity);

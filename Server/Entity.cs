@@ -60,14 +60,15 @@ namespace Server
         public const int SIZE = 54;
         private World world;
         private Rectangle rect;
+        public Chunk chunk;
 
-        public Entity(int x, int y, int id)
+        public Entity(int x, int y, int id, Chunk chunk)
         {
             Position = new Vector2(x, y);
             this.Id = id;
+            this.chunk = chunk;
 
             world = Server.world;
-
             rect = new Rectangle(x, y, SIZE, SIZE);
         }
 
@@ -85,6 +86,25 @@ namespace Server
             Orientation += steering.rotation * gameTime.deltaTime;
 
             rect = new Rectangle((int)Position.X, (int)Position.Y, SIZE, SIZE);
+        }
+
+        public void GetClosestChunk()
+        {
+            Chunk closestChunk = null;
+            double smallestDist = Double.MaxValue;
+            for (int i = 0; i < Chunk.CHUNK_SIZE; i++)
+            {
+                for (int j = 0; j < Chunk.CHUNK_SIZE; j++)
+                {
+                    double dist = Distance(Position, Server.world.chunks[i][j].Origin);
+                    if(dist < smallestDist)
+                    {
+                        smallestDist = dist;
+                        closestChunk = Server.world.chunks[i][j];
+                    }
+                }
+            }
+            chunk = closestChunk;
         }
 
         public float getNewOrientation(float currOrientation, Vector2 velocity)
@@ -176,6 +196,14 @@ namespace Server
 
                 }
             }
+        }
+
+        public double Distance(Vector2 posA, Vector2 posB)
+        {
+            float dX = posA.X - posB.X;
+            float dY = posA.Y - posB.Y;
+            double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
+            return distance;
         }
     }
 }

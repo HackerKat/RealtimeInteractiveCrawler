@@ -7,7 +7,7 @@ namespace Server
         public const int CHUNK_SIZE = 25;
 
         Tile[][] tiles;
-        Vector2 chunkPos;
+        public Vector2 chunkPos;
         public Vector2 Position
         {
             get;

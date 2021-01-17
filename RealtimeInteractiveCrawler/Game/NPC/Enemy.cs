@@ -5,6 +5,7 @@ namespace RealtimeInteractiveCrawler
 {
     class Enemy : Npc
     {
+        public Chunk Chunk;
         public Enemy() : base()
         {
             SpriteSheet = Content.SpriteEnemy;
