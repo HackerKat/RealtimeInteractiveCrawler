@@ -35,6 +35,7 @@ namespace RealtimeInteractiveCrawler
         public Player() : base()
         {
             isRectVisible = true;
+            TimeTillNextAttack = 3;
 
             spriteSheet = Content.SpritePlayer;
             animSprite = new AnimSprite(spriteSheet);
@@ -105,7 +106,7 @@ namespace RealtimeInteractiveCrawler
             // Mouse
             //if (UIManager.Over == null && UIManager.Drag == null)
             //{
-            
+
             Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
             mousePos = (Vector2i)GameLoop.Window.MapPixelToCoords(mousePos);
 
@@ -219,8 +220,24 @@ namespace RealtimeInteractiveCrawler
 
         private void AttackEnemy(Side side)
         {
+            if (!AllowAttack) return;
+            AllowAttack = false;
+
             List<Tile> tilesTowardsPlayer = GetTilesAroundPlayer(side);
+            Tile foundEnemy = tilesTowardsPlayer.Find(item => item.type == TileType.ENEMY);
+
+            //if (foundEnemy == null) return;
+
+            // TODO
+            // kind of animation
+            // Deal damage
+
+            // Cooldown
+            Debug.WriteLine("Attacked");
+            Wait();
+
         }
+       
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {

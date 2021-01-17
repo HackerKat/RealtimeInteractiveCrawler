@@ -1,4 +1,6 @@
-﻿namespace RealtimeInteractiveCrawler
+﻿using System.Diagnostics;
+
+namespace RealtimeInteractiveCrawler
 {
     public class GameTime
     {

@@ -11,10 +11,21 @@ using static RealtimeInteractiveCrawler.AnimSprite;
 namespace RealtimeInteractiveCrawler
 {
     abstract class Npc : Entity
-    {      
+    {
         public int Health;
         public int Attack;
         public int Defense;
+
+        public float TimeTillNextAttack;
+        public float AttackWaitingTime;
+        public bool AllowAttack = true;
+
+        // Debug
+        float totalTimeElapsed;
+        float deltaTime;
+        float previousTimeElapsed;
+        float startTime;
+        Clock clock;
 
         public int Direction
         {
@@ -32,6 +43,8 @@ namespace RealtimeInteractiveCrawler
 
         public Npc() : base()
         {
+            clock = new Clock();
+            
         }
 
 
@@ -64,6 +77,15 @@ namespace RealtimeInteractiveCrawler
             }
 
             animSprite.AddAnimation(animType, new Animation(animFrame));
+        }
+
+        public async void Wait()
+        {
+            await GameLoop.Wait((int)(TimeTillNextAttack * 1000));
+            AllowAttack = true;
+            AttackWaitingTime = 0;
+            Debug.WriteLine(TimeTillNextAttack);
+                       
         }
 
         public abstract void OnKill();

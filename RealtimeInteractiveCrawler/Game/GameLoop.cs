@@ -90,6 +90,12 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
+        public static async Task<bool> Wait(int milliSeconds)
+        {
+            await Task.Delay(milliSeconds);
+            return true;
+        }
+
         public abstract void LoadContent();
         public abstract void Initialize();
         public abstract void Update(GameTime gameTime);

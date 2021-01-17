@@ -104,7 +104,7 @@ namespace RealtimeInteractiveCrawler
                     if (offset.X > 0)
                     {
                         // Sends the player one tile away
-                        Position = new Vector2f((tileRect.Left + tileRect.Width) + playerRect.Width * 0.5f, Position.Y);
+                        Position = new Vector2f(tileRect.Left + tileRect.Width + playerRect.Width * 0.5f, Position.Y);
                         movement.X = 0;
                         velocity.X = 0;
                     }
@@ -119,7 +119,7 @@ namespace RealtimeInteractiveCrawler
                     // Top walls
                     else if (offset.Y > 0)
                     {
-                        Position = new Vector2f(Position.X, (tileRect.Top + tileRect.Height) + playerRect.Height * 0.5f);
+                        Position = new Vector2f(Position.X, tileRect.Top + tileRect.Height + playerRect.Height * 0.5f);
                         movement.Y = 0;
                         velocity.Y = 0;
                         //Position = new Vector2f(Position.X, Position.Y + 2);
