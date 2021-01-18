@@ -26,6 +26,7 @@ namespace RealtimeInteractiveCrawler
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         public static NetworkManager networkManager = new NetworkManager();
+        private int[] statusVals = new int[] { 100, 10, 50, 10 };
         private String ipAdress;
 
         private bool isDataReadyToInit = false;
