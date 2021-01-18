@@ -38,7 +38,7 @@ namespace Server
         public const float MAX_SPEED = 50f;
         public const float MIN_SPEED = 20f;
         public const float MAX_ROTATION = 7f;
-        public const float ENEMY_LIFE = 100f;
+        public const int ENEMY_LIFE = 100;
 
         public Vector2 OrientVector
         {
@@ -59,6 +59,11 @@ namespace Server
             get;
             private set;
         }
+        public int Health
+        {
+            get;
+            set;
+        } = ENEMY_LIFE;
 
         public const float AGGRO_RADIUS = 100f;
         public const int SIZE = 54;

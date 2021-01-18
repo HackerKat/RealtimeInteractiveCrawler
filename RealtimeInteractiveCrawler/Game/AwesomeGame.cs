@@ -89,6 +89,12 @@ namespace RealtimeInteractiveCrawler
                         UpdateItems(p);
                     }
                     break;
+                case PacketType.UPDATE_ENEMY_HEALTH:
+                    if (isDataReadyToInit)
+                    {
+                        UpdateEnemyHealth(p);
+                    }
+                    break;
             }
         }
 
@@ -108,8 +114,10 @@ namespace RealtimeInteractiveCrawler
                 int id = pr.GetInt();
                 float x = pr.GetFloat();
                 float y = pr.GetFloat();
-
+                int currHealth = pr.GetInt();
                 Enemy enemy = new Enemy();
+                enemy.id = id;
+                enemy.Health = currHealth;
                 Enemies.Add(id, enemy);
                 enemy.Spawn(x, y);
             }
@@ -207,11 +215,28 @@ namespace RealtimeInteractiveCrawler
                 int id = pr.GetInt();
                 int x = (int)pr.GetFloat();
                 int y = (int)pr.GetFloat();
+                int currHealth = pr.GetInt();
                 float chunkX = pr.GetFloat();
                 float chunkY = pr.GetFloat();
                 Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
-                
+                Enemies[id].Health = currHealth;
                 Enemies[id].UpdatePos(x, y);
+            }
+        }
+
+        public void UpdateEnemyHealth(Packet p)
+        {
+            //Console.WriteLine("Client got data about enemy position");
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+            foreach (Enemy enemy in Enemies.Values)
+            {
+                if(enemy.id == id)
+                {
+                    enemy.Health = health;
+                    return;
+                }
             }
         }
 

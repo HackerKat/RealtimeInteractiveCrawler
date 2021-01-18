@@ -250,6 +250,8 @@ namespace RealtimeInteractiveCrawler
             {
                 enemy.Health -= Attack;
                 Debug.WriteLine(enemy.Health + " health");
+
+                AwesomeGame.networkManager.SendEnemyHealth(enemy.id, enemy.Health);
             }
 
             //if (foundEnemy == null) return;
@@ -262,9 +264,7 @@ namespace RealtimeInteractiveCrawler
             // Cooldown
             Debug.WriteLine("Attacked");
             Wait();
-
         }
-       
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {

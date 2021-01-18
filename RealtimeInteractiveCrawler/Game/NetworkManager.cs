@@ -100,7 +100,17 @@ namespace RealtimeInteractiveCrawler
             pb.Add(id);
             Packet packet = pb.Build();
             SendData(packet);
-            Console.WriteLine("PAcket sent with item: " + id);
+            //Console.WriteLine("PAcket sent with item: " + id);
+        }
+
+        public void SendEnemyHealth(int id, int health)
+        {
+            Console.WriteLine("Packet sent with enemy id: " + id + " and health " + health);
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ENEMY_HEALTH);
+            pb.Add(id);
+            pb.Add(health);
+            Packet packet = pb.Build();
+            SendData(packet);
         }
     }
 }

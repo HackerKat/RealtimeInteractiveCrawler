@@ -131,6 +131,9 @@ namespace Server
                     case PacketType.UPDATE_ITEM:
                         SendItemUpdate(client, p);
                         break;
+                    case PacketType.UPDATE_ENEMY_HEALTH:
+                        SendEnemyHealth(client, p);
+                        break;
                     default:
                         break;
                 }
@@ -172,6 +175,7 @@ namespace Server
                 pb.Add(enemy.Id);
                 pb.Add(enemy.Position.X); //position is float
                 pb.Add(enemy.Position.Y);
+                pb.Add(enemy.Health);
             }
             pb.Add(itemsToDestroy.Count);
             foreach (int item in itemsToDestroy)
@@ -194,7 +198,6 @@ namespace Server
                     SendNewPlayerJoined(client, id);
                 }
             }
-           
         }
 
         public void SendPlayerUpdate(TcpClient client, Packet p)
@@ -226,12 +229,12 @@ namespace Server
         {
             PacketReader pr = new PacketReader(p);
             int id = pr.GetInt();
-            Console.WriteLine("received update on item: " + id);
+            //Console.WriteLine("received update on item: " + id);
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ITEM);
             pb.Add(id);
             Packet packet = pb.Build();
             itemsToDestroy.Add(id);
-            Console.WriteLine("sent update on item: " + id);
+            //Console.WriteLine("sent update on item: " + id);
             foreach (TcpClient c in connections.Keys)
             {
                 if (c != client)
@@ -251,12 +254,13 @@ namespace Server
             pb.Add(Server.world.enemies.Count);
             foreach(Entity enemy in Server.world.enemies)
             {
-                pb.Add(enemy.Id);
+                pb.Add(enemy.Id); 
                 pb.Add(enemy.Position.X);
                 pb.Add(enemy.Position.Y);
+                pb.Add(enemy.Health);
                 pb.Add(enemy.chunk.chunkPos.X);
                 pb.Add(enemy.chunk.chunkPos.Y);
-                
+                //Console.WriteLine("send enemy with: " + enemy.Id + " with health " + enemy.Health);
             }
             Packet packet = pb.Build();
 
@@ -265,6 +269,38 @@ namespace Server
                 lock (client)
                 {
                     SendData(packet, client.GetStream());
+                }
+            }
+        }
+
+        public void SendEnemyHealth(TcpClient client, Packet packet)
+        {
+            PacketReader pr = new PacketReader(packet);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+            //Console.WriteLine("received enemy with: " + id + " with health " + health);
+            foreach (Entity enemy in Server.world.enemies)
+            {
+                if(enemy.Id == id)
+                {
+                    enemy.Health = health;
+                    break;
+                }
+            }
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ENEMY_HEALTH);
+            
+            pb.Add(id);
+            pb.Add(health);
+            Packet p = pb.Build();
+            //Console.WriteLine("send enemy update");
+            foreach (TcpClient c in connections.Keys)
+            {
+                if(client != c)
+                {
+                    lock (c)
+                    {
+                        SendData(p, c.GetStream());
+                    }
                 }
             }
         }
