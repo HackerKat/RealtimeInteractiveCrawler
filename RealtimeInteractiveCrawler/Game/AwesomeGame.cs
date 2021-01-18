@@ -384,7 +384,13 @@ namespace RealtimeInteractiveCrawler
                 foreach (Enemy enemy in Enemies.Values)
                 {
                     if (enemy.Health > 0)
+                    {
+                        double distanceToPlayer = Distance(enemy.Position, Player.Position);
+                        if (distanceToPlayer > Tile.TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
+                            continue;
                         Window.Draw(enemy);
+                    }
+                        
                 }
                 foreach (var bar in StatusBars.Values)
                 {
