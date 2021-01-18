@@ -9,6 +9,7 @@ using NetworkLib;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace Server
 {
@@ -255,6 +256,7 @@ namespace Server
                 pb.Add(enemy.Position.Y);
                 pb.Add(enemy.chunk.chunkPos.X);
                 pb.Add(enemy.chunk.chunkPos.Y);
+                
             }
             Packet packet = pb.Build();
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using SFML.Window;
 using NetworkLib;
 using SFML.System;
+using System.Diagnostics;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -210,7 +211,8 @@ namespace RealtimeInteractiveCrawler
                 int y = (int)pr.GetFloat();
                 float chunkX = pr.GetFloat();
                 float chunkY = pr.GetFloat();
-                Enemies[id].Chunk = world.GetChunk((int)chunkX, (int)chunkY);
+                Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
+                
                 Enemies[id].UpdatePos(x, y);
             }
         }

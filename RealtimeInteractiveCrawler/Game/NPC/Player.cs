@@ -230,7 +230,7 @@ namespace RealtimeInteractiveCrawler
                 foreach (var tile in tiles)
                 {
                     double dist = AwesomeGame.Distance(tile.Position, enemy.Position, enemy.Origin);
-                    if (dist < 1)
+                    if (dist < 20) 
                         enemiesToAttack.Add(enemy);
                 }
             }

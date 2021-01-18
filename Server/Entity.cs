@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Server
 {
@@ -79,6 +80,7 @@ namespace Server
         {
             SteeringOutput steering = Behaviour.GetSteering();
             UpdatePos(steering, gameTime);
+            GetClosestChunk();
         }
 
         public void UpdatePos(SteeringOutput steering, GameTime gameTime)
@@ -95,9 +97,9 @@ namespace Server
         {
             Chunk closestChunk = null;
             double smallestDist = Double.MaxValue;
-            for (int i = 0; i < Chunk.CHUNK_SIZE; i++)
+            for (int i = 0; i < World.WORLD_SIZE; i++)
             {
-                for (int j = 0; j < Chunk.CHUNK_SIZE; j++)
+                for (int j = 0; j < World.WORLD_SIZE; j++)
                 {
                     double dist = Distance(Position, Server.world.chunks[i][j].Origin);
                     if(dist < smallestDist)
@@ -108,6 +110,7 @@ namespace Server
                 }
             }
             chunk = closestChunk;
+            
         }
 
         public float getNewOrientation(float currOrientation, Vector2 velocity)
@@ -201,10 +204,10 @@ namespace Server
             }
         }
 
-        public double Distance(Vector2 posA, Vector2 posB, Vector2 origin)
+        public double Distance(Vector2 posA, Vector2 posB)
         {
-            float dX = posA.X - (posB.X + origin.X);
-            float dY = posA.Y - (posB.Y + origin.X);
+            float dX = posA.X - posB.X;
+            float dY = posA.Y - posB.Y;
             double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
             return distance;
         }
