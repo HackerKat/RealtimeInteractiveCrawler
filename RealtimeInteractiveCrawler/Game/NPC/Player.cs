@@ -30,7 +30,7 @@ namespace RealtimeInteractiveCrawler
         private float positionX;
         private float positionY;
 
-        private AnimSprite animSprite;
+        public AnimSprite AnimSprite;
         public SpriteSheet spriteSheet;
         private MovementType lastAnim;
 
@@ -41,20 +41,20 @@ namespace RealtimeInteractiveCrawler
             Health = PLAYER_MAX_HEALTH;
 
             spriteSheet = Content.SpritePlayer;
-            animSprite = new AnimSprite(spriteSheet);
+            AnimSprite = new AnimSprite(spriteSheet);
             //animSprite.color = Color.Red;
-            Rect = animSprite.RectShape;
-            Rect = animSprite.RectShape;
+            Rect = AnimSprite.RectShape;
+            Rect = AnimSprite.RectShape;
             //Rect.FillColor = Color.Red;
             //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
             //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
 
-            AssignAnimations(animSprite, MovementType.Idle, 2, 1);
-            AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
-            AssignAnimations(animSprite, MovementType.Up, 0, 9);
-            AssignAnimations(animSprite, MovementType.Down, 2, 9);
-            animSprite.Play(MovementType.Idle);
+            AssignAnimations(AnimSprite, MovementType.Idle, 2, 1);
+            AssignAnimations(AnimSprite, MovementType.Horizontal, 1, 9);
+            AssignAnimations(AnimSprite, MovementType.Up, 0, 9);
+            AssignAnimations(AnimSprite, MovementType.Down, 2, 9);
+            AnimSprite.Play(MovementType.Idle);
         }
 
         public override void OnKill()
@@ -292,7 +292,7 @@ namespace RealtimeInteractiveCrawler
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {
-            target.Draw(animSprite, states);
+            target.Draw(AnimSprite, states);
         }
 
         private void UpdateMovement()
@@ -315,7 +315,7 @@ namespace RealtimeInteractiveCrawler
                     movement.Y += PLAYER_MOVE_SPEED_ACCELERATION;
 
                     // Animation
-                    animSprite.Play(MovementType.Down);
+                    AnimSprite.Play(MovementType.Down);
                     lastAnim = MovementType.Down;
                 }
                 else if (movingUp)
@@ -326,7 +326,7 @@ namespace RealtimeInteractiveCrawler
                     movement.Y -= PLAYER_MOVE_SPEED_ACCELERATION;
 
                     // Animation
-                    animSprite.Play(MovementType.Up);
+                    AnimSprite.Play(MovementType.Up);
                     lastAnim = MovementType.Up;
                 }
 
@@ -361,7 +361,7 @@ namespace RealtimeInteractiveCrawler
                     movement.X = -PLAYER_MOVE_SPEED;
 
                 // Animation
-                animSprite.Play(MovementType.Horizontal);
+                AnimSprite.Play(MovementType.Horizontal);
                 lastAnim = MovementType.Horizontal;
             }
             // Standing / Idle
@@ -370,7 +370,7 @@ namespace RealtimeInteractiveCrawler
                 movement = new Vector2f();
 
                 // Animation
-                animSprite.animations[lastAnim].Reset();
+                AnimSprite.animations[lastAnim].Reset();
                 //animSprite.Play(MovementType.Idle);
             }
         }
@@ -382,23 +382,23 @@ namespace RealtimeInteractiveCrawler
             if (Position.X < x)
             {
                 Direction = 1;
-                animSprite.Play(MovementType.Horizontal);
+                AnimSprite.Play(MovementType.Horizontal);
             }
             // move left
             else if (Position.X > x)
             {
                 Direction = -1;
-                animSprite.Play(MovementType.Horizontal);
+                AnimSprite.Play(MovementType.Horizontal);
             }
             // move down
             else if (Position.Y < y)
             {
-                animSprite.Play(MovementType.Down);
+                AnimSprite.Play(MovementType.Down);
             }
             // move up
             else if (Position.Y > y)
             {
-                animSprite.Play(MovementType.Up);
+                AnimSprite.Play(MovementType.Up);
             }
 
             Position = new Vector2f(x, y);

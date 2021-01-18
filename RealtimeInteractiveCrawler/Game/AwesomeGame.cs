@@ -378,7 +378,7 @@ namespace RealtimeInteractiveCrawler
                     int id = v.Key;
                     //Console.WriteLine("Player: " + id + " has health " + np.Health);
                     if (np.Health <= 0)
-                        np.SpriteSheet = Content.SpriteDead;
+                        np.AnimSprite = new AnimSprite(Content.SpriteDead);
                     Window.Draw(np);
                 }
                 foreach (Enemy enemy in Enemies.Values)
