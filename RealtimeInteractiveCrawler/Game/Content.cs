@@ -20,7 +20,6 @@ namespace RealtimeInteractiveCrawler
         public static SpriteSheet SpriteHealth { get; set; } // Health
         public static SpriteSheet SpriteAttack { get; set; } // Attack
         public static SpriteSheet SpriteDefense { get; set; } // Defense
-        public static SpriteSheet SpriteErase { get; set; } // Defense
 
         public static SpriteSheet SpriteInventory { get; set; } // Inventory
         public static SpriteSheet SpriteDead { get; set; }
@@ -38,7 +37,6 @@ namespace RealtimeInteractiveCrawler
             SpriteHealth = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Health.png"));
             SpriteAttack = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Attack.png"));
             SpriteDefense = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Defense.png"));
-            SpriteErase = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Erase.png"));
 
             SpriteInventory = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "UI\\" + "Ladder.png"));
            

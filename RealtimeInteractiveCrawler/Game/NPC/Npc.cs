@@ -15,7 +15,6 @@ namespace RealtimeInteractiveCrawler
         public int Health;
         public int Attack;
         public int Defense;
-        public int Erase;
 
         public float TimeTillNextAttack;
         public float AttackWaitingTime;
