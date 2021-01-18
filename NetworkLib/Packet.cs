@@ -13,7 +13,8 @@ namespace NetworkLib
         UPDATE_ITEM,
         UPDATE_ENEMY_HEALTH,
         UPDATE_PLAYER_HEALTH,
-        ENEMY_DIED
+        ENEMY_DIED,
+        TILE_UPDATED
     }
     public class Packet
     {

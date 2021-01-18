@@ -127,6 +127,7 @@ namespace RealtimeInteractiveCrawler
                     if (tile.type != TileType.ITEM && tile.type != TileType.GROUND && noBorders && Erase > 0)
                     {
                         world.SetTile(TileType.GROUND, i, j);
+                        AwesomeGame.networkManager.SendChangeTile(i, j);
                         ChangeErase(-1);
                     }
 

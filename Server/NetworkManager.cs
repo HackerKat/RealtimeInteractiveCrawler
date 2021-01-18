@@ -68,8 +68,8 @@ namespace Server
         {
             try
             {
-                IPAddress localAddr = IPAddress.Parse("134.101.5.157");
-                server = new TcpListener(localAddr, 12534);
+                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+                server = new TcpListener(localAddr, 80);
                 clients = new List<Thread>();
                 server.Start();
                 Console.WriteLine("Server started");
@@ -90,6 +90,7 @@ namespace Server
 
         public void Accept()
         {
+
             TcpClient client = server.AcceptTcpClient();
 
             Console.WriteLine("Connection established");
@@ -139,8 +140,34 @@ namespace Server
                     case PacketType.UPDATE_PLAYER_HEALTH:
                         UpdatePlayerHealth(client, p);
                         break;
+                    case PacketType.TILE_UPDATED:
+                        SendTileUpdate(client, p);
+                        break;
                     default:
                         break;
+                }
+            }
+        }
+
+        private void SendTileUpdate(TcpClient client, Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+            int x = pr.GetInt();
+            int y = pr.GetInt();
+            Server.world.SetTile(TileType.GROUND, x, y);
+
+            foreach (TcpClient c in connections.Keys)
+            {
+                if(c != client)
+                {
+                    PacketBuilder pb = new PacketBuilder(PacketType.TILE_UPDATED);
+                    pb.Add(x);
+                    pb.Add(y);
+                    Packet packet = pb.Build();
+                    lock (c)
+                    {
+                        SendData(packet, c.GetStream());
+                    }
                 }
             }
         }

@@ -26,7 +26,7 @@ namespace RealtimeInteractiveCrawler
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         public static NetworkManager networkManager = new NetworkManager();
-        private int[] statusVals = new int[] { 100, 10, 50, 10 };
+        private int[] statusVals = new int[] { 1000, 10, 50, 10 };
 
         private bool isDataReadyToInit = false;
         private bool pPressed = false;
@@ -116,7 +116,23 @@ namespace RealtimeInteractiveCrawler
                         UpdatePlayerHealth(p);
                     }
                     break;
+                case PacketType.TILE_UPDATED:
+                    if (isDataReadyToInit)
+                    {
+                        UpdateTile(p);
+                    }
+                    break;
             }
+        }
+
+        private void UpdateTile(Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+            int x = pr.GetInt();
+            int y = pr.GetInt();
+
+            world.SetTile(TileType.GROUND, x, y);
+            
         }
 
         public void GetAcceptData(Packet p)
@@ -310,7 +326,9 @@ namespace RealtimeInteractiveCrawler
                     //Console.WriteLine(Player.Health);
                     if (Player.Health <= 0)
                     {
-                        Window.Close();
+                        Player.ClientPlayer = false;
+                        //Window.Clear();
+                        //Window.Close();
                     }
                 }
             }
@@ -369,7 +387,7 @@ namespace RealtimeInteractiveCrawler
             //UIManager.Draw();
 
             // Network
-            if (isDataReadyToInit)
+            if (isDataReadyToInit && Player.ClientPlayer)
             {
 
                 Window.Draw(world);

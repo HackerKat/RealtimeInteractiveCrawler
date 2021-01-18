@@ -12,10 +12,10 @@ namespace RealtimeInteractiveCrawler
     public class NetworkManager
     {
 
-        private NetworkStream stream;
+        public NetworkStream Stream;
         private Thread networkThread;
         private bool threadShouldEnd = false;
-        private TcpClient client;
+        public TcpClient Client;
         public MessageQueue MessageQueue
         {
             get;
@@ -29,22 +29,22 @@ namespace RealtimeInteractiveCrawler
         public void SendData(Packet packet)
         {
             //write id of the packet
-            stream.WriteByte((byte)packet.PacketType);
+            Stream.WriteByte((byte)packet.PacketType);
             //write size of the packet
-            stream.Write(BitConverter.GetBytes(packet.Size), 0, 4);
+            Stream.Write(BitConverter.GetBytes(packet.Size), 0, 4);
             //write data
-            stream.Write(packet.Data, 0, packet.Data.Length);
-            stream.Flush();
+            Stream.Write(packet.Data, 0, packet.Data.Length);
+            Stream.Flush();
         }
 
         public Packet ReadData()
         {
-            PacketType packetType = (PacketType)stream.ReadByte();
+            PacketType packetType = (PacketType)Stream.ReadByte();
             byte[] sizeBytes = new byte[4];
-            stream.Read(sizeBytes, 0, sizeBytes.Length);
+            Stream.Read(sizeBytes, 0, sizeBytes.Length);
             int size = BitConverter.ToInt32(sizeBytes, 0);
             byte[] data = new byte[size];
-            stream.Read(data, 0, size);
+            Stream.Read(data, 0, size);
 
             //Console.WriteLine("PacketType: " + packetType.ToString());
             //Console.WriteLine("Packet size: " + size);
@@ -56,17 +56,17 @@ namespace RealtimeInteractiveCrawler
         {
             threadShouldEnd = true;
             networkThread.Join();
-            stream.Close();
-            client.Close();
+            Stream.Close();
+            Client.Close();
         }
 
         public void Connect(string server)
         {
             try
             {
-                int port = 12534;
-                client = new TcpClient(server, port);
-                stream = client.GetStream();
+                int port = 80;
+                Client = new TcpClient(server, port);
+                Stream = Client.GetStream();
                 threadShouldEnd = false;
                 networkThread = new Thread(ReadLoop);
                 networkThread.Start();
@@ -109,6 +109,15 @@ namespace RealtimeInteractiveCrawler
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ENEMY_HEALTH);
             pb.Add(id);
             pb.Add(health);
+            Packet packet = pb.Build();
+            SendData(packet);
+        }
+
+        public void SendChangeTile(int x, int y)
+        {
+            PacketBuilder pb = new PacketBuilder(PacketType.TILE_UPDATED);
+            pb.Add(x);
+            pb.Add(y);
             Packet packet = pb.Build();
             SendData(packet);
         }
