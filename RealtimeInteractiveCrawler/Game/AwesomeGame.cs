@@ -122,14 +122,12 @@ namespace RealtimeInteractiveCrawler
                     if (item.id == itemId)
                     {
                         item.IsDestroyed = true;
-                        world.Update();
-                        return;
                     }
                 }
             }
 
             Console.WriteLine("my connection id is: " + connectionId);
-
+            world.Update();
             Player = new Player();
             Player.ClientPlayer = true;
             Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
@@ -193,7 +191,7 @@ namespace RealtimeInteractiveCrawler
                 {
                     item.IsDestroyed = true;
                     world.Update();
-                    return;
+                    break;
                 }
             }
         }
