@@ -26,21 +26,20 @@ namespace RealtimeInteractiveCrawler
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         public static NetworkManager networkManager = new NetworkManager();
+        private int[] statusVals = new int[] { 100, 10, 50, 10 };
 
         private bool isDataReadyToInit = false;
-
-
         private bool pPressed = false;
-
         private int connectionId;
 
         public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
 
-            StatusBars.Add(ItemType.HEALTH, new SimpleUI(Color.Red, new Vector2f(20, 20), "Health"));
-            StatusBars.Add(ItemType.ATTACK, new SimpleUI(Color.Blue, new Vector2f(20, 50), "Attack"));
-            StatusBars.Add(ItemType.DEFENSE, new SimpleUI(Color.Green, new Vector2f(20, 80), "Defense"));
+            StatusBars.Add(ItemType.HEALTH, new SimpleUI(Color.Red, new Vector2f(20, 20), "Health", new Vector2f(statusVals[0], 20)));
+            StatusBars.Add(ItemType.ATTACK, new SimpleUI(Color.Yellow, new Vector2f(20, 50), "Attack", new Vector2f(statusVals[1], 20)));
+            StatusBars.Add(ItemType.DEFENSE, new SimpleUI(Color.Blue, new Vector2f(20, 80), "Defense", new Vector2f(statusVals[2], 20)));
+            StatusBars.Add(ItemType.ERASER, new SimpleUI(Color.Magenta, new Vector2f(20, 110), "Erase", new Vector2f(statusVals[3], 20)));
             //Rand = new Random();
 
             //Player.Inventory = new UIInventory();
@@ -65,6 +64,14 @@ namespace RealtimeInteractiveCrawler
         public override void LoadContent()
         {
             Content.Load();
+        }
+
+        private void AssignStatusValues(Player player)
+        {
+            player.Health = statusVals[0];
+            player.Attack = statusVals[1];
+            player.Defense = statusVals[2];
+            player.Erase = statusVals[3];
         }
 
         public void ProcessPacket(Packet p)
@@ -139,6 +146,7 @@ namespace RealtimeInteractiveCrawler
             Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             Player.Spawn(pos.X, pos.Y);
             Players.Add(connectionId, Player);
+            AssignStatusValues(Player);
             isDataReadyToInit = true;
         }
 
@@ -155,6 +163,7 @@ namespace RealtimeInteractiveCrawler
             //Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             newPlayer.Spawn(spawnX, spawnY);
             Players.Add(connId, newPlayer);
+            AssignStatusValues(newPlayer);
             Console.WriteLine("new player joined: " + connId);
         }
 
@@ -278,7 +287,7 @@ namespace RealtimeInteractiveCrawler
             // Single
             //Window.Draw(world);       
             //Window.Draw(Player);
-            DebugRender.Draw(Window);
+            
 
             //foreach (var bar in StatusBars.Values)
             //{
@@ -291,7 +300,9 @@ namespace RealtimeInteractiveCrawler
             // Network
             if (isDataReadyToInit)
             {
+
                 Window.Draw(world);
+                DebugRender.Draw(Window);
                 foreach (Player np in Players.Values)
                 {
                     Window.Draw(np);

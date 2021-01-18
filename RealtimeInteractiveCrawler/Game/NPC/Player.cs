@@ -124,8 +124,13 @@ namespace RealtimeInteractiveCrawler
                     int j = (mousePos.Y) / Tile.TILE_SIZE;
                     int boderMax = World.WORLD_SIZE * Chunk.CHUNK_SIZE * Tile.TILE_SIZE - Tile.TILE_SIZE;
                     bool noBorders = tile.Position.X != 0 && tile.Position.Y != 0 && tile.Position.X != boderMax && tile.Position.Y != boderMax;
-                    if (tile.type != TileType.ITEM && tile.type != TileType.GROUND && noBorders)
+                    if (tile.type != TileType.ITEM && tile.type != TileType.GROUND && noBorders && Erase > 0)
+                    {
                         world.SetTile(TileType.GROUND, i, j);
+                        ChangeErase(-1);
+                        Debug.WriteLine("erased");
+                    }
+                        
                 }
             }
             //}
@@ -185,16 +190,17 @@ namespace RealtimeInteractiveCrawler
                 Debug.WriteLine("huray, item! " + actualItem.TypeItem.ToString());
                 switch (actualItem.TypeItem)
                 {
-                    case Item.ItemType.HEALTH:
+                    case ItemType.HEALTH:
                         ChangeHealth(10);
                         break;
-                    case Item.ItemType.ATTACK:
+                    case ItemType.ATTACK:
                         ChangeAttack(2);
                         break;
-                    case Item.ItemType.DEFENSE:
+                    case ItemType.DEFENSE:
                         ChangeDefense(5);
                         break;
-                    case Item.ItemType.ERASER:
+                    case ItemType.ERASER:
+                        ChangeErase(10);
                         break;
                     default:
                         break;
@@ -223,6 +229,13 @@ namespace RealtimeInteractiveCrawler
             Defense += defense;
             AwesomeGame.StatusBars[ItemType.DEFENSE].ChangeStatus(defense);
             Debug.WriteLine(Defense + " my defense");
+        }
+
+        public void ChangeErase(int erase)
+        {
+            Erase += erase;
+            AwesomeGame.StatusBars[ItemType.ERASER].ChangeStatus(erase);
+            Debug.WriteLine(Erase + " my erase");
         }
 
         public List<Enemy> CheckIfEnemyOnTiles(List<Tile> tiles)

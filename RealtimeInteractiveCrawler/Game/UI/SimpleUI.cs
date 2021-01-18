@@ -15,14 +15,13 @@ namespace RealtimeInteractiveCrawler
         private RectangleShape statusBar;
         private Text text;
         private float OutlineThickness = 2;
-        private Vector2f size = new Vector2f(100, 20);
         private Vector2f position;
 
         private Font font;
 
 
 
-        public SimpleUI(Color color, Vector2f position, string statusText)
+        public SimpleUI(Color color, Vector2f position, string statusText, Vector2f size)
         {
             this.position = position;
             statusBar = new RectangleShape(size)

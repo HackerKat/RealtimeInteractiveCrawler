@@ -33,6 +33,7 @@ namespace RealtimeInteractiveCrawler
             itemSpriteSheets.Add(Content.SpriteHealth);
             itemSpriteSheets.Add(Content.SpriteAttack);
             itemSpriteSheets.Add(Content.SpriteDefense);
+            itemSpriteSheets.Add(Content.SpriteErase);
             // TODO other items
         }
 
@@ -55,7 +56,8 @@ namespace RealtimeInteractiveCrawler
             {
                 ItemType.ATTACK,
                 ItemType.DEFENSE,
-                ItemType.HEALTH
+                ItemType.HEALTH,
+                ItemType.ERASER
             };
             
             List<Vector2i> itemsAttack = mapHandler.PlaceTreasure(4);
