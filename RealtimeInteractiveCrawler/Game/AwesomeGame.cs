@@ -166,7 +166,7 @@ namespace RealtimeInteractiveCrawler
             Debug.WriteLine("health server "+ health);
             Player.Spawn(pos.X, pos.Y);
             Players.Add(connectionId, Player);
-            Player.Rect.FillColor = CreateRandomColor(connectionId);
+            //Player.Rect.FillColor = CreateRandomColor(connectionId);
             AssignStatusValues(Player);
             isDataReadyToInit = true;
         }
@@ -185,7 +185,7 @@ namespace RealtimeInteractiveCrawler
             //Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             newPlayer.Spawn(spawnX, spawnY);
             Players.Add(connId, newPlayer);
-            Player.Rect.FillColor = CreateRandomColor(connId);
+            //Player.Rect.FillColor = CreateRandomColor(connId);
             AssignStatusValues(newPlayer);
             Console.WriteLine("new player joined: " + connId);
         }

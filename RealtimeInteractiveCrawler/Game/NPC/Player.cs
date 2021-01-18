@@ -45,7 +45,7 @@ namespace RealtimeInteractiveCrawler
             //animSprite.color = Color.Red;
             Rect = animSprite.RectShape;
             Rect = animSprite.RectShape;
-            Rect.FillColor = Color.Red;
+            //Rect.FillColor = Color.Red;
             //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
             //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
@@ -221,7 +221,7 @@ namespace RealtimeInteractiveCrawler
                 Health += health;
             }
             AwesomeGame.networkManager.SendMyPlayerHealth(Health);
-            Debug.WriteLine(Health + " my health");
+            //Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
         {
