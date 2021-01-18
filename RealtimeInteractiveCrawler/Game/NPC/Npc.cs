@@ -55,7 +55,7 @@ namespace RealtimeInteractiveCrawler
             states.Transform *= Transform;
 
             if (isRectVisible)
-                target.Draw(rect, states);
+                target.Draw(Rect, states);
 
             DrawNPC(target, states);
         }

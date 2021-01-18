@@ -41,8 +41,9 @@ namespace RealtimeInteractiveCrawler
             spriteSheet = Content.SpritePlayer;
             animSprite = new AnimSprite(spriteSheet);
             //animSprite.color = Color.Red;
-            rect = animSprite.RectShape;
-            rect = animSprite.RectShape;
+            Rect = animSprite.RectShape;
+            Rect = animSprite.RectShape;
+            Rect.FillColor = Color.Red;
             //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
             //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
@@ -139,8 +140,8 @@ namespace RealtimeInteractiveCrawler
 
         private List<Tile> GetTilesAroundPlayer(Side side)
         {
-            int pX = (int)((Position.X - rect.Origin.X + rect.Size.X * 0.5f) / Tile.TILE_SIZE);
-            int pY = (int)((Position.Y + rect.Size.Y * 0.5f) / Tile.TILE_SIZE);
+            int pX = (int)((Position.X - Rect.Origin.X + Rect.Size.X * 0.5f) / Tile.TILE_SIZE);
+            int pY = (int)((Position.Y + Rect.Size.Y * 0.5f) / Tile.TILE_SIZE);
             List<Tile> tilesTowardsPlayer = new List<Tile>();
             switch (side)
             {

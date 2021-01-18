@@ -21,13 +21,13 @@ namespace RealtimeInteractiveCrawler
         public Item(ItemType type, SpriteSheet spriteSheet, int posSpriteX, int posSpriteY, int id, float size = 1) : base()
         {
             TypeItem = type;
-            rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight))
+            Rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight))
             {
                 Texture = spriteSheet.Texture,
                 TextureRect = spriteSheet.GetTextureRect(posSpriteX, posSpriteY),
                 
             };
-            rect.Size *= size;
+            Rect.Size *= size;
             IsItem = true;
             this.id = id;
         }
@@ -43,7 +43,7 @@ namespace RealtimeInteractiveCrawler
             states.Transform *= Transform;
 
             if (isRectVisible)
-                target.Draw(rect, states);
+                target.Draw(Rect, states);
         }
 
         public override void OnWallCollided()

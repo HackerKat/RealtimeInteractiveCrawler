@@ -13,7 +13,7 @@ namespace RealtimeInteractiveCrawler
         public bool IsItem;
         public SpriteSheet SpriteSheet;
 
-        protected RectangleShape rect;
+        public RectangleShape Rect;
         protected Vector2f velocity;
         protected Vector2f movement;
         protected World world;
@@ -48,11 +48,11 @@ namespace RealtimeInteractiveCrawler
 
             velocity.X *= 0.99f;
 
-            Vector2f nextPos = Position + velocity - rect.Origin;
-            FloatRect playerRect = new FloatRect(nextPos, rect.Size);
+            Vector2f nextPos = Position + velocity - Rect.Origin;
+            FloatRect playerRect = new FloatRect(nextPos, Rect.Size);
 
-            int pX = (int)((Position.X - rect.Origin.X + rect.Size.X * 0.5f) / Tile.TILE_SIZE);
-            int pY = (int)((Position.Y + rect.Size.Y * 0.5f) / Tile.TILE_SIZE);
+            int pX = (int)((Position.X - Rect.Origin.X + Rect.Size.X * 0.5f) / Tile.TILE_SIZE);
+            int pY = (int)((Position.Y + Rect.Size.Y * 0.5f) / Tile.TILE_SIZE);
 
             UpdatePhysicsWall(playerRect, pX, pY);
         }
