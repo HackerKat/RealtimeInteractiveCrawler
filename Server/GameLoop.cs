@@ -57,6 +57,12 @@ namespace Server
             }
         }
 
+        public static async Task<bool> Wait(int milliSeconds)
+        {
+            await Task.Delay(milliSeconds);
+            return true;
+        }
+
         public void Init()
         {
             foreach(Entity entity in Server.world.enemies)
@@ -69,11 +75,17 @@ namespace Server
         {
             foreach (Entity enemy in Server.world.enemies)
             {
+                if(enemy.Health <= 0)
+                {
+                    continue;
+                }
                 foreach(Player player in netMan.Players.Values)
                 {
-                    if (enemy.CheckIfSeekPlayer(player))
+                    if (enemy.CheckIfSeekPlayer(player) && player.Health > 0)
                     {
                         enemy.Behaviour = new Seek(enemy, player);
+                        enemy.Attack(player);
+                        netMan.UpdatePlayerHealth(player.ConnId);
                         break;
                     }
                     else

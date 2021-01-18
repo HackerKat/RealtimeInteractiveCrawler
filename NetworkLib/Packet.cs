@@ -10,7 +10,10 @@ namespace NetworkLib
         UPDATE_MY_POS,
         UPDATE_OTHER_POS,
         UPDATE_ENEMY,
-        UPDATE_ITEM
+        UPDATE_ITEM,
+        UPDATE_ENEMY_HEALTH,
+        UPDATE_PLAYER_HEALTH,
+        ENEMY_DIED
     }
     public class Packet
     {

@@ -7,6 +7,7 @@ namespace RealtimeInteractiveCrawler
     {
         public const int ENEMY_LIFE = 100;
         public Chunk Chunk;
+        public int id;
         public Enemy() : base()
         {
             Health = ENEMY_LIFE;

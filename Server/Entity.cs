@@ -38,7 +38,8 @@ namespace Server
         public const float MAX_SPEED = 50f;
         public const float MIN_SPEED = 20f;
         public const float MAX_ROTATION = 7f;
-        public const float ENEMY_LIFE = 100f;
+        public const int ENEMY_LIFE = 100;
+        public const int ATTACK = 5;
 
         public Vector2 OrientVector
         {
@@ -59,21 +60,34 @@ namespace Server
             get;
             private set;
         }
+        public int Health
+        {
+            get;
+            set;
+        } = ENEMY_LIFE;
+
+        public bool HasRecentlyDied
+        {
+            get;
+            set;
+        } = false;
+
+        public bool AllowAttack = true;
 
         public const float AGGRO_RADIUS = 100f;
-        public const int SIZE = 54;
+        public const int SIZE = 24;
         private World world;
-        private Rectangle rect;
+        private RectangleF rect;
         public Chunk chunk;
 
-        public Entity(int x, int y, int id, Chunk chunk)
+        public Entity(float x, float y, int id, Chunk chunk)
         {
             Position = new Vector2(x, y);
             this.Id = id;
             this.chunk = chunk;
 
             world = Server.world;
-            rect = new Rectangle(x, y, SIZE, SIZE);
+            rect = new RectangleF(x, y, SIZE, SIZE);
         }
 
         public void Update(GameTime gameTime)
@@ -85,12 +99,12 @@ namespace Server
 
         public void UpdatePos(SteeringOutput steering, GameTime gameTime)
         {
-            UpdatePhysicsWall();
             Position = new Vector2(Position.X + (steering.velocity.X * gameTime.deltaTime),
                                    Position.Y + (steering.velocity.Y * gameTime.deltaTime));
             Orientation += steering.rotation * gameTime.deltaTime;
 
-            rect = new Rectangle((int)Position.X, (int)Position.Y, SIZE, SIZE);
+            rect = new RectangleF(Position.X, Position.Y, SIZE, SIZE);
+            UpdatePhysicsWall();
         }
 
         public void GetClosestChunk()
@@ -102,7 +116,7 @@ namespace Server
                 for (int j = 0; j < World.WORLD_SIZE; j++)
                 {
                     double dist = Distance(Position, Server.world.chunks[i][j].Origin);
-                    if(dist < smallestDist)
+                    if (dist < smallestDist)
                     {
                         smallestDist = dist;
                         closestChunk = Server.world.chunks[i][j];
@@ -110,7 +124,7 @@ namespace Server
                 }
             }
             chunk = closestChunk;
-            
+
         }
 
         public float getNewOrientation(float currOrientation, Vector2 velocity)
@@ -129,11 +143,8 @@ namespace Server
 
         private void UpdatePhysicsWall()
         {
-            int entityTileX = (int)((Position.X - SIZE * 0.5f + SIZE * 0.5f) / Tile.TILE_SIZE);
-            int entityTileY = (int)((Position.Y + SIZE * 0.5f) / Tile.TILE_SIZE);
-
-            //int entityTileX = (int)(Position.X - rect. / Tile.TILE_SIZE);
-            //int entityTileY = (int)(Position.Y / Tile.TILE_SIZE);
+            int entityTileX = (int)(Position.X + SIZE / 2f) / Tile.TILE_SIZE;
+            int entityTileY = (int)(Position.Y + SIZE / 2f) / Tile.TILE_SIZE;
 
             Tile[] walls = new Tile[]
             {
@@ -159,50 +170,58 @@ namespace Server
             {
                 if (tile == null || tile.type == TileType.GROUND) continue;
 
-                Rectangle tileRect = new Rectangle((int)tile.Position.X, (int)tile.Position.Y, Tile.TILE_SIZE, Tile.TILE_SIZE);
+                RectangleF tileRect = new RectangleF(tile.Position.X, tile.Position.Y, Tile.TILE_SIZE, Tile.TILE_SIZE);
+                Vector2 pos = Position;
+                Vector2 vel = Velocity;
 
                 if (rect.IntersectsWith(tileRect))
                 {
-                    Vector2 offset = new Vector2(rect.Left - tileRect.Left, rect.Top - tileRect.Top);
-                    offset.X /= Math.Abs(offset.X);
-                    offset.Y /= Math.Abs(offset.Y);
+                    RectangleF intersection = RectangleF.Intersect(rect, tileRect);
 
-                    //float speed = Math.Abs(movement.X);
+                    //check least dominant intersection
+                    if (intersection.Width < intersection.Height)
+                    {
+                        if (intersection.X > rect.X) // tile to the right
+                        {
+                            pos.X -= intersection.Width;
+                            vel.X = 0;
 
-                    // Left walls
-                    if (offset.X > 0)
-                    {
-                        // Sends the player one tile away
-                        Position = new Vector2(tileRect.Left + rect.Width * 0.25f * 0.5f, Position.Y);
-                        Velocity = new Vector2(0, Velocity.Y);
+                            rect.X -= intersection.Width;
+                        }
+                        else // tile to the left
+                        {
+                            pos.X += intersection.Width;
+                            vel.X = 0;
+
+                            rect.X += intersection.Width;
+                        }
                     }
-                    // Right walls
-                    else if (offset.X < 0)
+                    else
                     {
-                        Position = new Vector2(tileRect.Left - rect.Width * 0.25f * 0.5f, Position.Y);
-                        Velocity = new Vector2(0, Velocity.Y);
-                        //Position = new Vector2f(Position.X - 2, Position.Y);
-                    }
-                    //// Top walls
-                    else if (offset.Y > 0)
-                    {
-                        Position = new Vector2(Position.X, (tileRect.Top + tileRect.Height) - rect.Height * 0.25f * 0.5f);
-                        Velocity = new Vector2(Velocity.X, 0);
-                        //Position = new Vector2f(Position.X, Position.Y + 2);
-                    }
-                    // Down walls
-                    else if (offset.Y < 0)
-                    {
-                        Position = new Vector2(Position.X, tileRect.Top + rect.Height * 0.25f);
-                        Velocity = new Vector2(Velocity.X, 0);
-                        //Position = new Vector2f(Position.X, Position.Y - 2);
+                        if (intersection.Y > rect.Y) // tile to the bottom
+                        {
+                            pos.Y -= intersection.Height;
+                            vel.Y = 0;
+
+                            rect.Y -= intersection.Height;
+                        }
+                        else // tile to the top
+                        {
+                            pos.Y += intersection.Height;
+                            vel.Y = 0;
+
+                            rect.Y += intersection.Height;
+                        }
                     }
 
                     //OnWallCollided();
-
                 }
+
+                Position = pos;
+                Velocity = vel;
             }
         }
+
 
         public double Distance(Vector2 posA, Vector2 posB)
         {
@@ -210,6 +229,23 @@ namespace Server
             float dY = posA.Y - posB.Y;
             double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
             return distance;
+        }
+
+        public void Attack(Player target)
+        {
+            if (AllowAttack && Distance(Position, target.Position) < 16)
+            {
+                AllowAttack = false;
+                target.Health -= ATTACK;
+                //Console.WriteLine(Id + " ENEMY ATTACKED");
+                Wait();
+            }
+        }
+
+        public async void Wait()
+        {
+            await GameLoop.Wait(5000);
+            AllowAttack = true;
         }
     }
 }

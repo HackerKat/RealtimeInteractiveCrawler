@@ -21,6 +21,7 @@ namespace RealtimeInteractiveCrawler
     {
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;
+        public const int PLAYER_MAX_HEALTH = 100;
 
         public bool ClientPlayer;
 
@@ -30,13 +31,14 @@ namespace RealtimeInteractiveCrawler
         private float positionY;
 
         private AnimSprite animSprite;
-        private SpriteSheet spriteSheet;
+        public SpriteSheet spriteSheet;
         private MovementType lastAnim;
 
         public Player() : base()
         {
             isRectVisible = true;
             TimeTillNextAttack = 1;
+            Health = PLAYER_MAX_HEALTH;
 
             spriteSheet = Content.SpritePlayer;
             animSprite = new AnimSprite(spriteSheet);
@@ -194,8 +196,8 @@ namespace RealtimeInteractiveCrawler
                     case ItemType.HEALTH:
                         ChangeHealth(10);
                         break;
-                    case ItemType.ATTACK:
-                        ChangeAttack(2);
+                    case Item.ItemType.ATTACK:
+                        ChangeAttack(5);
                         break;
                     case ItemType.DEFENSE:
                         ChangeDefense(5);
@@ -215,8 +217,16 @@ namespace RealtimeInteractiveCrawler
 
         public void ChangeHealth(int health)
         {
-            Health += health;
             AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(health);
+            if((Health + health) > PLAYER_MAX_HEALTH)
+            {
+                Health = PLAYER_MAX_HEALTH;
+            }
+            else
+            {
+                Health += health;
+            }
+            AwesomeGame.networkManager.SendMyPlayerHealth(health);
             Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
@@ -269,6 +279,8 @@ namespace RealtimeInteractiveCrawler
             {
                 enemy.Health -= Attack;
                 Debug.WriteLine(enemy.Health + " health");
+
+                AwesomeGame.networkManager.SendEnemyHealth(enemy.id, enemy.Health);
             }
 
             //if (foundEnemy == null) return;
@@ -281,9 +293,7 @@ namespace RealtimeInteractiveCrawler
             // Cooldown
             Debug.WriteLine("Attacked");
             Wait();
-
         }
-       
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {
@@ -398,6 +408,5 @@ namespace RealtimeInteractiveCrawler
 
             Position = new Vector2f(x, y);
         }
-
     }
 }

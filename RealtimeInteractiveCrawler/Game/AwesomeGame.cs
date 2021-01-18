@@ -88,7 +88,7 @@ namespace RealtimeInteractiveCrawler
                     InitializeNewPlayer(p);
                     break;
                 case PacketType.UPDATE_OTHER_POS:
-                    GetOtherPlayerData(p);
+                    GetOtherPlayerPos(p);
                     break;
                 case PacketType.UPDATE_ENEMY:
                     if (isDataReadyToInit)
@@ -102,6 +102,18 @@ namespace RealtimeInteractiveCrawler
                         UpdateItems(p);
                     }
                     break;
+                case PacketType.UPDATE_ENEMY_HEALTH:
+                    if (isDataReadyToInit)
+                    {
+                        UpdateEnemyHealth(p);
+                    }
+                    break;
+                case PacketType.UPDATE_PLAYER_HEALTH:
+                    if (isDataReadyToInit)
+                    {
+                        UpdatePlayerHealth(p);
+                    }
+                    break;
             }
         }
 
@@ -113,6 +125,7 @@ namespace RealtimeInteractiveCrawler
             int seed = pr.GetInt();
             float spawnX = pr.GetFloat();
             float spawnY = pr.GetFloat();
+            int health = pr.GetInt();
             int enemyCount = pr.GetInt();
             Rand = new Random(seed);
             world.GenerateWorld(seed);
@@ -121,10 +134,15 @@ namespace RealtimeInteractiveCrawler
                 int id = pr.GetInt();
                 float x = pr.GetFloat();
                 float y = pr.GetFloat();
-
-                Enemy enemy = new Enemy();
-                Enemies.Add(id, enemy);
-                enemy.Spawn(x, y);
+                int currHealth = pr.GetInt();
+                if(currHealth > 0)
+                {
+                    Enemy enemy = new Enemy();
+                    enemy.id = id;
+                    enemy.Health = currHealth;
+                    Enemies.Add(id, enemy);
+                    enemy.Spawn(x, y);
+                }
             }
             int itemsToDestroy = pr.GetInt();
             for(int i = 0; i < itemsToDestroy; i++)
@@ -144,6 +162,7 @@ namespace RealtimeInteractiveCrawler
             Player = new Player();
             Player.ClientPlayer = true;
             Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
+            Player.Health = health;
             Player.Spawn(pos.X, pos.Y);
             Players.Add(connectionId, Player);
             Player.Rect.FillColor = CreateRandomColor(connectionId);
@@ -158,9 +177,10 @@ namespace RealtimeInteractiveCrawler
             int connId = pr.GetInt();
             float spawnX = pr.GetFloat();
             float spawnY = pr.GetFloat();
+            int health = pr.GetInt();
 
             Player newPlayer = new Player();
-
+            newPlayer.Health = health;
             //Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             newPlayer.Spawn(spawnX, spawnY);
             Players.Add(connId, newPlayer);
@@ -180,7 +200,7 @@ namespace RealtimeInteractiveCrawler
             networkManager.SendData(packet);
         }
 
-        public void GetOtherPlayerData(Packet p)
+        public void GetOtherPlayerPos(Packet p)
         {
             PacketReader pr = new PacketReader(p);
 
@@ -230,12 +250,44 @@ namespace RealtimeInteractiveCrawler
                 int id = pr.GetInt();
                 int x = (int)pr.GetFloat();
                 int y = (int)pr.GetFloat();
+                int currHealth = pr.GetInt();
                 float chunkX = pr.GetFloat();
                 float chunkY = pr.GetFloat();
-                Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
-                
-                Enemies[id].UpdatePos(x, y);
+                if(currHealth > 0)
+                {
+                    Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
+                    Enemies[id].Health = currHealth;
+                    Enemies[id].UpdatePos(x, y);
+                }
             }
+        }
+
+        public void UpdateEnemyHealth(Packet p)
+        {
+            //Console.WriteLine("Client got data about enemy position");
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+            foreach (Enemy enemy in Enemies.Values)
+            {
+                if(enemy.id == id)
+                {
+                    enemy.Health = health;
+                    return;
+                }
+            }
+        }
+
+        public void UpdatePlayerHealth(Packet p)
+        {
+           
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+
+            Players[id].Health = health;
+
+            //Console.WriteLine("Client got data about player: " + id + " health " + health);
         }
 
         public override void Update(GameTime gameTime)
@@ -248,8 +300,14 @@ namespace RealtimeInteractiveCrawler
                     world.Update();
                     Player.Update();
                     GameView.Center = Player.Position;
-                // Network
-                SendPlayerUpdate();
+                    // Network
+                    SendPlayerUpdate();
+                    //Console.WriteLine(Player.Health);
+                    if(Player.Health <= 0)
+                    {
+                        Window.Close();
+                    }
+                }
             }
         }
             //UIManager.UpdateOver();
@@ -310,14 +368,20 @@ namespace RealtimeInteractiveCrawler
             {
 
                 Window.Draw(world);
-                DebugRender.Draw(Window);
-                foreach (Player np in Players.Values)
+                DebugRender.Draw(Window); // mainly for green mouse rect
+                foreach (KeyValuePair<int, Player> v in Players)
                 {
+                    Player np = v.Value;
+                    int id = v.Key;
+                    //Console.WriteLine("Player: " + id + " has health " + np.Health);
+                    if (np.Health <= 0)
+                        np.SpriteSheet = Content.SpriteDead;
                     Window.Draw(np);
                 }
                 foreach (Enemy enemy in Enemies.Values)
                 {
-                    Window.Draw(enemy);
+                    if (enemy.Health > 0)
+                        Window.Draw(enemy);
                 }
                 foreach (var bar in StatusBars.Values)
                 {
