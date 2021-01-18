@@ -11,7 +11,7 @@ namespace Server
     {
         public Entity entity;
         public Player target;
-        private int MinDistance = 2;
+        private int MinDistance = 4;
 
         public Seek(Entity entity, Player player)
         {

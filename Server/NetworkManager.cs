@@ -25,7 +25,7 @@ namespace Server
         } = new ConcurrentDictionary<int, Player>();
         private int connectionId;
         private int seed;
-
+        private ConcurrentBag<int> itemsToDestroy = new ConcurrentBag<int>();
         public NetworkManager(int seed)
         {
             this.seed = seed;
@@ -127,6 +127,9 @@ namespace Server
                     case PacketType.UPDATE_MY_POS:
                         SendPlayerUpdate(client, p);
                         break;
+                    case PacketType.UPDATE_ITEM:
+                        SendItemUpdate(client, p);
+                        break;
                     default:
                         break;
                 }
@@ -169,6 +172,11 @@ namespace Server
                 pb.Add(enemy.Position.X); //position is float
                 pb.Add(enemy.Position.Y);
             }
+            pb.Add(itemsToDestroy.Count);
+            foreach (int item in itemsToDestroy)
+            {
+                pb.Add(item);
+            }
             Player pl = new Player(spawnPoint.X, spawnPoint.Y, clientId);
             Players.TryAdd(clientId, pl);
             Packet packet = pb.Build();
@@ -204,6 +212,28 @@ namespace Server
             foreach(TcpClient c in connections.Keys)
             {
                 if(c != client)
+                {
+                    lock (c)
+                    {
+                        SendData(packet, c.GetStream());
+                    }
+                }
+            }
+        }
+
+        public void SendItemUpdate(TcpClient client, Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            Console.WriteLine("received update on item: " + id);
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_ITEM);
+            pb.Add(id);
+            Packet packet = pb.Build();
+            itemsToDestroy.Add(id);
+            Console.WriteLine("sent update on item: " + id);
+            foreach (TcpClient c in connections.Keys)
+            {
+                if (c != client)
                 {
                     lock (c)
                     {

@@ -9,7 +9,8 @@ namespace NetworkLib
         NEW_PLAYER,
         UPDATE_MY_POS,
         UPDATE_OTHER_POS,
-        UPDATE_ENEMY
+        UPDATE_ENEMY,
+        UPDATE_ITEM
     }
     public class Packet
     {

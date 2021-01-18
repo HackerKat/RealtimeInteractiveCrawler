@@ -19,6 +19,7 @@ namespace RealtimeInteractiveCrawler
         private List<SpriteSheet> itemSpriteSheets = new List<SpriteSheet>();
         //private List<Item> items = new List<Item>();
         public static Dictionary<Tile, Item> Items = new Dictionary<Tile, Item>();
+        private int itemCount = 0;
 
         public World()
         {
@@ -91,12 +92,11 @@ namespace RealtimeInteractiveCrawler
             Tile tile = GetTile(x, y);
             tile.type = TileType.ITEM;
 
-            Item item = new Item(itemType, neededSprite, 0, 0, 0.125f);
+            Item item = new Item(itemType, neededSprite, 0, 0, itemCount, 0.125f);
+            itemCount++;
             Items[tile] = item;
 
             item.Spawn(tile.Position.X, tile.Position.Y);
-
-
         }
 
         public void SetTile(TileType tileType, int x, int y)

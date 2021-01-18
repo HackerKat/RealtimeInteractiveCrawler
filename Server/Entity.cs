@@ -34,7 +34,8 @@ namespace Server
             set;
         } = new Vector2();
 
-        public const float MAX_SPEED = 20f;
+        public const float MAX_SPEED = 50f;
+        public const float MIN_SPEED = 20f;
         public const float MAX_ROTATION = 7f;
         public const float ENEMY_LIFE = 100f;
 
