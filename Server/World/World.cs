@@ -132,5 +132,17 @@ namespace Server
 
             return new Vector2(x - X * Chunk.CHUNK_SIZE, y - Y * Chunk.CHUNK_SIZE);
         }
+
+        public void Update()
+        {
+            Entity e;
+            foreach(Entity enemy in enemies)
+            {
+                if(enemy.Health <= 0)
+                {
+                    enemies.TryTake(out e);
+                }
+            }
+        }
     }
 }

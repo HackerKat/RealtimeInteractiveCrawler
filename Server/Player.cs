@@ -15,6 +15,12 @@ namespace Server
             set;
         }
 
+        public int Health
+        {
+            get;
+            set;
+        } = 100;
+
         public Vector2 Position
         {
             get

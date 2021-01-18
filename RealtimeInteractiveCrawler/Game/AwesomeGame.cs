@@ -75,7 +75,7 @@ namespace RealtimeInteractiveCrawler
                     InitializeNewPlayer(p);
                     break;
                 case PacketType.UPDATE_OTHER_POS:
-                    GetOtherPlayerData(p);
+                    GetOtherPlayerPos(p);
                     break;
                 case PacketType.UPDATE_ENEMY:
                     if (isDataReadyToInit)
@@ -106,6 +106,7 @@ namespace RealtimeInteractiveCrawler
             int seed = pr.GetInt();
             float spawnX = pr.GetFloat();
             float spawnY = pr.GetFloat();
+            int health = pr.GetInt();
             int enemyCount = pr.GetInt();
             Rand = new Random(seed);
             world.GenerateWorld(seed);
@@ -115,11 +116,14 @@ namespace RealtimeInteractiveCrawler
                 float x = pr.GetFloat();
                 float y = pr.GetFloat();
                 int currHealth = pr.GetInt();
-                Enemy enemy = new Enemy();
-                enemy.id = id;
-                enemy.Health = currHealth;
-                Enemies.Add(id, enemy);
-                enemy.Spawn(x, y);
+                if(currHealth > 0)
+                {
+                    Enemy enemy = new Enemy();
+                    enemy.id = id;
+                    enemy.Health = currHealth;
+                    Enemies.Add(id, enemy);
+                    enemy.Spawn(x, y);
+                }
             }
             int itemsToDestroy = pr.GetInt();
             for(int i = 0; i < itemsToDestroy; i++)
@@ -139,6 +143,7 @@ namespace RealtimeInteractiveCrawler
             Player = new Player();
             Player.ClientPlayer = true;
             Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
+            Player.Health = health;
             Player.Spawn(pos.X, pos.Y);
             Players.Add(connectionId, Player);
             isDataReadyToInit = true;
@@ -151,9 +156,10 @@ namespace RealtimeInteractiveCrawler
             int connId = pr.GetInt();
             float spawnX = pr.GetFloat();
             float spawnY = pr.GetFloat();
+            int health = pr.GetInt();
 
             Player newPlayer = new Player();
-
+            newPlayer.Health = health;
             //Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             newPlayer.Spawn(spawnX, spawnY);
             Players.Add(connId, newPlayer);
@@ -171,7 +177,7 @@ namespace RealtimeInteractiveCrawler
             networkManager.SendData(packet);
         }
 
-        public void GetOtherPlayerData(Packet p)
+        public void GetOtherPlayerPos(Packet p)
         {
             PacketReader pr = new PacketReader(p);
 
@@ -218,9 +224,12 @@ namespace RealtimeInteractiveCrawler
                 int currHealth = pr.GetInt();
                 float chunkX = pr.GetFloat();
                 float chunkY = pr.GetFloat();
-                Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
-                Enemies[id].Health = currHealth;
-                Enemies[id].UpdatePos(x, y);
+                if(currHealth > 0)
+                {
+                    Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
+                    Enemies[id].Health = currHealth;
+                    Enemies[id].UpdatePos(x, y);
+                }
             }
         }
 
@@ -310,7 +319,8 @@ namespace RealtimeInteractiveCrawler
                 }
                 foreach (Enemy enemy in Enemies.Values)
                 {
-                    Window.Draw(enemy);
+                    if (enemy.Health > 0)
+                        Window.Draw(enemy);
                 }
             }
 

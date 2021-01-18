@@ -69,6 +69,10 @@ namespace Server
         {
             foreach (Entity enemy in Server.world.enemies)
             {
+                if(enemy.Health <= 0)
+                {
+                    continue;
+                }
                 foreach(Player player in netMan.Players.Values)
                 {
                     if (enemy.CheckIfSeekPlayer(player))

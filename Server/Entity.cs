@@ -65,20 +65,26 @@ namespace Server
             set;
         } = ENEMY_LIFE;
 
+        public bool HasRecentlyDied
+        {
+            get;
+            set;
+        } = false;
+
         public const float AGGRO_RADIUS = 100f;
         public const int SIZE = 54;
         private World world;
-        private Rectangle rect;
+        private RectangleF rect;
         public Chunk chunk;
 
-        public Entity(int x, int y, int id, Chunk chunk)
+        public Entity(float x, float y, int id, Chunk chunk)
         {
             Position = new Vector2(x, y);
             this.Id = id;
             this.chunk = chunk;
 
             world = Server.world;
-            rect = new Rectangle(x, y, SIZE, SIZE);
+            rect = new RectangleF(x, y, SIZE, SIZE);
         }
 
         public void Update(GameTime gameTime)
@@ -90,12 +96,12 @@ namespace Server
 
         public void UpdatePos(SteeringOutput steering, GameTime gameTime)
         {
-            UpdatePhysicsWall();
             Position = new Vector2(Position.X + (steering.velocity.X * gameTime.deltaTime),
                                    Position.Y + (steering.velocity.Y * gameTime.deltaTime));
             Orientation += steering.rotation * gameTime.deltaTime;
 
-            rect = new Rectangle((int)Position.X, (int)Position.Y, SIZE, SIZE);
+            rect = new RectangleF(Position.X, Position.Y, SIZE, SIZE);
+            UpdatePhysicsWall();
         }
 
         public void GetClosestChunk()
@@ -164,7 +170,7 @@ namespace Server
             {
                 if (tile == null || tile.type == TileType.GROUND) continue;
 
-                Rectangle tileRect = new Rectangle((int)tile.Position.X, (int)tile.Position.Y, Tile.TILE_SIZE, Tile.TILE_SIZE);
+                RectangleF tileRect = new RectangleF(tile.Position.X, tile.Position.Y, Tile.TILE_SIZE, Tile.TILE_SIZE);
 
                 if (rect.IntersectsWith(tileRect))
                 {
@@ -178,13 +184,13 @@ namespace Server
                     if (offset.X > 0)
                     {
                         // Sends the player one tile away
-                        Position = new Vector2(tileRect.Left + rect.Width * 0.25f * 0.5f, Position.Y);
+                        Position = new Vector2(Position.X + offset.X, Position.Y);
                         Velocity = new Vector2(0, Velocity.Y);
                     }
                     // Right walls
                     else if (offset.X < 0)
                     {
-                        Position = new Vector2(tileRect.Left - rect.Width * 0.25f * 0.5f, Position.Y);
+                        Position = new Vector2(Position.X - offset.X, Position.Y);
                         Velocity = new Vector2(0, Velocity.Y);
                         //Position = new Vector2f(Position.X - 2, Position.Y);
                     }

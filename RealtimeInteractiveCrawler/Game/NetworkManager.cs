@@ -112,5 +112,14 @@ namespace RealtimeInteractiveCrawler
             Packet packet = pb.Build();
             SendData(packet);
         }
+
+        public void SendMyPlayerHealth(int health)
+        {
+            //Console.WriteLine("Packet sent with enemy id: " + id + " and health " + health);
+            PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_PLAYER_HEALTH);
+            pb.Add(health);
+            Packet packet = pb.Build();
+            SendData(packet);
+        }
     }
 }

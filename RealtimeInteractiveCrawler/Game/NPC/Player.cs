@@ -20,6 +20,7 @@ namespace RealtimeInteractiveCrawler
     {
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACCELERATION = 0.2f;
+        public const int PLAYER_MAX_HEALTH = 100;
 
         public bool ClientPlayer;
 
@@ -36,6 +37,7 @@ namespace RealtimeInteractiveCrawler
         {
             isRectVisible = true;
             TimeTillNextAttack = 1;
+            Health = PLAYER_MAX_HEALTH;
 
             spriteSheet = Content.SpritePlayer;
             animSprite = new AnimSprite(spriteSheet);
@@ -187,7 +189,7 @@ namespace RealtimeInteractiveCrawler
                         ChangeHealth(10);
                         break;
                     case Item.ItemType.ATTACK:
-                        ChangeAttack(2);
+                        ChangeAttack(50);
                         break;
                     case Item.ItemType.DEFENSE:
                         ChangeDefense(5);
@@ -206,7 +208,15 @@ namespace RealtimeInteractiveCrawler
 
         public void ChangeHealth(int health)
         {
-            Health += health;
+            if((Health + health) > PLAYER_MAX_HEALTH)
+            {
+                Health = PLAYER_MAX_HEALTH;
+            }
+            else
+            {
+                Health += health;
+            }
+            //AwesomeGame.networkManager.SendMyPlayerHealth(health);
             Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
