@@ -211,7 +211,8 @@ namespace RealtimeInteractiveCrawler
 
         public void ChangeHealth(int healthChange, bool enemyDamage)
         {
-            AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(healthChange);
+            if (ClientPlayer)
+                AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(healthChange);
             if ((Health + healthChange) > PLAYER_MAX_HEALTH)
             {
                 Health = PLAYER_MAX_HEALTH;
