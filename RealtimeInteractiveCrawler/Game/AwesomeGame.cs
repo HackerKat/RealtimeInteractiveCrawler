@@ -280,6 +280,10 @@ namespace RealtimeInteractiveCrawler
                     // Network
                     SendPlayerUpdate();
                     //Console.WriteLine(Player.Health);
+                    if(Player.Health <= 0)
+                    {
+                        Window.Close();
+                    }
                 }
             }
             //UIManager.UpdateOver();
@@ -332,8 +336,13 @@ namespace RealtimeInteractiveCrawler
             if (isDataReadyToInit)
             {
                 Window.Draw(world);
-                foreach (Player np in Players.Values)
+                foreach (KeyValuePair<int, Player> v in Players)
                 {
+                    Player np = v.Value;
+                    int id = v.Key;
+                    //Console.WriteLine("Player: " + id + " has health " + np.Health);
+                    if (np.Health <= 0)
+                        np.SpriteSheet = Content.SpriteDead;
                     Window.Draw(np);
                 }
                 foreach (Enemy enemy in Enemies.Values)

@@ -81,7 +81,7 @@ namespace Server
                 }
                 foreach(Player player in netMan.Players.Values)
                 {
-                    if (enemy.CheckIfSeekPlayer(player))
+                    if (enemy.CheckIfSeekPlayer(player) && player.Health > 0)
                     {
                         enemy.Behaviour = new Seek(enemy, player);
                         enemy.Attack(player);

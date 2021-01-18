@@ -22,6 +22,7 @@ namespace RealtimeInteractiveCrawler
         public static SpriteSheet SpriteDefense { get; set; } // Defense
 
         public static SpriteSheet SpriteInventory { get; set; } // Inventory
+        public static SpriteSheet SpriteDead { get; set; }
 
 
         public static void Load()
@@ -40,6 +41,7 @@ namespace RealtimeInteractiveCrawler
             SpriteInventory = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "UI\\" + "Ladder.png"));
            
             SpriteEnemy = new SpriteSheet(24, 24, false, 0, new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter2.png"));
+            SpriteDead = new SpriteSheet(32, 32, false, 0, new Texture(CONTENT_DIR + "NPC\\" + "grave.png"));
 
             Font = new Font(CONTENT_DIR + "Fonts\\arial\\arial.ttf");
         }

@@ -30,7 +30,7 @@ namespace RealtimeInteractiveCrawler
         private float positionY;
 
         private AnimSprite animSprite;
-        private SpriteSheet spriteSheet;
+        public SpriteSheet spriteSheet;
         private MovementType lastAnim;
 
         public Player() : base()

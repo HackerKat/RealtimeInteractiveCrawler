@@ -143,8 +143,8 @@ namespace Server
 
         private void UpdatePhysicsWall()
         {
-            int entityTileX = (int)Position.X / Tile.TILE_SIZE;
-            int entityTileY = (int)Position.Y / Tile.TILE_SIZE;
+            int entityTileX = (int)(Position.X + SIZE / 2f) / Tile.TILE_SIZE;
+            int entityTileY = (int)(Position.Y + SIZE / 2f) / Tile.TILE_SIZE;
 
             Tile[] walls = new Tile[]
             {
