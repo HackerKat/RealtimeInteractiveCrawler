@@ -135,7 +135,7 @@ namespace RealtimeInteractiveCrawler
                 float x = pr.GetFloat();
                 float y = pr.GetFloat();
                 int currHealth = pr.GetInt();
-                if(currHealth > 0)
+                if (currHealth > 0)
                 {
                     Enemy enemy = new Enemy();
                     enemy.id = id;
@@ -145,7 +145,7 @@ namespace RealtimeInteractiveCrawler
                 }
             }
             int itemsToDestroy = pr.GetInt();
-            for(int i = 0; i < itemsToDestroy; i++)
+            for (int i = 0; i < itemsToDestroy; i++)
             {
                 int itemId = pr.GetInt();
                 foreach (var item in World.Items.Values)
@@ -163,6 +163,7 @@ namespace RealtimeInteractiveCrawler
             Player.ClientPlayer = true;
             Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             Player.Health = health;
+            Debug.WriteLine("health server "+ health);
             Player.Spawn(pos.X, pos.Y);
             Players.Add(connectionId, Player);
             Player.Rect.FillColor = CreateRandomColor(connectionId);
@@ -224,7 +225,7 @@ namespace RealtimeInteractiveCrawler
             Console.WriteLine("received an update on item: " + id);
             foreach (var item in World.Items.Values)
             {
-                if(item.id == id)
+                if (item.id == id)
                 {
                     item.IsDestroyed = true;
                     world.Update();
@@ -238,7 +239,7 @@ namespace RealtimeInteractiveCrawler
             Random rand = new Random(seed);
             return new Color((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
         }
-        
+
 
         public void UpdateEnemyData(Packet p)
         {
@@ -253,7 +254,7 @@ namespace RealtimeInteractiveCrawler
                 int currHealth = pr.GetInt();
                 float chunkX = pr.GetFloat();
                 float chunkY = pr.GetFloat();
-                if(currHealth > 0)
+                if (currHealth > 0)
                 {
                     Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
                     Enemies[id].Health = currHealth;
@@ -270,7 +271,7 @@ namespace RealtimeInteractiveCrawler
             int health = pr.GetInt();
             foreach (Enemy enemy in Enemies.Values)
             {
-                if(enemy.id == id)
+                if (enemy.id == id)
                 {
                     enemy.Health = health;
                     return;
@@ -280,12 +281,14 @@ namespace RealtimeInteractiveCrawler
 
         public void UpdatePlayerHealth(Packet p)
         {
-           
+
             PacketReader pr = new PacketReader(p);
             int id = pr.GetInt();
             int health = pr.GetInt();
-
-            Players[id].Health = health;
+            int damage = Players[id].Health - health;
+            Debug.WriteLine(damage + " " + health);
+            //Players[id].Health = health;
+            Players[id].ChangeHealth(-damage);
 
             //Console.WriteLine("Client got data about player: " + id + " health " + health);
         }
@@ -303,13 +306,13 @@ namespace RealtimeInteractiveCrawler
                     // Network
                     SendPlayerUpdate();
                     //Console.WriteLine(Player.Health);
-                    if(Player.Health <= 0)
+                    if (Player.Health <= 0)
                     {
                         Window.Close();
                     }
                 }
             }
-        }
+
             //UIManager.UpdateOver();
             //UIManager.Update();
             // TODO revert debug change
@@ -353,7 +356,7 @@ namespace RealtimeInteractiveCrawler
             // Single
             //Window.Draw(world);       
             //Window.Draw(Player);
-            
+
 
             //foreach (var bar in StatusBars.Values)
             //{
