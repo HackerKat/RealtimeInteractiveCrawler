@@ -139,6 +139,24 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
+        public Chunk GetClosestChunk()
+        {
+            Chunk closestChunk = null;
+            double smallestDist = Double.MaxValue;
+            for (int i = 0; i < World.WORLD_SIZE; i++)
+            {
+                for (int j = 0; j < World.WORLD_SIZE; j++)
+                {
+                    double dist = AwesomeGame.Distance(Position, world.chunks[i][j].Position, world.chunks[i][j].Origin);
+                    if (dist < smallestDist)
+                    {
+                        smallestDist = dist;
+                        closestChunk = world.chunks[i][j];
+                    }
+                }
+            }
+            return closestChunk;
+        }
 
         public abstract void OnWallCollided();
         public abstract void Draw(RenderTarget target, RenderStates states);

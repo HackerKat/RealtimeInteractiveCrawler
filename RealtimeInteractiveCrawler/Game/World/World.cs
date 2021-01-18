@@ -14,7 +14,7 @@ namespace RealtimeInteractiveCrawler
 
         //public List<Enemy> enemies = new List<Enemy>();
 
-        private Chunk[][] chunks;
+        public Chunk[][] chunks;
         // 0 = health, 1 = attack, 2 = defense, 3 = eraser
         private List<SpriteSheet> itemSpriteSheets = new List<SpriteSheet>();
         //private List<Item> items = new List<Item>();

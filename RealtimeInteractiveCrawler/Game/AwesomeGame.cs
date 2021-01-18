@@ -40,10 +40,6 @@ namespace RealtimeInteractiveCrawler
             //Player.Inventory = new UIInventory();
             //UIManager.AddControl(Player.Inventory);
 
-            foreach (var player in Players.Values)
-            {
-                PlayerTiles.Add(new Tile(TileType.PLAYER, null));
-            }
         }
 
         public override void Initialize()
@@ -173,8 +169,8 @@ namespace RealtimeInteractiveCrawler
                 int y = (int)pr.GetFloat();
                 float chunkX = pr.GetFloat();
                 float chunkY = pr.GetFloat();
-                enemies[id].Chunk = world.GetChunk((int)chunkX, (int)chunkY);
-                enemies[id].UpdatePos(x, y);
+                Enemies[id].Chunk = world.GetChunk((int)chunkX, (int)chunkY);
+                Enemies[id].UpdatePos(x, y);
             }
         }
 
@@ -246,12 +242,21 @@ namespace RealtimeInteractiveCrawler
                 {
                     Window.Draw(np);
                 }
-                foreach (Enemy enemy in enemies.Values)
+                foreach (Enemy enemy in Enemies.Values)
                 {
                     Window.Draw(enemy);
                 }
             }
 
         }
+
+        public static double Distance(Vector2f pos, Vector2f obj, Vector2f objOrigin)
+        {
+            float dX = pos.X - (obj.X + objOrigin.X);
+            float dY = pos.Y - (obj.Y + objOrigin.Y);
+            double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
+            return distance;
+        }
+
     }
 }

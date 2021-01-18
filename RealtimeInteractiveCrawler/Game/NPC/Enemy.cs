@@ -5,9 +5,11 @@ namespace RealtimeInteractiveCrawler
 {
     class Enemy : Npc
     {
+        public const int ENEMY_LIFE = 100;
         public Chunk Chunk;
         public Enemy() : base()
         {
+            Health = ENEMY_LIFE;
             SpriteSheet = Content.SpriteEnemy;
 
             // Size of rectangle

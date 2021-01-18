@@ -8,7 +8,7 @@ namespace Server
     // TODO Singleton
     public class World
     {
-        public const int WORLD_SIZE = 3;
+        public const int WORLD_SIZE = 5;
 
         public Chunk[][] chunks;
         public ConcurrentBag<Entity> enemies = new ConcurrentBag<Entity>();

@@ -16,7 +16,7 @@ namespace RealtimeInteractiveCrawler
         {
             this.chunkPos = chunkPos;
             Position = new Vector2f(chunkPos.X * CHUNK_SIZE * Tile.TILE_SIZE, chunkPos.Y * CHUNK_SIZE * Tile.TILE_SIZE);
-
+            Origin = new Vector2f(CHUNK_SIZE * Tile.TILE_SIZE * 0.5f, CHUNK_SIZE * Tile.TILE_SIZE * 0.5f);
             tiles = new Tile[CHUNK_SIZE][];
 
             for (int i = 0; i < CHUNK_SIZE; i++)
@@ -31,7 +31,7 @@ namespace RealtimeInteractiveCrawler
 
         public void SetTile(TileType type, int x, int y, Tile[] neighbours)
         {
-            tiles[x][y] = new Tile(type, neighbours);
+            tiles[x][y] = new Tile(type, neighbours, this);
             tiles[x][y].Position = new Vector2f(x * Tile.TILE_SIZE, y * Tile.TILE_SIZE) + Position;
         }
         

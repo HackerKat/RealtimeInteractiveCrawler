@@ -36,6 +36,8 @@ namespace Server
 
         public const float MAX_SPEED = 20f;
         public const float MAX_ROTATION = 7f;
+        public const float ENEMY_LIFE = 100f;
+
         public Vector2 OrientVector
         {
             get
@@ -198,10 +200,10 @@ namespace Server
             }
         }
 
-        public double Distance(Vector2 posA, Vector2 posB)
+        public double Distance(Vector2 posA, Vector2 posB, Vector2 origin)
         {
-            float dX = posA.X - posB.X;
-            float dY = posA.Y - posB.Y;
+            float dX = posA.X - (posB.X + origin.X);
+            float dY = posA.Y - (posB.Y + origin.X);
             double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
             return distance;
         }

@@ -35,7 +35,7 @@ namespace RealtimeInteractiveCrawler
         public Player() : base()
         {
             isRectVisible = true;
-            TimeTillNextAttack = 3;
+            TimeTillNextAttack = 1;
 
             spriteSheet = Content.SpritePlayer;
             animSprite = new AnimSprite(spriteSheet);
@@ -218,19 +218,44 @@ namespace RealtimeInteractiveCrawler
             Debug.WriteLine(Defense + " my defense");
         }
 
+        public List<Enemy> CheckIfEnemyOnTiles(List<Tile> tiles)
+        {
+            List<Enemy> enemiesToAttack = new List<Enemy>();
+            Chunk playerChunk = GetClosestChunk();
+            foreach (var enemy in AwesomeGame.Enemies.Values)
+            {
+                if (!enemy.Chunk.Equals(playerChunk)) continue;
+                foreach (var tile in tiles)
+                {
+                    double dist = AwesomeGame.Distance(tile.Position, enemy.Position, enemy.Origin);
+                    if (dist < 1)
+                        enemiesToAttack.Add(enemy);
+                }
+            }
+
+            return enemiesToAttack;
+        }
+
         private void AttackEnemy(Side side)
         {
             if (!AllowAttack) return;
             AllowAttack = false;
 
             List<Tile> tilesTowardsPlayer = GetTilesAroundPlayer(side);
-            Tile foundEnemy = tilesTowardsPlayer.Find(item => item.type == TileType.ENEMY);
+
+            List<Enemy> enemiesToAttack = CheckIfEnemyOnTiles(tilesTowardsPlayer);
+            foreach (var enemy in enemiesToAttack)
+            {
+                enemy.Health -= Attack;
+                Debug.WriteLine(enemy.Health + " health");
+            }
 
             //if (foundEnemy == null) return;
 
             // TODO
             // kind of animation
             // Deal damage
+
 
             // Cooldown
             Debug.WriteLine("Attacked");

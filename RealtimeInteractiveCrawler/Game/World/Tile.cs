@@ -25,6 +25,7 @@ namespace RealtimeInteractiveCrawler
         public TileType type = TileType.GROUND;
         public SpriteSheet SpriteSheet { get; set; }
 
+        public Chunk MyChunk { get; set; }
 
         private RectangleShape rectShape;
 
@@ -71,10 +72,11 @@ namespace RealtimeInteractiveCrawler
             get { return rightTile; }
         }
 
-        public Tile(TileType type, Tile[] neighbours)
+        public Tile(TileType type, Tile[] neighbours, Chunk chunk)
         {
             rectShape = new RectangleShape(new Vector2f(TILE_SIZE, TILE_SIZE));
             this.type = type;
+            MyChunk = chunk;
 
             // Setting neighbours
             if(neighbours[0] != null) // up
