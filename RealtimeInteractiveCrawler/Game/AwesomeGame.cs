@@ -277,7 +277,7 @@ namespace RealtimeInteractiveCrawler
             int damage = Players[id].Health - health;
             Debug.WriteLine(damage + " " + health);
             //Players[id].Health = health;
-            Players[id].ChangeHealth(-damage);
+            Players[id].ChangeHealth(-damage, true);
 
             //Console.WriteLine("Client got data about player: " + id + " health " + health);
         }
@@ -365,13 +365,19 @@ namespace RealtimeInteractiveCrawler
                     int id = v.Key;
                     //Console.WriteLine("Player: " + id + " has health " + np.Health);
                     if (np.Health <= 0)
-                        np.SpriteSheet = Content.SpriteDead;
+                        np.AnimSprite = new AnimSprite(Content.SpriteDead);
                     Window.Draw(np);
                 }
                 foreach (Enemy enemy in Enemies.Values)
                 {
                     if (enemy.Health > 0)
+                    {
+                        double distanceToPlayer = Distance(enemy.Position, Player.Position);
+                        if (distanceToPlayer > Tile.TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
+                            continue;
                         Window.Draw(enemy);
+                    }
+                        
                 }
                 foreach (var bar in StatusBars.Values)
                 {

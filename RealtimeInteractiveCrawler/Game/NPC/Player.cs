@@ -30,7 +30,7 @@ namespace RealtimeInteractiveCrawler
         private float positionX;
         private float positionY;
 
-        private AnimSprite animSprite;
+        public AnimSprite AnimSprite;
         public SpriteSheet spriteSheet;
         private MovementType lastAnim;
 
@@ -41,20 +41,20 @@ namespace RealtimeInteractiveCrawler
             Health = PLAYER_MAX_HEALTH;
 
             spriteSheet = Content.SpritePlayer;
-            animSprite = new AnimSprite(spriteSheet);
+            AnimSprite = new AnimSprite(spriteSheet);
             //animSprite.color = Color.Red;
-            Rect = animSprite.RectShape;
-            Rect = animSprite.RectShape;
+            Rect = AnimSprite.RectShape;
+            Rect = AnimSprite.RectShape;
             //Rect.FillColor = Color.Red;
             //rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth * size, spriteSheet.SubHeight * size));
             // Center of rectangle
             //rect.Origin = new Vector2f(spriteSheet.SubWidth * size * 0.5f, spriteSheet.SubWidth * size * 0.5f);
 
-            AssignAnimations(animSprite, MovementType.Idle, 2, 1);
-            AssignAnimations(animSprite, MovementType.Horizontal, 1, 9);
-            AssignAnimations(animSprite, MovementType.Up, 0, 9);
-            AssignAnimations(animSprite, MovementType.Down, 2, 9);
-            animSprite.Play(MovementType.Idle);
+            AssignAnimations(AnimSprite, MovementType.Idle, 2, 1);
+            AssignAnimations(AnimSprite, MovementType.Horizontal, 1, 9);
+            AssignAnimations(AnimSprite, MovementType.Up, 0, 9);
+            AssignAnimations(AnimSprite, MovementType.Down, 2, 9);
+            AnimSprite.Play(MovementType.Idle);
         }
 
         public override void OnKill()
@@ -128,7 +128,7 @@ namespace RealtimeInteractiveCrawler
                         world.SetTile(TileType.GROUND, i, j);
                         ChangeErase(-1);
                     }
-                        
+
                 }
             }
         }
@@ -186,8 +186,8 @@ namespace RealtimeInteractiveCrawler
                 Debug.WriteLine("huray, item! " + actualItem.TypeItem.ToString());
                 switch (actualItem.TypeItem)
                 {
-                    case Item.ItemType.HEALTH:
-                        ChangeHealth(10);
+                    case ItemType.HEALTH:
+                        ChangeHealth(10, false);
                         break;
                     case Item.ItemType.ATTACK:
                         ChangeAttack(5);
@@ -207,18 +207,19 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
-        public void ChangeHealth(int health)
+        public void ChangeHealth(int healthChange, bool enemyDamage)
         {
-            AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(health);
-            if((Health + health) > PLAYER_MAX_HEALTH)
+            AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(healthChange);
+            if ((Health + healthChange) > PLAYER_MAX_HEALTH)
             {
                 Health = PLAYER_MAX_HEALTH;
             }
             else
             {
-                Health += health;
+                Health += healthChange;
             }
-            AwesomeGame.networkManager.SendMyPlayerHealth(Health);
+            if (!enemyDamage)
+                AwesomeGame.networkManager.SendMyPlayerHealth(Health);
             //Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
@@ -244,7 +245,7 @@ namespace RealtimeInteractiveCrawler
                 foreach (var tile in tiles)
                 {
                     double dist = AwesomeGame.Distance(tile.Position, enemy.Position, enemy.Origin);
-                    if (dist < 20) 
+                    if (dist < 20)
                         enemiesToAttack.Add(enemy);
                 }
             }
@@ -282,7 +283,7 @@ namespace RealtimeInteractiveCrawler
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {
-            target.Draw(animSprite, states);
+            target.Draw(AnimSprite, states);
         }
 
         private void UpdateMovement()
@@ -305,7 +306,7 @@ namespace RealtimeInteractiveCrawler
                     movement.Y += PLAYER_MOVE_SPEED_ACCELERATION;
 
                     // Animation
-                    animSprite.Play(MovementType.Down);
+                    AnimSprite.Play(MovementType.Down);
                     lastAnim = MovementType.Down;
                 }
                 else if (movingUp)
@@ -316,7 +317,7 @@ namespace RealtimeInteractiveCrawler
                     movement.Y -= PLAYER_MOVE_SPEED_ACCELERATION;
 
                     // Animation
-                    animSprite.Play(MovementType.Up);
+                    AnimSprite.Play(MovementType.Up);
                     lastAnim = MovementType.Up;
                 }
 
@@ -351,7 +352,7 @@ namespace RealtimeInteractiveCrawler
                     movement.X = -PLAYER_MOVE_SPEED;
 
                 // Animation
-                animSprite.Play(MovementType.Horizontal);
+                AnimSprite.Play(MovementType.Horizontal);
                 lastAnim = MovementType.Horizontal;
             }
             // Standing / Idle
@@ -360,7 +361,7 @@ namespace RealtimeInteractiveCrawler
                 movement = new Vector2f();
 
                 // Animation
-                animSprite.animations[lastAnim].Reset();
+                AnimSprite.animations[lastAnim].Reset();
                 //animSprite.Play(MovementType.Idle);
             }
         }
@@ -372,23 +373,23 @@ namespace RealtimeInteractiveCrawler
             if (Position.X < x)
             {
                 Direction = 1;
-                animSprite.Play(MovementType.Horizontal);
+                AnimSprite.Play(MovementType.Horizontal);
             }
             // move left
             else if (Position.X > x)
             {
                 Direction = -1;
-                animSprite.Play(MovementType.Horizontal);
+                AnimSprite.Play(MovementType.Horizontal);
             }
             // move down
             else if (Position.Y < y)
             {
-                animSprite.Play(MovementType.Down);
+                AnimSprite.Play(MovementType.Down);
             }
             // move up
             else if (Position.Y > y)
             {
-                animSprite.Play(MovementType.Up);
+                AnimSprite.Play(MovementType.Up);
             }
 
             Position = new Vector2f(x, y);
