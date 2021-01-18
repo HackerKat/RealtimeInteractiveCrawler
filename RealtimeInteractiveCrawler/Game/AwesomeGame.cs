@@ -171,7 +171,36 @@ namespace RealtimeInteractiveCrawler
                     Enemy enemy = world.enemies[i];
                     enemy.UpdatePos(steering, gameTime);
                 }
-            //}
+
+            }
+        }
+
+        public void UpdateEnemyHealth(Packet p)
+        {
+            //Console.WriteLine("Client got data about enemy position");
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+            foreach (Enemy enemy in Enemies.Values)
+            {
+                if (enemy.id == id)
+                {
+                    enemy.Health = health;
+                    return;
+                }
+            }
+        }
+
+        public void UpdatePlayerHealth(Packet p)
+        {
+
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+            int damage = Players[id].Health - health;
+            Debug.WriteLine(damage + " " + health);
+            //Players[id].Health = health;
+            Players[id].ChangeHealth(-damage, true);
 
             return;
 
@@ -249,9 +278,30 @@ namespace RealtimeInteractiveCrawler
             if (isDataReadyToInit)
             {
                 Window.Draw(world);
-                foreach (Player np in players.Values)
+                foreach (KeyValuePair<int, Player> np in Players)
                 {
+
+                    Player np = v.Value;
+                    int id = v.Key;
+                    //Console.WriteLine("Player: " + id + " has health " + np.Health);
+                    if (np.Health <= 0)
+                        np.AnimSprite = new AnimSprite(Content.SpriteDead);
                     Window.Draw(np);
+                }
+                foreach (Enemy enemy in Enemies.Values)
+                {
+                    if (enemy.Health > 0)
+                    {
+                        double distanceToPlayer = Distance(enemy.Position, Player.Position);
+                        if (distanceToPlayer > Tile.TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
+                            continue;
+                        Window.Draw(enemy);
+                    }
+                        
+                }
+                foreach (var bar in StatusBars.Values)
+                {
+                    Window.Draw(bar);
                 }
             }
 
