@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using static RealtimeInteractiveCrawler.AnimSprite;
+using static RealtimeInteractiveCrawler.Item;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -208,16 +209,19 @@ namespace RealtimeInteractiveCrawler
         public void ChangeHealth(int health)
         {
             Health += health;
+            AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(health);
             Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
         {
             Attack += attack;
+            AwesomeGame.StatusBars[ItemType.ATTACK].ChangeStatus(attack);
             Debug.WriteLine(Attack + " my attack");
         }
         public void ChangeDefense(int defense)
         {
             Defense += defense;
+            AwesomeGame.StatusBars[ItemType.DEFENSE].ChangeStatus(defense);
             Debug.WriteLine(Defense + " my defense");
         }
 

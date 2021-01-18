@@ -59,6 +59,7 @@
     <Compile Include="Game\AwesomeGame.cs" />
     <Compile Include="Game\Items\Item.cs" />
     <Compile Include="Game\NPC\NetworkPlayer.cs" />
+    <Compile Include="Game\UI\SimpleUI.cs" />
     <Compile Include="Game\World\Chunk.cs" />
     <Compile Include="Game\UI\UIBase.cs" />
     <Compile Include="Game\UI\UIInventory.cs" />

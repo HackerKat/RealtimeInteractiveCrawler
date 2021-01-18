@@ -14,7 +14,7 @@ namespace RealtimeInteractiveCrawler
         public static SpriteSheet SpriteGround { get; set; } // Ground
         public static SpriteSheet SpriteGrass { get; set; } // Grass
         public static SpriteSheet SpriteEnemy { get; set; } // Enemy
-        public static Font Font { get; set; } //font
+        public static Font Font { get; set; } // Font
 
         public static SpriteSheet SpritePlayer { get; set; } // Player
         public static SpriteSheet SpriteHealth { get; set; } // Health

@@ -5,6 +5,7 @@ using SFML.Window;
 using NetworkLib;
 using SFML.System;
 using System.Diagnostics;
+using static RealtimeInteractiveCrawler.Item;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -17,6 +18,8 @@ namespace RealtimeInteractiveCrawler
         public static Dictionary<int, Player> Players { get; set; } = new Dictionary<int, Player>();
         public static Player Player;
         public static Dictionary<int, Enemy> Enemies = new Dictionary<int, Enemy>();
+
+        public static Dictionary<ItemType, SimpleUI> StatusBars = new Dictionary<ItemType, SimpleUI>();
 
         private const uint DEFAULT_WIDTH = 1280;
         private const uint DEFAULT_HEIGHT = 720;
@@ -35,7 +38,9 @@ namespace RealtimeInteractiveCrawler
         {
             DebugRender.Enabled = true;
 
-
+            StatusBars.Add(ItemType.HEALTH, new SimpleUI(Color.Red, new Vector2f(20, 20), "Health"));
+            StatusBars.Add(ItemType.ATTACK, new SimpleUI(Color.Blue, new Vector2f(20, 50), "Attack"));
+            StatusBars.Add(ItemType.DEFENSE, new SimpleUI(Color.Green, new Vector2f(20, 80), "Defense"));
             //Rand = new Random();
 
             //Player.Inventory = new UIInventory();
@@ -47,13 +52,13 @@ namespace RealtimeInteractiveCrawler
         {
             world = new World();
             // Network
-            //networkManager.Connect("localhost");
-            
+            networkManager.Connect("localhost");
+
             // Single
-            Player = new Player();
-            Player.Spawn(650, 300);
-            Player.ClientPlayer = true;
-            world.GenerateWorld(5);
+            //Player = new Player();
+            //Player.Spawn(650, 300);
+            //Player.ClientPlayer = true;
+            //world.GenerateWorld(5);
 
         }
 
@@ -219,21 +224,21 @@ namespace RealtimeInteractiveCrawler
         public override void Update(GameTime gameTime)
         {
             // Network
-            //if (isDataReadyToInit)
-            //{
+            if (isDataReadyToInit)
+            {
                 if (hasFocus)
                 {
                     world.Update();
                     Player.Update();
                     GameView.Center = Player.Position;
                 // Network
-                //SendPlayerUpdate();
+                SendPlayerUpdate();
             }
-        //}
+        }
             //UIManager.UpdateOver();
             //UIManager.Update();
             // TODO revert debug change
-            return;
+            //return;
             // Network
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
@@ -269,26 +274,37 @@ namespace RealtimeInteractiveCrawler
 
             //DebugUtility.DrawPerformanceData(Color.White);
 
-            // Single
-            Window.Draw(world);
-            Window.Draw(Player);
 
+            // Single
+            //Window.Draw(world);       
+            //Window.Draw(Player);
             DebugRender.Draw(Window);
+
+            //foreach (var bar in StatusBars.Values)
+            //{
+            //    Window.Draw(bar);
+            //}
+
+
             //UIManager.Draw();
 
             // Network
-            //if (isDataReadyToInit)
-            //{
-            //    Window.Draw(world);
-            //    foreach (Player np in Players.Values)
-            //    {
-            //        Window.Draw(np);
-            //    }
-            //    foreach (Enemy enemy in Enemies.Values)
-            //    {
-            //        Window.Draw(enemy);
-            //    }
-            //}
+            if (isDataReadyToInit)
+            {
+                Window.Draw(world);
+                foreach (Player np in Players.Values)
+                {
+                    Window.Draw(np);
+                }
+                foreach (Enemy enemy in Enemies.Values)
+                {
+                    Window.Draw(enemy);
+                }
+                foreach (var bar in StatusBars.Values)
+                {
+                    Window.Draw(bar);
+                }
+            }
 
         }
 
