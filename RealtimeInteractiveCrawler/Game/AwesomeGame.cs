@@ -79,7 +79,7 @@ namespace RealtimeInteractiveCrawler
             switch (p.PacketType)
             {
                 case PacketType.PING:
-                    Console.WriteLine("pong received from server");    //ping is received from server
+                    //Console.WriteLine("pong received from server");    //ping is received from server
                     break;
                 case PacketType.INIT:
                     GetAcceptData(p);
@@ -222,7 +222,7 @@ namespace RealtimeInteractiveCrawler
             int id = pr.GetInt();
             //int x = (int)pr.GetFloat();
             //int y = (int)pr.GetFloat();
-            Console.WriteLine("received an update on item: " + id);
+            //Console.WriteLine("received an update on item: " + id);
             foreach (var item in World.Items.Values)
             {
                 if (item.id == id)

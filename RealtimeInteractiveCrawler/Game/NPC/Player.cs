@@ -109,9 +109,6 @@ namespace RealtimeInteractiveCrawler
             }
 
             // Mouse
-            //if (UIManager.Over == null && UIManager.Drag == null)
-            //{
-
             Vector2i mousePos = Mouse.GetPosition(GameLoop.Window);
             mousePos = (Vector2i)GameLoop.Window.MapPixelToCoords(mousePos);
 
@@ -131,13 +128,10 @@ namespace RealtimeInteractiveCrawler
                     {
                         world.SetTile(TileType.GROUND, i, j);
                         ChangeErase(-1);
-                        Debug.WriteLine("erased");
                     }
                         
                 }
             }
-            //}
-
         }
 
         private List<Tile> GetTilesAroundPlayer(Side side)
@@ -211,7 +205,7 @@ namespace RealtimeInteractiveCrawler
                 actualItem.IsDestroyed = true;
                 foundItem.type = TileType.GROUND;
                 AwesomeGame.networkManager.SendItemUpdate(actualItem.id);
-                Console.WriteLine("Client took item: " +  actualItem.id);
+                //Console.WriteLine("Client took item: " +  actualItem.id);
             }
         }
 
@@ -226,7 +220,7 @@ namespace RealtimeInteractiveCrawler
             {
                 Health += health;
             }
-            AwesomeGame.networkManager.SendMyPlayerHealth(health);
+            AwesomeGame.networkManager.SendMyPlayerHealth(Health);
             Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)

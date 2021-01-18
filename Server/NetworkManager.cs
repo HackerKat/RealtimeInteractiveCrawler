@@ -120,12 +120,12 @@ namespace Server
                 switch (p.PacketType)
                 {
                     case PacketType.PING:
-                        Console.WriteLine("ping packet received");
+                        //Console.WriteLine("ping packet received");
                         PacketBuilder pb = new PacketBuilder(0);
                         pb.Add(14);
                         Packet packet = pb.Build(); //ping packet
                         SendData(packet, client.GetStream());
-                        Console.WriteLine("Send pong");
+                        //Console.WriteLine("Send pong");
                         break;
                     case PacketType.UPDATE_MY_POS:
                         SendPlayerUpdate(client, p);
@@ -192,7 +192,7 @@ namespace Server
             }
            
             Packet packet = pb.Build();
-            Console.WriteLine("Init packet is built");
+            //Console.WriteLine("Init packet is built");
             lock (client)
             {
                 SendData(packet, client.GetStream());
