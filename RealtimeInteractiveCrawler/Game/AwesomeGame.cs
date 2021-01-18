@@ -95,6 +95,12 @@ namespace RealtimeInteractiveCrawler
                         UpdateEnemyHealth(p);
                     }
                     break;
+                case PacketType.UPDATE_PLAYER_HEALTH:
+                    if (isDataReadyToInit)
+                    {
+                        UpdatePlayerHealth(p);
+                    }
+                    break;
             }
         }
 
@@ -249,6 +255,18 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
+        public void UpdatePlayerHealth(Packet p)
+        {
+           
+            PacketReader pr = new PacketReader(p);
+            int id = pr.GetInt();
+            int health = pr.GetInt();
+
+            Players[id].Health = health;
+
+            //Console.WriteLine("Client got data about player: " + id + " health " + health);
+        }
+
         public override void Update(GameTime gameTime)
         {
             // Network
@@ -261,6 +279,7 @@ namespace RealtimeInteractiveCrawler
                     GameView.Center = Player.Position;
                     // Network
                     SendPlayerUpdate();
+                    //Console.WriteLine(Player.Health);
                 }
             }
             //UIManager.UpdateOver();

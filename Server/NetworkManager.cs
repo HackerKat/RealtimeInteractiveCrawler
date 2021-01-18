@@ -136,9 +136,9 @@ namespace Server
                     case PacketType.UPDATE_ENEMY_HEALTH:
                         SendEnemyHealth(client, p);
                         break;
-                    //case PacketType.UPDATE_PLAYER_HEALTH:
-                    //    UpdatePlayerHealth(client, p);
-                    //    break;
+                    case PacketType.UPDATE_PLAYER_HEALTH:
+                        UpdatePlayerHealth(client, p);
+                        break;
                     default:
                         break;
                 }
@@ -335,6 +335,23 @@ namespace Server
                     {
                         SendData(p, c.GetStream());
                     }
+                }
+            }
+        }
+
+        public void UpdatePlayerHealth(int playerId)
+        {
+            Player player = Players[playerId];
+            foreach (TcpClient c in connections.Keys)
+            {
+                PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_PLAYER_HEALTH);
+                pb.Add(playerId);
+                pb.Add(player.Health);
+                Packet p = pb.Build();
+                //Console.WriteLine("player: " + playerId + " health " + player.Health);
+                lock (c)
+                {
+                    SendData(p, c.GetStream());
                 }
             }
         }

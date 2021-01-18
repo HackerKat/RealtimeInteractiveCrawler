@@ -216,7 +216,7 @@ namespace RealtimeInteractiveCrawler
             {
                 Health += health;
             }
-            //AwesomeGame.networkManager.SendMyPlayerHealth(health);
+            AwesomeGame.networkManager.SendMyPlayerHealth(health);
             Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
@@ -389,6 +389,5 @@ namespace RealtimeInteractiveCrawler
 
             Position = new Vector2f(x, y);
         }
-
     }
 }
