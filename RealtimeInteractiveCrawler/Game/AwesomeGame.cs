@@ -45,14 +45,15 @@ namespace RealtimeInteractiveCrawler
 
         public override void Initialize()
         {
-            // Network
-            networkManager.Connect("localhost");
             world = new World();
+            // Network
+            //networkManager.Connect("localhost");
+            
             // Single
-            //Player = new Player();
-            //Player.Spawn(650, 300);
-            //Player.ClientPlayer = true;
-            //world.GenerateWorld(5);
+            Player = new Player();
+            Player.Spawn(650, 300);
+            Player.ClientPlayer = true;
+            world.GenerateWorld(5);
 
         }
 
@@ -218,21 +219,21 @@ namespace RealtimeInteractiveCrawler
         public override void Update(GameTime gameTime)
         {
             // Network
-            if (isDataReadyToInit)
-            {
+            //if (isDataReadyToInit)
+            //{
                 if (hasFocus)
                 {
                     world.Update();
                     Player.Update();
                     GameView.Center = Player.Position;
-                    // Network
-                    SendPlayerUpdate();
-                }
+                // Network
+                //SendPlayerUpdate();
             }
+        //}
             //UIManager.UpdateOver();
             //UIManager.Update();
             // TODO revert debug change
-
+            return;
             // Network
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
@@ -268,26 +269,26 @@ namespace RealtimeInteractiveCrawler
 
             //DebugUtility.DrawPerformanceData(Color.White);
 
-            // TODO remove debug
-            //Window.Draw(world);
-            //Window.Draw(Player);
+            // Single
+            Window.Draw(world);
+            Window.Draw(Player);
 
             DebugRender.Draw(Window);
             //UIManager.Draw();
 
             // Network
-            if (isDataReadyToInit)
-            {
-                Window.Draw(world);
-                foreach (Player np in Players.Values)
-                {
-                    Window.Draw(np);
-                }
-                foreach (Enemy enemy in Enemies.Values)
-                {
-                    Window.Draw(enemy);
-                }
-            }
+            //if (isDataReadyToInit)
+            //{
+            //    Window.Draw(world);
+            //    foreach (Player np in Players.Values)
+            //    {
+            //        Window.Draw(np);
+            //    }
+            //    foreach (Enemy enemy in Enemies.Values)
+            //    {
+            //        Window.Draw(enemy);
+            //    }
+            //}
 
         }
 
@@ -295,6 +296,14 @@ namespace RealtimeInteractiveCrawler
         {
             float dX = pos.X - (obj.X + objOrigin.X);
             float dY = pos.Y - (obj.Y + objOrigin.Y);
+            double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
+            return distance;
+        }
+
+        public static double Distance(Vector2f pos, Vector2f obj)
+        {
+            float dX = pos.X - obj.X;
+            float dY = pos.Y - obj.Y;
             double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
             return distance;
         }

@@ -181,9 +181,12 @@ namespace RealtimeInteractiveCrawler
                 }
             }
 
-            foreach (var item in Items)
+            foreach (var item in Items.Values)
             {
-                target.Draw(item.Value);
+                double distanceToPlayer = AwesomeGame.Distance(item.Position, AwesomeGame.Player.Position);
+                if (distanceToPlayer > Tile.TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
+                    continue;
+                target.Draw(item);
             }
         }
     }

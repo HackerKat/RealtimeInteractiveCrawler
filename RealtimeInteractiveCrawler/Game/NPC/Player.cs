@@ -64,6 +64,7 @@ namespace RealtimeInteractiveCrawler
 
         public override void UpdateNPC()
         {
+
             if (!ClientPlayer) return;
 
             UpdateMovement();
