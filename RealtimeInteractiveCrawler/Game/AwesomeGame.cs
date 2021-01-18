@@ -23,6 +23,7 @@ namespace RealtimeInteractiveCrawler
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         public static NetworkManager networkManager = new NetworkManager();
+        private String ipAdress;
 
         private bool isDataReadyToInit = false;
 
@@ -31,10 +32,10 @@ namespace RealtimeInteractiveCrawler
 
         private int connectionId;
 
-        public AwesomeGame() : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
+        public AwesomeGame(String ipAdress) : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
             DebugRender.Enabled = true;
-
+            this.ipAdress = ipAdress;
 
             //Rand = new Random();
 
@@ -46,7 +47,7 @@ namespace RealtimeInteractiveCrawler
         public override void Initialize()
         {
             // Network
-            networkManager.Connect("localhost");
+            networkManager.Connect(ipAdress);
             world = new World();
             // Single
             //Player = new Player();

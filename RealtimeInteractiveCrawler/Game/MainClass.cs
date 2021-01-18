@@ -10,7 +10,8 @@ namespace RealtimeInteractiveCrawler
     {
         public static void Main(string[] args)
         {
-            AwesomeGame game = new AwesomeGame();
+            String ipAdress = Console.ReadLine();
+            AwesomeGame game = new AwesomeGame(ipAdress);
             game.Run();
         }
     }
