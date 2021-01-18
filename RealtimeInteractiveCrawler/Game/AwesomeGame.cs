@@ -3,9 +3,6 @@ using System;
 using System.Collections.Generic;
 using SFML.Window;
 using NetworkLib;
-using SFML.System;
-using System.Diagnostics;
-using static RealtimeInteractiveCrawler.Item;
 
 namespace RealtimeInteractiveCrawler
 {
@@ -14,20 +11,16 @@ namespace RealtimeInteractiveCrawler
         public static World world;
         public static Random Rand;
 
-        public static List<Tile> PlayerTiles = new List<Tile>();
-        public static Dictionary<int, Player> Players { get; set; } = new Dictionary<int, Player>();
-        public static Player Player;
-        public static Dictionary<int, Enemy> Enemies = new Dictionary<int, Enemy>();
-
-        public static Dictionary<ItemType, SimpleUI> StatusBars = new Dictionary<ItemType, SimpleUI>();
-
         private const uint DEFAULT_WIDTH = 1280;
         private const uint DEFAULT_HEIGHT = 720;
-        private const string TITLE = "Realtime Interactive Crawler";
+        private const string TITLE = "OBAMA CARES";
         private InputManager inputManager = new InputManager();
-        public static NetworkManager networkManager = new NetworkManager();
-
+        private NetworkManager networkManager = new NetworkManager();
+        private Player player;
         private bool isDataReadyToInit = false;
+        private Dictionary<int, Player> players = new Dictionary<int, Player>();
+
+        private float movementSpeed = 5f;
 
 
         private bool pPressed = false;
@@ -38,10 +31,8 @@ namespace RealtimeInteractiveCrawler
         {
             DebugRender.Enabled = true;
 
-            StatusBars.Add(ItemType.HEALTH, new SimpleUI(Color.Red, new Vector2f(20, 20), "Health"));
-            StatusBars.Add(ItemType.ATTACK, new SimpleUI(Color.Blue, new Vector2f(20, 50), "Attack"));
-            StatusBars.Add(ItemType.DEFENSE, new SimpleUI(Color.Green, new Vector2f(20, 80), "Defense"));
-            //Rand = new Random();
+
+            Rand = new Random();
 
             //Player.Inventory = new UIInventory();
             //UIManager.AddControl(Player.Inventory);
@@ -50,14 +41,25 @@ namespace RealtimeInteractiveCrawler
 
         public override void Initialize()
         {
-            world = new World();
-            // Network
             networkManager.Connect("localhost");
+            world = new World();
 
-            // Single
-            //Player = new Player();
-            //Player.Spawn(650, 300);
-            //Player.ClientPlayer = true;
+            
+
+            player = new Player(world);
+            player.Spawn(650, 300);
+
+            world.GenerateWorld(5);
+
+            foreach (Enemy enemy in world.enemies)
+            {
+                behaviours.Add(new Wander(enemy, Rand));
+            }
+
+
+            //player = new Player();
+            //player.Spawn(650, 300);
+
             //world.GenerateWorld(5);
 
         }
@@ -72,7 +74,7 @@ namespace RealtimeInteractiveCrawler
             switch (p.PacketType)
             {
                 case PacketType.PING:
-                    //Console.WriteLine("pong received from server");    //ping is received from server
+                    Console.WriteLine("pong received from server");    //ping is received from server
                     break;
                 case PacketType.INIT:
                     GetAcceptData(p);
@@ -81,31 +83,7 @@ namespace RealtimeInteractiveCrawler
                     InitializeNewPlayer(p);
                     break;
                 case PacketType.UPDATE_OTHER_POS:
-                    GetOtherPlayerPos(p);
-                    break;
-                case PacketType.UPDATE_ENEMY:
-                    if (isDataReadyToInit)
-                    {
-                        UpdateEnemyData(p);
-                    }
-                    break;
-                case PacketType.UPDATE_ITEM:
-                    if (isDataReadyToInit)
-                    {
-                        UpdateItems(p);
-                    }
-                    break;
-                case PacketType.UPDATE_ENEMY_HEALTH:
-                    if (isDataReadyToInit)
-                    {
-                        UpdateEnemyHealth(p);
-                    }
-                    break;
-                case PacketType.UPDATE_PLAYER_HEALTH:
-                    if (isDataReadyToInit)
-                    {
-                        UpdatePlayerHealth(p);
-                    }
+                    GetOtherPlayerData(p);
                     break;
             }
         }
@@ -116,49 +94,21 @@ namespace RealtimeInteractiveCrawler
 
             connectionId = pr.GetInt();
             int seed = pr.GetInt();
-            float spawnX = pr.GetFloat();
-            float spawnY = pr.GetFloat();
-            int health = pr.GetInt();
-            int enemyCount = pr.GetInt();
-            Rand = new Random(seed);
-            world.GenerateWorld(seed);
-            for (int i = 0; i < enemyCount; i++)
-            {
-                int id = pr.GetInt();
-                float x = pr.GetFloat();
-                float y = pr.GetFloat();
-                int currHealth = pr.GetInt();
-                if (currHealth > 0)
-                {
-                    Enemy enemy = new Enemy();
-                    enemy.id = id;
-                    enemy.Health = currHealth;
-                    Enemies.Add(id, enemy);
-                    enemy.Spawn(x, y);
-                }
-            }
-            int itemsToDestroy = pr.GetInt();
-            for (int i = 0; i < itemsToDestroy; i++)
-            {
-                int itemId = pr.GetInt();
-                foreach (var item in World.Items.Values)
-                {
-                    if (item.id == itemId)
-                    {
-                        item.IsDestroyed = true;
-                    }
-                }
-            }
+            int spawnX = pr.GetInt();
+            int spawnY = pr.GetInt();
 
+            Console.WriteLine("init data get processed");
             Console.WriteLine("my connection id is: " + connectionId);
-            world.Update();
-            Player = new Player();
-            Player.ClientPlayer = true;
-            Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
-            Player.Health = health;
-            Debug.WriteLine("health server "+ health);
-            Player.Spawn(pos.X, pos.Y);
-            Players.Add(connectionId, Player);
+
+            player = new Player();
+            player.ClientPlayer = true;
+            player.Spawn(spawnX, spawnY);
+            players.Add(connectionId, player);
+            world.GenerateWorld(seed);
+            foreach(Enemy enemy in world.enemies)
+            {
+                behaviours.Add(new Wander(enemy, Rand));
+            }
             isDataReadyToInit = true;
         }
 
@@ -167,15 +117,13 @@ namespace RealtimeInteractiveCrawler
             PacketReader pr = new PacketReader(p);
 
             int connId = pr.GetInt();
-            float spawnX = pr.GetFloat();
-            float spawnY = pr.GetFloat();
-            int health = pr.GetInt();
+            int spawnX = pr.GetInt();
+            int spawnY = pr.GetInt();
 
+            Console.WriteLine("new player data get processed");
             Player newPlayer = new Player();
-            newPlayer.Health = health;
-            //Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             newPlayer.Spawn(spawnX, spawnY);
-            Players.Add(connId, newPlayer);
+            players.Add(connId, newPlayer);
             Console.WriteLine("new player joined: " + connId);
         }
 
@@ -184,129 +132,59 @@ namespace RealtimeInteractiveCrawler
             PacketBuilder pb = new PacketBuilder(PacketType.UPDATE_MY_POS);
 
             pb.Add(connectionId);
-            pb.Add(Player.Position.X);
-            pb.Add(Player.Position.Y);
+            pb.Add(player.Position.X);
+            pb.Add(player.Position.Y);
             Packet packet = pb.Build();
             networkManager.SendData(packet);
         }
 
-        public void GetOtherPlayerPos(Packet p)
+        public void GetOtherPlayerData(Packet p)
         {
+            Console.WriteLine("Client got data about other players position");
             PacketReader pr = new PacketReader(p);
 
             int id = pr.GetInt();
-            int x = (int)pr.GetFloat();
-            int y = (int)pr.GetFloat();
-            if (Players.ContainsKey(id))
+            int x = pr.GetInt();
+            int y = pr.GetInt();
+            Console.WriteLine("Get data from player: " + id);
+            if (players.ContainsKey(id))
             {
-                Player np = Players[id];
+                Player np = players[id];
+                Console.WriteLine("network player has moved to x: " + np.Position.X);
+                Console.WriteLine("network player has moved to y: " + np.Position.Y);
                 np.UpdatePos(x, y);
             }
         }
 
-        public void UpdateItems(Packet p)
-        {
-            PacketReader pr = new PacketReader(p);
-
-            int id = pr.GetInt();
-            //int x = (int)pr.GetFloat();
-            //int y = (int)pr.GetFloat();
-            //Console.WriteLine("received an update on item: " + id);
-            foreach (var item in World.Items.Values)
-            {
-                if (item.id == id)
-                {
-                    item.IsDestroyed = true;
-                    world.Update();
-                    break;
-                }
-            }
-        }
-
-        private Color CreateRandomColor(int seed)
-        {
-            Random rand = new Random(seed);
-            return new Color((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
-        }
-
-
-        public void UpdateEnemyData(Packet p)
-        {
-            //Console.WriteLine("Client got data about enemy position");
-            PacketReader pr = new PacketReader(p);
-            int count = pr.GetInt();
-            for (int i = 0; i < count; i++)
-            {
-                int id = pr.GetInt();
-                int x = (int)pr.GetFloat();
-                int y = (int)pr.GetFloat();
-                int currHealth = pr.GetInt();
-                float chunkX = pr.GetFloat();
-                float chunkY = pr.GetFloat();
-                if (currHealth > 0)
-                {
-                    Enemies[id].Chunk = world.chunks[(int)chunkX][(int)chunkY];
-                    Enemies[id].Health = currHealth;
-                    Enemies[id].UpdatePos(x, y);
-                }
-            }
-        }
-
-        public void UpdateEnemyHealth(Packet p)
-        {
-            //Console.WriteLine("Client got data about enemy position");
-            PacketReader pr = new PacketReader(p);
-            int id = pr.GetInt();
-            int health = pr.GetInt();
-            foreach (Enemy enemy in Enemies.Values)
-            {
-                if (enemy.id == id)
-                {
-                    enemy.Health = health;
-                    return;
-                }
-            }
-        }
-
-        public void UpdatePlayerHealth(Packet p)
-        {
-
-            PacketReader pr = new PacketReader(p);
-            int id = pr.GetInt();
-            int health = pr.GetInt();
-            int damage = Players[id].Health - health;
-            Debug.WriteLine(damage + " " + health);
-            //Players[id].Health = health;
-            Players[id].ChangeHealth(-damage);
-
-            //Console.WriteLine("Client got data about player: " + id + " health " + health);
-        }
-
         public override void Update(GameTime gameTime)
         {
-            // Network
-            if (isDataReadyToInit)
-            {
-                if (hasFocus)
+            //if (isDataReadyToInit)
+            //{
+
+                player.Update();
+                // SendPlayerUpdate();
+                for(int i = 0; i < behaviours.Count; i++)
                 {
+
+                    SteeringBehaviour wander = behaviours[i];
+                    var steering = wander.GetSteering();
+                    Enemy enemy = world.enemies[i];
+                    enemy.UpdatePos(steering, gameTime);
+                }
+            //}
+
+            return;
+
                     world.Update();
-                    Player.Update();
-                    GameView.Center = Player.Position;
-                    // Network
+                    player.Update();
                     SendPlayerUpdate();
-                    //Console.WriteLine(Player.Health);
-                    if (Player.Health <= 0)
-                    {
-                        Window.Close();
-                    }
                 }
             }
-
             //UIManager.UpdateOver();
             //UIManager.Update();
             // TODO revert debug change
-            //return;
-            // Network
+
+
             MessageQueue messageQueue = networkManager.MessageQueue;
             Packet p;
             while ((p = messageQueue.Pop()) != null)
@@ -330,72 +208,53 @@ namespace RealtimeInteractiveCrawler
             {
                 Window.Close();
             }
-
         }
 
         public override void Draw(GameTime gameTime)
         {
-            // TODO remove debug
 
+            //DebugUtility.DrawPerformanceData(this, Color.White);
+            //if (isDataReadyToInit)
+            //{
+                Window.Draw(world);
+                Window.Draw(player);
+
+                //foreach (NetworkPlayer np in players.Values)
+                //{
+                    //Window.Draw(np);
+                //}
+            //}
+
+
+            // TODO remove debug
+            Window.Draw(world);
+            Window.Draw(player);
+            foreach(Enemy enemy in world.enemies)
+            {
+                Window.Draw(enemy);
+            }
+
+            DebugRender.Draw(Window);
             //Window.Draw(sprite);
 
             //DebugUtility.DrawPerformanceData(Color.White);
 
+            // TODO remove debug
+            //Window.Draw(world);
+            //Window.Draw(player);
 
-            // Single
-            //Window.Draw(world);       
-            //Window.Draw(Player);
-
-            //foreach (var bar in StatusBars.Values)
-            //{
-            //    Window.Draw(bar);
-            //}
-
-
+            DebugRender.Draw(Window);
             //UIManager.Draw();
 
-            // Network
             if (isDataReadyToInit)
             {
                 Window.Draw(world);
-                DebugRender.Draw(Window); // mainly for green mouse rect
-                foreach (KeyValuePair<int, Player> v in Players)
+                foreach (Player np in players.Values)
                 {
-                    Player np = v.Value;
-                    int id = v.Key;
-                    //Console.WriteLine("Player: " + id + " has health " + np.Health);
-                    if (np.Health <= 0)
-                        np.SpriteSheet = Content.SpriteDead;
                     Window.Draw(np);
-                }
-                foreach (Enemy enemy in Enemies.Values)
-                {
-                    if (enemy.Health > 0)
-                        Window.Draw(enemy);
-                }
-                foreach (var bar in StatusBars.Values)
-                {
-                    Window.Draw(bar);
                 }
             }
 
         }
-
-        public static double Distance(Vector2f pos, Vector2f obj, Vector2f objOrigin)
-        {
-            float dX = pos.X - (obj.X + objOrigin.X);
-            float dY = pos.Y - (obj.Y + objOrigin.Y);
-            double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
-            return distance;
-        }
-
-        public static double Distance(Vector2f pos, Vector2f obj)
-        {
-            float dX = pos.X - obj.X;
-            float dY = pos.Y - obj.Y;
-            double distance = Math.Sqrt(Math.Pow(dX, 2) + Math.Pow(dY, 2));
-            return distance;
-        }
-
     }
 }
