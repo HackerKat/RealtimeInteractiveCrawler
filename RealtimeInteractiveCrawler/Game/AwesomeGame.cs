@@ -26,22 +26,22 @@ namespace RealtimeInteractiveCrawler
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
         public static NetworkManager networkManager = new NetworkManager();
-        private String ipAdress;
+        private int[] statusVals = new int[] { 100, 10, 50, 10 };
 
         private bool isDataReadyToInit = false;
         private bool pPressed = false;
         private int connectionId;
+        private String ipAdress;
 
         public AwesomeGame(String ipAdress) : base(DEFAULT_WIDTH, DEFAULT_HEIGHT, TITLE, Color.Black)
         {
+            this.ipAdress = ipAdress;
             DebugRender.Enabled = true;
 
             StatusBars.Add(ItemType.HEALTH, new SimpleUI(Color.Red, new Vector2f(20, 20), "Health", new Vector2f(statusVals[0], 20)));
             StatusBars.Add(ItemType.ATTACK, new SimpleUI(Color.Yellow, new Vector2f(20, 50), "Attack", new Vector2f(statusVals[1], 20)));
             StatusBars.Add(ItemType.DEFENSE, new SimpleUI(Color.Blue, new Vector2f(20, 80), "Defense", new Vector2f(statusVals[2], 20)));
             StatusBars.Add(ItemType.ERASER, new SimpleUI(Color.Magenta, new Vector2f(20, 110), "Erase", new Vector2f(statusVals[3], 20)));
-            this.ipAdress = ipAdress;
-
             //Rand = new Random();
 
             //Player.Inventory = new UIInventory();
@@ -54,7 +54,7 @@ namespace RealtimeInteractiveCrawler
             world = new World();
             // Network
             networkManager.Connect(ipAdress);
-            world = new World();
+
             // Single
             //Player = new Player();
             //Player.Spawn(650, 300);
@@ -165,7 +165,7 @@ namespace RealtimeInteractiveCrawler
             Player.ClientPlayer = true;
             Vector2f pos = world.GetChunk(0, 0).GetTile((int)spawnX, (int)spawnY).Position;
             Player.Health = health;
-            Debug.WriteLine("health server "+ health);
+            Debug.WriteLine("health server " + health);
             Player.Spawn(pos.X, pos.Y);
             Players.Add(connectionId, Player);
             //Player.Rect.FillColor = CreateRandomColor(connectionId);
@@ -379,8 +379,8 @@ namespace RealtimeInteractiveCrawler
                     Player np = v.Value;
                     int id = v.Key;
                     //Console.WriteLine("Player: " + id + " has health " + np.Health);
-                    //if (np.Health <= 0)
-                    //    np.AnimSprite = new AnimSprite(Content.SpriteDead);
+                    if (np.Health <= 0)
+                        np.AnimSprite = new AnimSprite(Content.SpriteDead);
                     Window.Draw(np);
                 }
                 foreach (Enemy enemy in Enemies.Values)
@@ -392,7 +392,7 @@ namespace RealtimeInteractiveCrawler
                             continue;
                         Window.Draw(enemy);
                     }
-                        
+
                 }
                 foreach (var bar in StatusBars.Values)
                 {

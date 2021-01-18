@@ -68,7 +68,7 @@ namespace Server
         {
             try
             {
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+                IPAddress localAddr = IPAddress.Parse("134.101.5.157");
                 server = new TcpListener(localAddr, 12534);
                 clients = new List<Thread>();
                 server.Start();
