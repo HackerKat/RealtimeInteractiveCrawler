@@ -14,12 +14,12 @@ namespace RealtimeInteractiveCrawler
             SpriteSheet = Content.SpriteEnemy;
 
             // Size of rectangle
-            rect = new RectangleShape(new Vector2f(SpriteSheet.SubWidth * 0.8f, SpriteSheet.SubHeight * 0.8f));
+            Rect = new RectangleShape(new Vector2f(SpriteSheet.SubWidth * 0.8f, SpriteSheet.SubHeight * 0.8f));
             // Center of rectangle
-            rect.Origin = new Vector2f(rect.Size.X * 0.5f, 0);
+            Rect.Origin = new Vector2f(Rect.Size.X * 0.5f, 0);
 
-            rect.Texture = SpriteSheet.Texture;
-            rect.TextureRect = SpriteSheet.GetTextureRect(0, 0);
+            Rect.Texture = SpriteSheet.Texture;
+            Rect.TextureRect = SpriteSheet.GetTextureRect(0, 0);
         }
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {

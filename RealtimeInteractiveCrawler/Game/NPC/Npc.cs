@@ -15,6 +15,7 @@ namespace RealtimeInteractiveCrawler
         public int Health;
         public int Attack;
         public int Defense;
+        public int Erase;
 
         public float TimeTillNextAttack;
         public float AttackWaitingTime;
@@ -54,7 +55,7 @@ namespace RealtimeInteractiveCrawler
             states.Transform *= Transform;
 
             if (isRectVisible)
-                target.Draw(rect, states);
+                target.Draw(Rect, states);
 
             DrawNPC(target, states);
         }

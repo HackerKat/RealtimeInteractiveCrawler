@@ -33,6 +33,7 @@ namespace RealtimeInteractiveCrawler
             itemSpriteSheets.Add(Content.SpriteHealth);
             itemSpriteSheets.Add(Content.SpriteAttack);
             itemSpriteSheets.Add(Content.SpriteDefense);
+            itemSpriteSheets.Add(Content.SpriteErase);
             // TODO other items
         }
 
@@ -55,7 +56,8 @@ namespace RealtimeInteractiveCrawler
             {
                 ItemType.ATTACK,
                 ItemType.DEFENSE,
-                ItemType.HEALTH
+                ItemType.HEALTH,
+                ItemType.ERASER
             };
             
             List<Vector2i> itemsAttack = mapHandler.PlaceTreasure(4);
@@ -181,9 +183,12 @@ namespace RealtimeInteractiveCrawler
                 }
             }
 
-            foreach (var item in Items)
+            foreach (var item in Items.Values)
             {
-                target.Draw(item.Value);
+                double distanceToPlayer = AwesomeGame.Distance(item.Position, AwesomeGame.Player.Position);
+                if (distanceToPlayer > Tile.TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
+                    continue;
+                target.Draw(item);
             }
         }
     }

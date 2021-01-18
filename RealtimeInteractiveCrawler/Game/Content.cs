@@ -14,12 +14,13 @@ namespace RealtimeInteractiveCrawler
         public static SpriteSheet SpriteGround { get; set; } // Ground
         public static SpriteSheet SpriteGrass { get; set; } // Grass
         public static SpriteSheet SpriteEnemy { get; set; } // Enemy
-        public static Font Font { get; set; } //font
+        public static Font Font { get; set; } // Font
 
         public static SpriteSheet SpritePlayer { get; set; } // Player
         public static SpriteSheet SpriteHealth { get; set; } // Health
         public static SpriteSheet SpriteAttack { get; set; } // Attack
         public static SpriteSheet SpriteDefense { get; set; } // Defense
+        public static SpriteSheet SpriteErase { get; set; } // Defense
 
         public static SpriteSheet SpriteInventory { get; set; } // Inventory
         public static SpriteSheet SpriteDead { get; set; }
@@ -37,11 +38,12 @@ namespace RealtimeInteractiveCrawler
             SpriteHealth = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Health.png"));
             SpriteAttack = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Attack.png"));
             SpriteDefense = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Defense.png"));
+            SpriteErase = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "Items\\" + "Erase.png"));
 
             SpriteInventory = new SpriteSheet(128, 128, false, 0, new Texture(CONTENT_DIR + "UI\\" + "Ladder.png"));
            
             SpriteEnemy = new SpriteSheet(24, 24, false, 0, new Texture(CONTENT_DIR + "NPC\\" + "HalflingFighter2.png"));
-            SpriteDead = new SpriteSheet(32, 32, false, 0, new Texture(CONTENT_DIR + "NPC\\" + "grave.png"));
+            SpriteDead = new SpriteSheet(32, 33, false, 0, new Texture(CONTENT_DIR + "NPC\\" + "grave.png"));
 
             Font = new Font(CONTENT_DIR + "Fonts\\arial\\arial.ttf");
         }

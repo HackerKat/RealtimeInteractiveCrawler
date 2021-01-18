@@ -194,6 +194,7 @@ namespace RealtimeInteractiveCrawler
         {
             states.Transform *= Transform;
 
+            // Only draw when in view
             double distance = CheckDistance(AwesomeGame.Player.Position);
             if (distance > TILE_SIZE * Chunk.CHUNK_SIZE * 0.5f)
                 return;

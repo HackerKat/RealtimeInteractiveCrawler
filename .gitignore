@@ -363,3 +363,5 @@ RealtimeInteractiveCrawler/RealtimeInteractiveCrawler/obj/Debug/RealtimeInteract
 *.cache
 *.exe
 *.pdb
+NetworkLib/bin/Debug/net472/NetworkLib.dll
+Server/bin/Debug/NetworkLib.dll

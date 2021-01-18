@@ -36,7 +36,7 @@ namespace Server
         public void Run()
         {
             Init();
-            Console.WriteLine("Game loop started");
+            //Console.WriteLine("Game loop started");
             float totalTimeBeforeUpdate = 0f;
             float previousTimeElapsed = 0f;
             float deltaTime = 0f;
