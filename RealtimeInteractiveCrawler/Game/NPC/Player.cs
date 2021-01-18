@@ -199,6 +199,8 @@ namespace RealtimeInteractiveCrawler
                 }
                 actualItem.IsDestroyed = true;
                 foundItem.type = TileType.GROUND;
+                AwesomeGame.networkManager.SendItemUpdate(actualItem.id);
+                Console.WriteLine("Client took item: " +  actualItem.id);
             }
         }
 

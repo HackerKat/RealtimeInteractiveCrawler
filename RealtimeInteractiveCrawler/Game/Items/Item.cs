@@ -16,8 +16,9 @@ namespace RealtimeInteractiveCrawler
         }
 
         public ItemType TypeItem;
+        public int id;
 
-        public Item(ItemType type, SpriteSheet spriteSheet, int posSpriteX, int posSpriteY, float size = 1) : base()
+        public Item(ItemType type, SpriteSheet spriteSheet, int posSpriteX, int posSpriteY, int id, float size = 1) : base()
         {
             TypeItem = type;
             rect = new RectangleShape(new Vector2f(spriteSheet.SubWidth, spriteSheet.SubHeight))
@@ -28,6 +29,7 @@ namespace RealtimeInteractiveCrawler
             };
             rect.Size *= size;
             IsItem = true;
+            this.id = id;
         }
 
         public override void Update()

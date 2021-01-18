@@ -20,7 +20,7 @@ namespace RealtimeInteractiveCrawler
         private const uint DEFAULT_HEIGHT = 720;
         private const string TITLE = "Realtime Interactive Crawler";
         private InputManager inputManager = new InputManager();
-        private NetworkManager networkManager = new NetworkManager();
+        public static NetworkManager networkManager = new NetworkManager();
         private Dictionary<int, Enemy> enemies = new Dictionary<int, Enemy>();
 
         private bool isDataReadyToInit = false;
@@ -35,7 +35,7 @@ namespace RealtimeInteractiveCrawler
             DebugRender.Enabled = true;
 
 
-            Rand = new Random();
+            //Rand = new Random();
 
             //Player.Inventory = new UIInventory();
             //UIManager.AddControl(Player.Inventory);
@@ -86,6 +86,12 @@ namespace RealtimeInteractiveCrawler
                         UpdateEnemyData(p);
                     }
                     break;
+                case PacketType.UPDATE_ITEM:
+                    if (isDataReadyToInit)
+                    {
+                        UpdateItems(p);
+                    }
+                    break;
             }
         }
 
@@ -98,6 +104,7 @@ namespace RealtimeInteractiveCrawler
             float spawnX = pr.GetFloat();
             float spawnY = pr.GetFloat();
             int enemyCount = pr.GetInt();
+            Rand = new Random(seed);
             world.GenerateWorld(seed);
             for (int i = 0; i < enemyCount; i++)
             {
@@ -108,6 +115,20 @@ namespace RealtimeInteractiveCrawler
                 Enemy enemy = new Enemy();
                 enemies.Add(id, enemy);
                 enemy.Spawn(x, y);
+            }
+            int itemsToDestroy = pr.GetInt();
+            for(int i = 0; i < itemsToDestroy; i++)
+            {
+                int itemId = pr.GetInt();
+                foreach (var item in World.Items.Values)
+                {
+                    if (item.id == itemId)
+                    {
+                        item.IsDestroyed = true;
+                        world.Update();
+                        return;
+                    }
+                }
             }
 
             Console.WriteLine("my connection id is: " + connectionId);
@@ -160,6 +181,26 @@ namespace RealtimeInteractiveCrawler
                 np.UpdatePos(x, y);
             }
         }
+
+        public void UpdateItems(Packet p)
+        {
+            PacketReader pr = new PacketReader(p);
+
+            int id = pr.GetInt();
+            //int x = (int)pr.GetFloat();
+            //int y = (int)pr.GetFloat();
+            Console.WriteLine("received an update on item: " + id);
+            foreach (var item in World.Items.Values)
+            {
+                if(item.id == id)
+                {
+                    item.IsDestroyed = true;
+                    world.Update();
+                    return;
+                }
+            }
+        }
+        
 
         public void UpdateEnemyData(Packet p)
         {
