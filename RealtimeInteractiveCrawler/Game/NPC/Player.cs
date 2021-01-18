@@ -129,7 +129,7 @@ namespace RealtimeInteractiveCrawler
                         world.SetTile(TileType.GROUND, i, j);
                         ChangeErase(-1);
                     }
-                        
+
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace RealtimeInteractiveCrawler
                 switch (actualItem.TypeItem)
                 {
                     case ItemType.HEALTH:
-                        ChangeHealth(10);
+                        ChangeHealth(10, false);
                         break;
                     case Item.ItemType.ATTACK:
                         ChangeAttack(5);
@@ -209,18 +209,19 @@ namespace RealtimeInteractiveCrawler
             }
         }
 
-        public void ChangeHealth(int health)
+        public void ChangeHealth(int healthChange, bool enemyDamage)
         {
-            AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(health);
-            if((Health + health) > PLAYER_MAX_HEALTH)
+            AwesomeGame.StatusBars[ItemType.HEALTH].ChangeStatus(healthChange);
+            if ((Health + healthChange) > PLAYER_MAX_HEALTH)
             {
                 Health = PLAYER_MAX_HEALTH;
             }
             else
             {
-                Health += health;
+                Health += healthChange;
             }
-            AwesomeGame.networkManager.SendMyPlayerHealth(Health);
+            if (!enemyDamage)
+                AwesomeGame.networkManager.SendMyPlayerHealth(Health);
             //Debug.WriteLine(Health + " my health");
         }
         public void ChangeAttack(int attack)
@@ -253,7 +254,7 @@ namespace RealtimeInteractiveCrawler
                 foreach (var tile in tiles)
                 {
                     double dist = AwesomeGame.Distance(tile.Position, enemy.Position, enemy.Origin);
-                    if (dist < 20) 
+                    if (dist < 20)
                         enemiesToAttack.Add(enemy);
                 }
             }

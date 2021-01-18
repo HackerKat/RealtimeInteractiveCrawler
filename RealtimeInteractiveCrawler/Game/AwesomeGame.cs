@@ -288,7 +288,7 @@ namespace RealtimeInteractiveCrawler
             int damage = Players[id].Health - health;
             Debug.WriteLine(damage + " " + health);
             //Players[id].Health = health;
-            Players[id].ChangeHealth(-damage);
+            Players[id].ChangeHealth(-damage, true);
 
             //Console.WriteLine("Client got data about player: " + id + " health " + health);
         }
